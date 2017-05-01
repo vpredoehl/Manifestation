@@ -1,14 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Rollover View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="RolloverViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -16,11 +21,63 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" semanticContentAttribute="spatial" translatesAutoresizingMaskIntoConstraints="NO" id="M1q-TV-OXq">
+                                <rect key="frame" x="0.0" y="623" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="WJa-Mp-IPF"/>
+                                </constraints>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Vkj-oz-WYP"/>
+                                    <barButtonItem systemItem="play" id="xRl-0l-l00">
+                                        <connections>
+                                            <action selector="playRollover:" destination="BYZ-38-t0r" id="xPc-eZ-Q1L"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="oh2-mO-UTZ"/>
+                                    <barButtonItem systemItem="camera" id="mv2-i6-yZp">
+                                        <connections>
+                                            <action selector="takePicture:" destination="BYZ-38-t0r" id="0Hg-da-72T"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="530-c8-VV2"/>
+                                </items>
+                            </toolbar>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
+                                <rect key="frame" x="32" y="36" width="311" height="277.5"/>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lwo-xw-x6c">
+                                <rect key="frame" x="31.5" y="329.5" width="311" height="277.5"/>
+                            </imageView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="M1q-TV-OXq" firstAttribute="top" secondItem="lwo-xw-x6c" secondAttribute="bottom" constant="16" id="7ZV-ea-Z77"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="lwo-xw-x6c" secondAttribute="trailing" constant="16" id="A5T-jo-36Z"/>
+                            <constraint firstItem="aze-yh-CBR" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="16" id="EvC-nZ-kCq"/>
+                            <constraint firstItem="lwo-xw-x6c" firstAttribute="top" secondItem="aze-yh-CBR" secondAttribute="bottom" constant="16" id="It1-B5-F0m"/>
+                            <constraint firstItem="aze-yh-CBR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="16" id="KHr-YB-Eyz"/>
+                            <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="NgD-5O-aaG"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="aze-yh-CBR" secondAttribute="trailing" constant="16" id="YEG-gl-z6D"/>
+                            <constraint firstItem="lwo-xw-x6c" firstAttribute="width" secondItem="aze-yh-CBR" secondAttribute="width" id="ZcU-XE-s3l"/>
+                            <constraint firstItem="lwo-xw-x6c" firstAttribute="height" secondItem="aze-yh-CBR" secondAttribute="height" id="g7D-Zw-XL6"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="kxk-uo-ui7"/>
+                            <constraint firstItem="lwo-xw-x6c" firstAttribute="centerX" secondItem="aze-yh-CBR" secondAttribute="centerX" id="oJg-QU-6A9"/>
+                            <constraint firstItem="lwo-xw-x6c" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="16" id="oRT-XR-cP0"/>
+                            <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="vgO-U4-stc"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="chiImageView" destination="aze-yh-CBR" id="1Ba-SJ-XWp"/>
+                        <outlet property="rolloverImageView" destination="lwo-xw-x6c" id="5D2-88-QCe"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="128.80000000000001" y="-56.221889055472268"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="Chi Transfer" width="600" height="450"/>
+    </resources>
 </document>
