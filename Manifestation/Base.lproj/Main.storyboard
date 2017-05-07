@@ -50,10 +50,10 @@
                                 </items>
                             </toolbar>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
-                                <rect key="frame" x="32" y="36" width="311" height="277.5"/>
+                                <rect key="frame" x="32" y="80" width="311" height="255.5"/>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="lwo-xw-x6c">
-                                <rect key="frame" x="32" y="329.5" width="311" height="277.5"/>
+                                <rect key="frame" x="32" y="351.5" width="311" height="255.5"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -85,7 +85,7 @@
         <scene sceneID="Bij-eC-JCt">
             <objects>
                 <collectionViewController id="XeA-6l-AL1" customClass="CardsViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="mNI-vK-oZb">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="mNI-vK-oZb">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -109,10 +109,10 @@
                                     </subviews>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="52e-Wz-SSd" secondAttribute="bottom" id="I3s-Co-Rlr"/>
-                                    <constraint firstItem="52e-Wz-SSd" firstAttribute="top" secondItem="yrB-vX-8FO" secondAttribute="top" id="PhX-Yz-r0o"/>
-                                    <constraint firstItem="52e-Wz-SSd" firstAttribute="leading" secondItem="yrB-vX-8FO" secondAttribute="leading" id="UCh-9B-hFA"/>
-                                    <constraint firstAttribute="trailing" secondItem="52e-Wz-SSd" secondAttribute="trailing" id="hIn-nh-VNQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="52e-Wz-SSd" secondAttribute="bottom" id="Hfv-o3-xYo"/>
+                                    <constraint firstAttribute="trailing" secondItem="52e-Wz-SSd" secondAttribute="trailing" id="Lhe-Za-E1W"/>
+                                    <constraint firstItem="52e-Wz-SSd" firstAttribute="top" secondItem="yrB-vX-8FO" secondAttribute="top" id="O6O-SI-KFO"/>
+                                    <constraint firstItem="52e-Wz-SSd" firstAttribute="leading" secondItem="yrB-vX-8FO" secondAttribute="leading" id="oAp-4S-Npt"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="imageView" destination="52e-Wz-SSd" id="EUb-nW-fd8"/>
@@ -124,9 +124,7 @@
                             <outlet property="delegate" destination="XeA-6l-AL1" id="o2W-vJ-8rU"/>
                         </connections>
                     </collectionView>
-                    <toolbarItems>
-                        <barButtonItem title="Item" id="GxL-GE-bJA"/>
-                    </toolbarItems>
+                    <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J5o-px-aMQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
