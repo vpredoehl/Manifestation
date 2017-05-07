@@ -35,5 +35,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         rolloverImageView.image = img
         dismiss(animated: true, completion: nil)
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let dest = segue.destination as! CardsViewController
+        
+    }
 }
 
