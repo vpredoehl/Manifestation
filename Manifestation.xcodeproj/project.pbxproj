@@ -12,6 +12,8 @@
 		086DDC321EB6C9F90091A199 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC301EB6C9F90091A199 /* Main.storyboard */; };
 		086DDC341EB6C9F90091A199 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC331EB6C9F90091A199 /* Assets.xcassets */; };
 		086DDC371EB6C9F90091A199 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */; };
+		08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B601EBF515E0095A736 /* CardsViewController.swift */; };
+		08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		086DDC331EB6C9F90091A199 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		086DDC361EB6C9F90091A199 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		086DDC381EB6C9F90091A199 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08B87B601EBF515E0095A736 /* CardsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardsViewController.swift; sourceTree = "<group>"; };
+		08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,10 +60,12 @@
 			children = (
 				086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */,
 				086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */,
+				08B87B601EBF515E0095A736 /* CardsViewController.swift */,
 				086DDC301EB6C9F90091A199 /* Main.storyboard */,
 				086DDC331EB6C9F90091A199 /* Assets.xcassets */,
 				086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */,
 				086DDC381EB6C9F90091A199 /* Info.plist */,
+				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
 			);
 			path = Manifestation;
 			sourceTree = "<group>";
@@ -137,8 +143,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */,
 				086DDC2F1EB6C9F90091A199 /* RolloverViewController.swift in Sources */,
 				086DDC2D1EB6C9F90091A199 /* AppDelegate.swift in Sources */,
+				08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +312,7 @@
 				086DDC3D1EB6C9F90091A199 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
