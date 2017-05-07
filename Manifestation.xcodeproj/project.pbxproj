@@ -14,6 +14,7 @@
 		086DDC371EB6C9F90091A199 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */; };
 		08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B601EBF515E0095A736 /* CardsViewController.swift */; };
 		08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */; };
+		08B87B651EBF8F0C0095A736 /* CardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B641EBF8F0C0095A736 /* CardStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		086DDC381EB6C9F90091A199 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		08B87B601EBF515E0095A736 /* CardsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardsViewController.swift; sourceTree = "<group>"; };
 		08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
+		08B87B641EBF8F0C0095A736 /* CardStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */,
 				086DDC381EB6C9F90091A199 /* Info.plist */,
 				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
+				08B87B641EBF8F0C0095A736 /* CardStore.swift */,
 			);
 			path = Manifestation;
 			sourceTree = "<group>";
@@ -144,6 +147,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */,
+				08B87B651EBF8F0C0095A736 /* CardStore.swift in Sources */,
 				086DDC2F1EB6C9F90091A199 /* RolloverViewController.swift in Sources */,
 				086DDC2D1EB6C9F90091A199 /* AppDelegate.swift in Sources */,
 				08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */,

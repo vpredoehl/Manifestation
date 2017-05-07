@@ -10,15 +10,14 @@ import UIKit
 
 class CardsViewController: UICollectionViewController {
     
+    
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let img = UIImage(named: "AoD/\(indexPath.row)")
         
+        (cell as! CardCollectionViewCell).imageView.image = img
     }
     
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 0
+        return AoDCount
     }
-    
-//    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        
-//    }
 }
