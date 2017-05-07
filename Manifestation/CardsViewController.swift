@@ -9,21 +9,23 @@
 import UIKit
 
 class CardsViewController: UICollectionViewController {
-    @IBOutlet weak var backButton: UIBarButtonItem!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let statusBarHeight = UIApplication.shared.statusBarFrame.height
+        let insets = UIEdgeInsets(top: statusBarHeight, left: 0, bottom: 0, right: 0)
+        
+        collectionView?.scrollIndicatorInsets = insets
+    }
     
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let img = UIImage(named: "AoD/\(indexPath.row - 1)")
+        let img = UIImage(named: "AoD/\(indexPath.row + 1)")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCollectionViewCell", for: indexPath) as! CardCollectionViewCell
         
         cell.imageView.image = img
         return cell
         
-    }
-    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        let img = UIImage(named: "AoD/\(indexPath.row)")
-        
-        (cell as! CardCollectionViewCell).imageView.image = img
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
