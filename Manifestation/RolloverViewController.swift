@@ -13,6 +13,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var chiImageView: UIImageView!
     @IBOutlet weak var rolloverImageView: UIImageView!
 
+    var rolloverImageIndex: [Int?] = [ nil, nil, nil ]
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.

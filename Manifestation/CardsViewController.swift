@@ -18,12 +18,18 @@ class CardsViewController: UICollectionViewController {
         collectionView?.scrollIndicatorInsets = insets
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        navigationItem.title = "Cards"
+    }
+
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let img = UIImage(named: "AoD/\(indexPath.row + 1)")
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CardCollectionViewCell", for: indexPath) as! CardCollectionViewCell
         
         cell.imageView.image = img
+        cell.imgIdx = indexPath.row
         return cell
         
     }
@@ -37,5 +43,6 @@ class CardsViewController: UICollectionViewController {
         let positionVC = segue.destination as! PositionViewController
         
         positionVC.selectedImage = cell?.imageView.image
+        positionVC.imageIndex = cell?.imgIdx        
     }
 }

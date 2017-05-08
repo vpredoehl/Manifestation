@@ -67,10 +67,10 @@
 				08B87B601EBF515E0095A736 /* CardsViewController.swift */,
 				08B87B661EBFCD160095A736 /* PositionViewController.swift */,
 				086DDC301EB6C9F90091A199 /* Main.storyboard */,
+				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
 				086DDC331EB6C9F90091A199 /* Assets.xcassets */,
 				086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */,
 				086DDC381EB6C9F90091A199 /* Info.plist */,
-				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
 				08B87B641EBF8F0C0095A736 /* CardStore.swift */,
 			);
 			path = Manifestation;
