@@ -31,7 +31,11 @@ class CardsViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return AoDCount
     }
-    
-    @IBAction func back(_ sender: Any) {
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let cell = sender as? CardCollectionViewCell
+        let positionVC = segue.destination as! PositionViewController
+        
+        positionVC.selectedImage = cell?.imageView.image
     }
 }
