@@ -12,6 +12,8 @@ let numPositions = 3
 
 class PositionViewController: UIViewController {
     @IBOutlet var positionView: [UIImageView]!
+    @IBOutlet weak var doubleTapGesture: UITapGestureRecognizer!
+    @IBOutlet weak var singleTapGesture: UITapGestureRecognizer!
     
     var selectedImage: UIImage!
     var imageIndex: Int!
@@ -29,20 +31,30 @@ class PositionViewController: UIViewController {
                 pV.image = UIImage(named: "AoD/\(idx + 1)")
             }
         }
-
+        singleTapGesture.require(toFail: doubleTapGesture)
+    }
+    @IBAction func switchSegment(_ sender: UISegmentedControl) {
+        print("Switched Segment: \(sender.selectedSegmentIndex)")
     }
     
     @IBAction func tap(_ sender: UITapGestureRecognizer) {
+        print("Taps: \(sender.numberOfTapsRequired)")
         for pV in positionView {
             let pt = sender.location(in: pV)
-            if pV.point(inside: pt, with: nil)
+            if !pV.isHidden && pV.point(inside: pt, with: nil)
             {
                 let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
                 let wellPosition = pV.tag
                 
-                print("Position: \(pV.tag) ImageIndex: \(imageIndex)")
-                pV.image = selectedImage
-                rolloverVC.rolloverImageIndex[wellPosition - 1] = imageIndex
+                print("Position: \(pV.tag) ImageIndex: \(imageIndex)  numberOfTaps: \(sender.numberOfTapsRequired)")
+                if sender.numberOfTapsRequired == 2 {
+                    pV.image = nil
+                    rolloverVC.rolloverImageIndex[wellPosition - 1] = nil
+                } else {
+                    pV.image = selectedImage
+                    rolloverVC.rolloverImageIndex[wellPosition - 1] = imageIndex
+
+                }
             }
         }
     }
