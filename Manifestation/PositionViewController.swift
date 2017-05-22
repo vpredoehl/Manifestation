@@ -10,13 +10,14 @@ import UIKit
 
 let numPositions = 3
 
-class PositionViewController: UIViewController {
+class PositionViewController: UIViewController, UIPopoverPresentationControllerDelegate {
     @IBOutlet var positionView: [UIImageView]!
     @IBOutlet weak var doubleTapGesture: UITapGestureRecognizer!
     @IBOutlet weak var singleTapGesture: UITapGestureRecognizer!
     
     var selectedImage: UIImage!
     var imageIndex: Int!
+    var rolloverVC: RolloverViewController!
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -24,7 +25,6 @@ class PositionViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
         
         for pV in positionView {
             if let idx = rolloverVC.rolloverImageIndex[pV.tag - 1] {
@@ -43,7 +43,6 @@ class PositionViewController: UIViewController {
             let pt = sender.location(in: pV)
             if !pV.isHidden && pV.point(inside: pt, with: nil)
             {
-                let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
                 let wellPosition = pV.tag
                 
                 print("Position: \(pV.tag) ImageIndex: \(imageIndex)  numberOfTaps: \(sender.numberOfTapsRequired)")
@@ -57,5 +56,9 @@ class PositionViewController: UIViewController {
                 }
             }
         }
+    }
+    
+    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+        return .none
     }
 }

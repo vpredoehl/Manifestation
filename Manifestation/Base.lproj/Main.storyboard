@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="RuG-6x-TLJ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="RuG-6x-TLJ">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -110,7 +110,9 @@
                                 </constraints>
                                 <connections>
                                     <outlet property="imageView" destination="52e-Wz-SSd" id="EUb-nW-fd8"/>
-                                    <segue destination="sHv-Gh-ctV" kind="show" id="dnS-zq-ZQK"/>
+                                    <segue destination="CGb-nG-nlN" kind="popoverPresentation" popoverAnchorView="mNI-vK-oZb" id="dnS-zq-ZQK">
+                                        <popoverArrowDirection key="popoverArrowDirection" up="YES" down="YES" left="YES" right="YES"/>
+                                    </segue>
                                 </connections>
                             </collectionViewCell>
                         </cells>
@@ -222,6 +224,7 @@
                             <outletCollection property="gestureRecognizers" destination="WZL-mx-SQm" appends="YES" id="9zq-aT-8ba"/>
                         </connections>
                     </view>
+                    <navigationItem key="navigationItem" id="UjA-iN-H1t"/>
                     <connections>
                         <outlet property="doubleTapGesture" destination="WZL-mx-SQm" id="IsA-cJ-5CR"/>
                         <outlet property="singleTapGesture" destination="bGG-xM-lHF" id="A3b-cZ-aiT"/>
@@ -242,7 +245,7 @@
                     </connections>
                 </tapGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="4000.8000000000002" y="-56.221889055472268"/>
+            <point key="canvasLocation" x="4940" y="-56.221889055472268"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FGK-YO-nTE">
@@ -261,6 +264,24 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wZL-py-q74" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1068" y="-56.221889055472268"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="mM8-6i-SPC">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="CGb-nG-nlN" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="AZH-7G-rvB">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="sHv-Gh-ctV" kind="relationship" relationship="rootViewController" id="v3x-RH-amU"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HgX-rv-zm5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4000.8000000000002" y="-56.221889055472268"/>
         </scene>
     </scenes>
     <resources>
