@@ -8,6 +8,8 @@
 
 import UIKit
 
+let maxNumPositions = 3
+
 class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     @IBOutlet weak var chiImageView: UIImageView!
@@ -16,6 +18,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var rolloverImageIndex: [Int?] = [ nil, nil, nil ]
     var trendText = [ "", "", "" ]
     var targetText = [ "", "", "" ]
+    var numPositions = maxNumPositions
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,7 +49,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         dest.imageIndex = rolloverImageIndex
         dest.trendText = trendText
         dest.targetText = targetText
-
+        dest.numPositions = numPositions
     }
 }
 

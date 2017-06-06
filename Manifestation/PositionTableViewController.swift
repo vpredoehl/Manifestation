@@ -8,7 +8,6 @@
 
 import UIKit
 
-let numPositions = 3
 let placeholderText = "Place text here"
 
 class PositionTableViewController: UITableViewController, UITextViewDelegate {
@@ -19,22 +18,19 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         case target
     }
 
-    @IBOutlet weak var targetOrTrend: UISegmentedControl!
+    @IBOutlet weak var editItem: UIBarButtonItem!
 
     var imageIndex: [Int?]!
     var trendText: [String]!
     var targetText: [String]!
+    var numPositions: Int!
     var selectedSegment = SegmentType.trend
     var rowBeingEdited: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+         navigationItem.rightBarButtonItems?[1] = editButtonItem
     }
 
     override func didReceiveMemoryWarning() {
@@ -96,24 +92,41 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     }
     */
 
-    /*
+    
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
+            let rowToDelete = indexPath.row
+            
+            imageIndex.remove(at: rowToDelete)
+            trendText.remove(at: rowToDelete)
+            targetText.remove(at: rowToDelete)
+            numPositions = numPositions - 1
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
         }    
     }
-    */
+    
 
-    /*
+    
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
+        let fromRow = fromIndexPath.row
+        let toRow = to.row
+        let tempIdx = imageIndex[toRow]
+        let tempTrendText = trendText[toRow]
+        let tempTargetText = targetText[toRow]
+        
+        imageIndex[toRow] = imageIndex[fromRow]
+        trendText[toRow] = trendText[fromRow]
+        targetText[toRow] = targetText[fromRow]
+        
+        imageIndex[fromRow] = tempIdx
+        trendText[fromRow] = tempTrendText
+        targetText[fromRow] = tempTargetText
     }
-    */
+    
 
     /*
     // Override to support conditional rearranging of the table view.
@@ -204,6 +217,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         rolloverVC.trendText = trendText
         rolloverVC.targetText = targetText
         rolloverVC.rolloverImageIndex = imageIndex
+        rolloverVC.numPositions = numPositions
         navigationController?.popViewController(animated: true)
     }
 }
