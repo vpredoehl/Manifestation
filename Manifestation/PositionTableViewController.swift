@@ -9,6 +9,7 @@
 import UIKit
 
 let numPositions = 3
+let placeholderText = "Place text here"
 
 class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
@@ -24,6 +25,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     var trendText: [String]!
     var targetText: [String]!
     var selectedSegment = SegmentType.trend
+    var rowBeingEdited: Int?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,20 +56,35 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
         let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
-        let img = UIImage(named: "AoD/\(row + 1)")
         let text = trendText[row]
 
-        cell.cardImageView.image = img
+        if let idx = imageIndex[row],
+            let img = UIImage(named: "AoD/\(idx + 1)") {
+            cell.cardButton.setImage(img, for: .normal)
+        }
+        cell.cardButton.tag = row
         
         if text == "" {
             cell.textView.textColor = UIColor.lightGray
-            cell.textView.text = "Place text here"
+            cell.textView.text = placeholderText
         } else {
             cell.textView.text = text
         }
         cell.textView.tag = indexPath.row
         cell.trendOrTarget.tag = indexPath.row
         return cell
+    }
+    
+    // MARK: - Table View Delegate -
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        let row = indexPath.row
+        
+        if rowBeingEdited != nil && row != rowBeingEdited {
+            let ipBeingEdited = IndexPath(row: rowBeingEdited!, section: 0)
+            let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
+            cell.textView.resignFirstResponder()
+        }
+        return false
     }
     
 
@@ -111,7 +128,28 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("prepare for segue")
+        let cardVC = segue.destination as! CardsViewController
+        let cardButton = sender as! UIButton
+        
+        cardVC.row = cardButton.tag
+        if let row = rowBeingEdited {
+            let ip = IndexPath(row: row, section: 0)
+            let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+            
+            cell.textView.resignFirstResponder()
+        }
+    }
+    
+    @IBAction
+    func ImageSelectedUnwind(_ segue: UIStoryboardSegue, sender: CardCollectionViewCell) {
+        let cardVC = segue.source as! CardsViewController
+        let row = cardVC.row
+        let ip = IndexPath(row: cardVC.row, section: 0)
+        let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+        let img = UIImage(named: "AoD/\(cardVC.imageIdx + 1)")
+        
+        imageIndex[row!] = cardVC.imageIdx
+        cell.cardButton.setImage(img, for: .normal)
     }
     
 
@@ -125,6 +163,16 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         
         textView.text = text
         textView.textColor = UIColor.black
+        rowBeingEdited = row
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            // restore placeholder text
+            textView.textColor = UIColor.lightGray
+            textView.text = placeholderText
+        }
+        rowBeingEdited = nil
     }
     
     func textViewDidChange(_ textView: UITextView) {
@@ -146,7 +194,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         
         selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         cell.textView.text = selectedSegment == .trend ? trendText[idx] : targetText[idx]
-//        tableView.reloadRows(at: [ip], with: .automatic)
+        cell.textView.becomeFirstResponder()
         print("Segmented Control: \(sender.tag) : \(sender.selectedSegmentIndex)")
     }
     

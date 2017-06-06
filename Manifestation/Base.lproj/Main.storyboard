@@ -79,7 +79,7 @@
         <scene sceneID="7nJ-f2-xyD">
             <objects>
                 <tableViewController id="NpI-hx-oAE" customClass="PositionTableViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="140" sectionHeaderHeight="28" sectionFooterHeight="28" id="0p7-rB-Y3B">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="28" sectionFooterHeight="28" id="0p7-rB-Y3B">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -88,21 +88,11 @@
                                 <rect key="frame" x="0.0" y="28" width="375" height="140"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="139.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="140"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uJg-ls-Cci">
-                                            <rect key="frame" x="8" y="42" width="90" height="90"/>
-                                            <accessibility key="accessibilityConfiguration">
-                                                <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
-                                            </accessibility>
-                                            <constraints>
-                                                <constraint firstAttribute="height" constant="90" id="1YS-Jy-qFn"/>
-                                                <constraint firstAttribute="width" constant="90" id="FUw-Om-0X9"/>
-                                            </constraints>
-                                        </imageView>
                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
-                                            <rect key="frame" x="106" y="44" width="261" height="88"/>
+                                            <rect key="frame" x="105" y="44" width="261" height="88"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -112,7 +102,7 @@
                                             </connections>
                                         </textView>
                                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
-                                            <rect key="frame" x="260" y="8" width="107" height="29"/>
+                                            <rect key="frame" x="259" y="8" width="107" height="29"/>
                                             <segments>
                                                 <segment title="Trend"/>
                                                 <segment title="Target"/>
@@ -121,23 +111,36 @@
                                                 <action selector="selectTrendOrTarget:" destination="NpI-hx-oAE" eventType="valueChanged" id="Kx6-sF-62h"/>
                                             </connections>
                                         </segmentedControl>
+                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bbr-tT-eFu">
+                                            <rect key="frame" x="8" y="42" width="90" height="90"/>
+                                            <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="90" id="mCM-k2-cVC"/>
+                                            </constraints>
+                                            <state key="normal" title="No Image">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
+                                            <connections>
+                                                <segue destination="XeA-6l-AL1" kind="show" id="hfN-8q-bbJ"/>
+                                            </connections>
+                                        </button>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="uJg-ls-Cci" firstAttribute="bottom" secondItem="ET1-RQ-nWK" secondAttribute="bottom" id="1oY-Gl-1iM"/>
-                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="trailing" secondItem="BkG-V0-WIM" secondAttribute="trailingMargin" id="2hZ-5g-CfE"/>
-                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="top" secondItem="0fc-7T-zBP" secondAttribute="bottom" constant="8" symbolic="YES" id="Bd2-BF-rRu"/>
-                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="trailing" secondItem="ET1-RQ-nWK" secondAttribute="trailing" id="CDW-ef-N1y"/>
-                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" id="H9u-bB-zyL"/>
-                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="leading" secondItem="uJg-ls-Cci" secondAttribute="trailing" constant="8" symbolic="YES" id="Vaw-9l-MKV"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="uJg-ls-Cci" secondAttribute="bottom" constant="-0.5" id="XSj-wc-th4"/>
-                                        <constraint firstItem="uJg-ls-Cci" firstAttribute="leading" secondItem="BkG-V0-WIM" secondAttribute="leadingMargin" id="zPs-h8-qw5"/>
+                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="leading" secondItem="Bbr-tT-eFu" secondAttribute="trailing" constant="7" id="G6b-9w-e0R"/>
+                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="bottom" secondItem="ET1-RQ-nWK" secondAttribute="bottom" id="MB2-V8-aux"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="0fc-7T-zBP" secondAttribute="trailing" constant="1" id="Wfn-vE-5BC"/>
+                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" id="Y2C-Dp-MEM"/>
+                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="top" secondItem="0fc-7T-zBP" secondAttribute="bottom" constant="8" symbolic="YES" id="iPH-no-33I"/>
+                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="leading" secondItem="BkG-V0-WIM" secondAttribute="leadingMargin" id="jlR-oQ-MnB"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="Bbr-tT-eFu" secondAttribute="bottom" constant="-0.5" id="m5k-Dp-FSZ"/>
+                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="trailing" secondItem="ET1-RQ-nWK" secondAttribute="trailing" id="naK-td-jYR"/>
+                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" constant="34" id="r8i-xI-12z"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="cardImageView" destination="uJg-ls-Cci" id="bnJ-AW-Re7"/>
+                                    <outlet property="cardButton" destination="Bbr-tT-eFu" id="M9a-C9-Pcv"/>
                                     <outlet property="textView" destination="ET1-RQ-nWK" id="XUA-Em-JdV"/>
                                     <outlet property="trendOrTarget" destination="0fc-7T-zBP" id="wUm-mG-5FM"/>
-                                    <segue destination="XeA-6l-AL1" kind="show" identifier="showCards" id="Ox1-Ih-ugP"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -156,7 +159,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="far-Oy-jHt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3094" y="-56"/>
+            <point key="canvasLocation" x="3093.5999999999999" y="-56.221889055472268"/>
         </scene>
         <!--Cards View Controller-->
         <scene sceneID="Bij-eC-JCt">
@@ -193,6 +196,7 @@
                                 </constraints>
                                 <connections>
                                     <outlet property="imageView" destination="52e-Wz-SSd" id="EUb-nW-fd8"/>
+                                    <segue destination="UHq-Wk-T3n" kind="unwind" unwindAction="ImageSelectedUnwind:sender:" id="HWX-d0-dfZ"/>
                                 </connections>
                             </collectionViewCell>
                         </cells>
@@ -205,6 +209,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J5o-px-aMQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="UHq-Wk-T3n" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="4057" y="-56"/>
         </scene>

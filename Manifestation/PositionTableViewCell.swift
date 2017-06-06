@@ -11,7 +11,7 @@ import UIKit
 class PositionTableViewCell: UITableViewCell {
     
     // MARK: Properties -
-    @IBOutlet weak var cardImageView: UIImageView!
+    @IBOutlet weak var cardButton: UIButton!
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var trendOrTarget: UISegmentedControl!
 
