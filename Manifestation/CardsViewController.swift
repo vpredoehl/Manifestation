@@ -39,11 +39,11 @@ class CardsViewController: UICollectionViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cell = sender as? CardCollectionViewCell
-        let positionVC = segue.destination as! PositionViewController
-        
-        positionVC.selectedImage = cell?.imageView.image
-        positionVC.imageIndex = cell?.imgIdx
-        positionVC.rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
+//        let cell = sender as? CardCollectionViewCell
+//        let positionVC = segue.destination as! PositionViewController
+//        
+//        positionVC.selectedImage = cell?.imageView.image
+//        positionVC.imageIndex = cell?.imgIdx
+//        positionVC.rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
     }
 }

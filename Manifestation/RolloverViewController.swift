@@ -14,6 +14,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var rolloverImageView: UIImageView!
 
     var rolloverImageIndex: [Int?] = [ nil, nil, nil ]
+    var trendText = [ "", "", "" ]
+    var targetText = [ "", "", "" ]
         
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,8 +41,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let dest = segue.destination as! CardsViewController
+        let dest = segue.destination as! PositionTableViewController
         
+        dest.imageIndex = rolloverImageIndex
+        dest.trendText = trendText
+        dest.targetText = targetText
+
     }
 }
 
