@@ -15,20 +15,17 @@ enum TableSection: Int {
     case positionSection
 }
 
+enum SegmentType: Int {
+    case trend
+    case target
+}
+
 class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
     // MARK: Properties -
-    enum SegmentType: Int {
-        case trend
-        case target
-    }
-
     @IBOutlet weak var editItem: UIBarButtonItem!
 
-    var imageIndex: [Int?]!
-    var trendText: [String]!
-    var targetText: [String]!
-    var numPositions: Int!
+    var pref: Preference!
     var selectedSegment = SegmentType.trend
     var rowBeingEdited: Int?
 
@@ -50,7 +47,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == TableSection.chiSection.rawValue ? 1 : numPositions
+        return section == TableSection.chiSection.rawValue ? 1 : pref.numPositions
     }
 
     
@@ -65,9 +62,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
             return cell
         case .positionSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
-            let text = trendText[row]
+            let text = pref.userText(forRow: row, ofType: .trend)
             
-            if let idx = imageIndex[row],
+            if let idx = pref.rolloverIndex(forRow: row),
                 let img = UIImage(named: "AoD/\(idx + 1)") {
                 cell.cardButton.setImage(img, for: .normal)
             }
@@ -86,6 +83,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     }
     
     // MARK: - Table View Delegate -
+//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//        return indexPath.section == TableSection.chiSection.rawValue ? 200 : 140
+//    }
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         let row = indexPath.row
         
@@ -112,10 +112,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         if editingStyle == .delete {
             let rowToDelete = indexPath.row
             
-            imageIndex.remove(at: rowToDelete)
-            trendText.remove(at: rowToDelete)
-            targetText.remove(at: rowToDelete)
-            numPositions = numPositions - 1
+            pref.remove(at: rowToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -146,19 +143,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-        let fromRow = fromIndexPath.row
-        let toRow = to.row
-        let tempIdx = imageIndex[toRow]
-        let tempTrendText = trendText[toRow]
-        let tempTargetText = targetText[toRow]
-        
-        imageIndex[toRow] = imageIndex[fromRow]
-        trendText[toRow] = trendText[fromRow]
-        targetText[toRow] = targetText[fromRow]
-        
-        imageIndex[fromRow] = tempIdx
-        trendText[fromRow] = tempTrendText
-        targetText[fromRow] = tempTargetText
+        pref.swap(fromRow: fromIndexPath.row, to: to.row)
     }
     
 
@@ -195,7 +180,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let img = UIImage(named: "AoD/\(cardVC.imageIdx + 1)")
         
-        imageIndex[row!] = cardVC.imageIdx
+        pref.setImageIndex(index: cardVC.imageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
     }
     
@@ -206,8 +191,8 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let selIdx = SegmentType(rawValue: cell.trendOrTarget.selectedSegmentIndex)!
-        let text = selIdx == .trend ? trendText[row] : targetText[row]
-        
+        let text = pref.userText(forRow: row, ofType: selIdx)
+
         textView.text = text
         textView.textColor = UIColor.black
         rowBeingEdited = row
@@ -223,14 +208,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     }
     
     func textViewDidChange(_ textView: UITextView) {
-        print("TextView: \(textView.text)")
         let idx = textView.tag
         
-        if selectedSegment == .trend {
-            trendText[idx] = textView.text
-        } else {
-            targetText[idx] = textView.text
-        }
+        pref.setText(text: textView.text, forRow: idx, ofType: selectedSegment)
     }
     
     // MARK: - Segmented Control -
@@ -240,18 +220,18 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         
         selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
-        cell.textView.text = selectedSegment == .trend ? trendText[idx] : targetText[idx]
-        cell.textView.becomeFirstResponder()
-        print("Segmented Control: \(sender.tag) : \(sender.selectedSegmentIndex)")
+        cell.textView.text = pref.userText(forRow: idx, ofType: selectedSegment)
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
+        let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let f = dd.appendingPathComponent("positions")
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
-        
-        rolloverVC.trendText = trendText
-        rolloverVC.targetText = targetText
-        rolloverVC.rolloverImageIndex = imageIndex
-        rolloverVC.numPositions = numPositions
+
+        if NSKeyedArchiver.archiveRootObject(pref, toFile: f.path) {
+            print("Positions saved.")
+        }
+        rolloverVC.pref = pref
         navigationController?.popViewController(animated: true)
     }
 }

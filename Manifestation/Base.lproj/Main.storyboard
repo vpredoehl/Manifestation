@@ -52,7 +52,7 @@
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="530-c8-VV2"/>
                                 </items>
                             </toolbar>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
                                 <rect key="frame" x="16" y="64" width="343" height="559"/>
                             </imageView>
                         </subviews>
@@ -70,6 +70,7 @@
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
                     <connections>
                         <outlet property="chiImageView" destination="aze-yh-CBR" id="1Ba-SJ-XWp"/>
+                        <outlet property="rolloverImageView" destination="aze-yh-CBR" id="1Jp-Re-xsO"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -85,32 +86,28 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="90" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="375" height="90"/>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="28" width="375" height="140"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bto-6u-UY8" id="LrX-Ks-JC3">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="90"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="140"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
-                                            <rect key="frame" x="8" y="0.0" width="90" height="90"/>
+                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
+                                            <rect key="frame" x="127" y="10" width="120" height="120"/>
                                             <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
-                                            <state key="normal" title="No Image"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="120" id="TB2-AB-8x1"/>
+                                            </constraints>
+                                            <state key="normal" title="Chi Transfer">
+                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            </state>
                                         </button>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chi Transfer Image" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="epG-5m-izJ">
-                                            <rect key="frame" x="106" y="31" width="193" height="28"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerY" secondItem="LrX-Ks-JC3" secondAttribute="centerY" id="Xp7-L0-zHg"/>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="leading" secondItem="LrX-Ks-JC3" secondAttribute="leadingMargin" id="aaG-cJ-9Ph"/>
-                                        <constraint firstItem="epG-5m-izJ" firstAttribute="leading" secondItem="aAR-zI-BcP" secondAttribute="trailing" constant="8" symbolic="YES" id="hqE-0L-Vmx"/>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="top" secondItem="LrX-Ks-JC3" secondAttribute="top" id="hyF-Os-qEI"/>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerY" secondItem="epG-5m-izJ" secondAttribute="centerY" id="iWZ-vJ-gKC"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="epG-5m-izJ" secondAttribute="trailing" constant="68" id="rmV-ML-sCK"/>
+                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="top" secondItem="LrX-Ks-JC3" secondAttribute="topMargin" constant="2" id="eqW-Ab-YRH"/>
+                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerX" secondItem="LrX-Ks-JC3" secondAttribute="centerX" id="sJD-Oy-dDn"/>
+                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerY" secondItem="LrX-Ks-JC3" secondAttribute="centerY" id="wQv-vP-hmF"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
@@ -118,24 +115,24 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="118" width="375" height="140"/>
+                                <rect key="frame" x="0.0" y="168" width="375" height="140"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="139.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
-                                            <rect key="frame" x="105" y="44" width="261" height="88"/>
+                                            <rect key="frame" x="105" y="44" width="262" height="88"/>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                             <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences" returnKeyType="done"/>
+                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                             <connections>
                                                 <outlet property="delegate" destination="NpI-hx-oAE" id="cRU-JE-QBL"/>
                                             </connections>
                                         </textView>
                                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
-                                            <rect key="frame" x="259" y="8" width="107" height="29"/>
+                                            <rect key="frame" x="260" y="8" width="107" height="29"/>
                                             <segments>
                                                 <segment title="Trend"/>
                                                 <segment title="Target"/>
@@ -161,7 +158,7 @@
                                     <constraints>
                                         <constraint firstItem="ET1-RQ-nWK" firstAttribute="leading" secondItem="Bbr-tT-eFu" secondAttribute="trailing" constant="7" id="G6b-9w-e0R"/>
                                         <constraint firstItem="Bbr-tT-eFu" firstAttribute="bottom" secondItem="ET1-RQ-nWK" secondAttribute="bottom" id="MB2-V8-aux"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="0fc-7T-zBP" secondAttribute="trailing" constant="1" id="Wfn-vE-5BC"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="0fc-7T-zBP" secondAttribute="trailing" id="Wfn-vE-5BC"/>
                                         <constraint firstItem="0fc-7T-zBP" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" id="Y2C-Dp-MEM"/>
                                         <constraint firstItem="ET1-RQ-nWK" firstAttribute="top" secondItem="0fc-7T-zBP" secondAttribute="bottom" constant="8" symbolic="YES" id="iPH-no-33I"/>
                                         <constraint firstItem="Bbr-tT-eFu" firstAttribute="leading" secondItem="BkG-V0-WIM" secondAttribute="leadingMargin" id="jlR-oQ-MnB"/>
@@ -272,6 +269,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Chi Transfer" width="600" height="450"/>
+        <image name="Transfer/Chi Transfer" width="600" height="450"/>
     </resources>
 </document>

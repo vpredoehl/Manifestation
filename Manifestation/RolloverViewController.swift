@@ -15,14 +15,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var chiImageView: UIImageView!
     @IBOutlet weak var rolloverImageView: UIImageView!
 
-    var rolloverImageIndex: [Int?] = [ nil, nil, nil ]
-    var trendText = [ "", "", "" ]
-    var targetText = [ "", "", "" ]
-    var numPositions = maxNumPositions
+    var pref: Preference?
         
     override func viewDidLoad() {
+        let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        let f = dd.appendingPathComponent("positions")
+        let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
+        
+        pref = p ?? Preference(imageIndex: nil, trendText: [ "", "", "" ], targetText: [ "", "", "" ], numPositions: maxNumPositions)
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
 
     @IBAction func playRollover(_ sender: UIBarButtonItem) {
@@ -46,10 +47,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let dest = segue.destination as! PositionTableViewController
         
-        dest.imageIndex = rolloverImageIndex
-        dest.trendText = trendText
-        dest.targetText = targetText
-        dest.numPositions = numPositions
+        dest.pref = pref
     }
 }
 

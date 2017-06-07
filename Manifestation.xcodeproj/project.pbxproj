@@ -10,6 +10,7 @@
 		0823564B1EE4ED5C00F0760E /* PositionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0823564A1EE4ED5C00F0760E /* PositionTableViewController.swift */; };
 		0823564D1EE4EFE700F0760E /* PositionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0823564C1EE4EFE700F0760E /* PositionTableViewCell.swift */; };
 		0823564F1EE73E0700F0760E /* ChiCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0823564E1EE73E0700F0760E /* ChiCellTableViewCell.swift */; };
+		082356531EE7998100F0760E /* Preference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 082356521EE7998100F0760E /* Preference.swift */; };
 		086DDC2D1EB6C9F90091A199 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */; };
 		086DDC2F1EB6C9F90091A199 /* RolloverViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */; };
 		086DDC321EB6C9F90091A199 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC301EB6C9F90091A199 /* Main.storyboard */; };
@@ -24,6 +25,7 @@
 		0823564A1EE4ED5C00F0760E /* PositionTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PositionTableViewController.swift; sourceTree = "<group>"; };
 		0823564C1EE4EFE700F0760E /* PositionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PositionTableViewCell.swift; sourceTree = "<group>"; };
 		0823564E1EE73E0700F0760E /* ChiCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChiCellTableViewCell.swift; sourceTree = "<group>"; };
+		082356521EE7998100F0760E /* Preference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
 		086DDC291EB6C9F90091A199 /* Manifestation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Manifestation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverViewController.swift; sourceTree = "<group>"; };
@@ -78,6 +80,7 @@
 				086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */,
 				086DDC381EB6C9F90091A199 /* Info.plist */,
 				08B87B641EBF8F0C0095A736 /* CardStore.swift */,
+				082356521EE7998100F0760E /* Preference.swift */,
 			);
 			path = Manifestation;
 			sourceTree = "<group>";
@@ -162,6 +165,7 @@
 				0823564F1EE73E0700F0760E /* ChiCellTableViewCell.swift in Sources */,
 				086DDC2F1EB6C9F90091A199 /* RolloverViewController.swift in Sources */,
 				086DDC2D1EB6C9F90091A199 /* AppDelegate.swift in Sources */,
+				082356531EE7998100F0760E /* Preference.swift in Sources */,
 				08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
