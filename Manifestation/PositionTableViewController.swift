@@ -10,6 +10,11 @@ import UIKit
 
 let placeholderText = "Place text here"
 
+enum TableSection: Int {
+    case chiSection
+    case positionSection
+}
+
 class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
     // MARK: Properties -
@@ -41,34 +46,43 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return numPositions
+        return section == TableSection.chiSection.rawValue ? 1 : numPositions
     }
 
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
-        let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
-        let text = trendText[row]
+        let section = TableSection(rawValue: indexPath.section)!
 
-        if let idx = imageIndex[row],
-            let img = UIImage(named: "AoD/\(idx + 1)") {
-            cell.cardButton.setImage(img, for: .normal)
+        switch section {
+        case .chiSection:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChiCell", for: indexPath)
+            
+            return cell
+        case .positionSection:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
+            let text = trendText[row]
+            
+            if let idx = imageIndex[row],
+                let img = UIImage(named: "AoD/\(idx + 1)") {
+                cell.cardButton.setImage(img, for: .normal)
+            }
+            cell.cardButton.tag = row
+            
+            if text == "" {
+                cell.textView.textColor = UIColor.lightGray
+                cell.textView.text = placeholderText
+            } else {
+                cell.textView.text = text
+            }
+            cell.textView.tag = indexPath.row
+            cell.trendOrTarget.tag = indexPath.row
+            return cell
         }
-        cell.cardButton.tag = row
-        
-        if text == "" {
-            cell.textView.textColor = UIColor.lightGray
-            cell.textView.text = placeholderText
-        } else {
-            cell.textView.text = text
-        }
-        cell.textView.tag = indexPath.row
-        cell.trendOrTarget.tag = indexPath.row
-        return cell
     }
     
     // MARK: - Table View Delegate -
@@ -76,7 +90,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let row = indexPath.row
         
         if rowBeingEdited != nil && row != rowBeingEdited {
-            let ipBeingEdited = IndexPath(row: rowBeingEdited!, section: 0)
+            let ipBeingEdited = IndexPath(row: rowBeingEdited!, section: TableSection.positionSection.rawValue)
             let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
             cell.textView.resignFirstResponder()
         }
@@ -108,7 +122,27 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         }    
     }
     
-
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        if indexPath.section == TableSection.chiSection.rawValue {
+            return .none
+        }
+        return .delete
+    }
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section != TableSection.chiSection.rawValue
+    }
+    
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        let section = TableSection(rawValue: sourceIndexPath.section)!
+        
+        switch section {
+        case .chiSection:
+            return sourceIndexPath
+        case .positionSection:
+            return proposedDestinationIndexPath
+        }
+    }
     
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
@@ -146,7 +180,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         
         cardVC.row = cardButton.tag
         if let row = rowBeingEdited {
-            let ip = IndexPath(row: row, section: 0)
+            let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
             let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
             
             cell.textView.resignFirstResponder()
@@ -157,7 +191,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     func ImageSelectedUnwind(_ segue: UIStoryboardSegue, sender: CardCollectionViewCell) {
         let cardVC = segue.source as! CardsViewController
         let row = cardVC.row
-        let ip = IndexPath(row: cardVC.row, section: 0)
+        let ip = IndexPath(row: cardVC.row, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let img = UIImage(named: "AoD/\(cardVC.imageIdx + 1)")
         
@@ -169,7 +203,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     // MARK: - Text View Delegage -
     func textViewDidBeginEditing(_ textView: UITextView) {
         let row = textView.tag
-        let ip = IndexPath(row: row, section: 0)
+        let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let selIdx = SegmentType(rawValue: cell.trendOrTarget.selectedSegmentIndex)!
         let text = selIdx == .trend ? trendText[row] : targetText[row]
@@ -202,7 +236,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     // MARK: - Segmented Control -
     @IBAction func selectTrendOrTarget(_ sender: UISegmentedControl) {
         let idx = sender.tag
-        let ip = IndexPath(row: idx, section: 0)
+        let ip = IndexPath(row: idx, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         
         selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
