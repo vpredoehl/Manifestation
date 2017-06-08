@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Preference: NSObject, NSCoding {
+class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: Properties -
     private var imageIndex: [Int?]!
@@ -133,5 +133,10 @@ class Preference: NSObject, NSCoding {
     
     func set(imageIndex i: Int, forRow r: Int) {
         imageIndex[r] = i
+    }
+    
+    // MARK: - NSCopying -
+    func copy(with zone: NSZone? = nil) -> Any {
+        return Preference(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
 }

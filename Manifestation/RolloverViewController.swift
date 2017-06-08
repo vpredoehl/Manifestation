@@ -47,7 +47,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let dest = segue.destination as! PositionTableViewController
         
-        dest.pref = pref
+        dest.pref = pref?.copy() as! Preference
     }
 }
 
