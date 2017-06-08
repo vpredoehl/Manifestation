@@ -26,7 +26,6 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     @IBOutlet weak var editItem: UIBarButtonItem!
 
     var pref: Preference!
-    var selectedSegment = SegmentType.trend
     var rowBeingEdited: Int?
 
     override func viewDidLoad() {
@@ -91,14 +90,22 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
 //    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return indexPath.section == TableSection.chiSection.rawValue ? 200 : 140
 //    }
+    override func setEditing(_ editing: Bool, animated: Bool) {
+        super.setEditing(editing, animated: animated)
+        
+        if editing,
+            let row = rowBeingEdited {
+            let cell = tableView.cellForRow(at: IndexPath(row: row, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
+            
+            cell.textView.resignFirstResponder()
+        }
+    }
     override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
         return indexPath.section != TableSection.chiSection.rawValue
     }
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        let row = indexPath.row
-        
-        if rowBeingEdited != nil && row != rowBeingEdited {
-            let ipBeingEdited = IndexPath(row: rowBeingEdited!, section: TableSection.positionSection.rawValue)
+        if let row = rowBeingEdited {
+            let ipBeingEdited = IndexPath(row: row, section: TableSection.positionSection.rawValue)
             let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
             cell.textView.resignFirstResponder()
         }
@@ -228,6 +235,8 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         textView.text = text
         textView.textColor = UIColor.black
         rowBeingEdited = row
+        tableView.setEditing(false, animated: true)
+        setEditing(false, animated: true)
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -242,7 +251,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let idx = textView.tag
         
-        pref.set(text: textView.text, forRow: idx, ofType: selectedSegment)
+        pref.set(text: textView.text, forRow: idx, ofType: pref.segment(forRow: idx))
     }
     
     // MARK: - Segmented Control -
@@ -250,8 +259,8 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let idx = sender.tag
         let ip = IndexPath(row: idx, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+        let selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         
-        selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         cell.textView.text = pref.userText(forRow: idx, ofType: selectedSegment)
         pref.set(segment: selectedSegment, forRow: idx)
     }
