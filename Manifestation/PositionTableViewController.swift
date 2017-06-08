@@ -62,18 +62,23 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
             return cell
         case .positionSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
-            let text = pref.userText(forRow: row, ofType: .trend)
             
             if let idx = pref.rolloverIndex(forRow: row),
                 let img = UIImage(named: "AoD/\(idx + 1)") {
                 cell.cardButton.setImage(img, for: .normal)
             }
+            else {
+                cell.cardButton.setImage(nil, for: .normal)
+            }
             cell.cardButton.tag = row
+            cell.trendOrTarget.selectedSegmentIndex = pref.segment(forRow: row).rawValue
             
+            let text = pref.userText(forRow: row, ofType: pref.segment(forRow: row))
             if text == "" {
                 cell.textView.textColor = UIColor.lightGray
                 cell.textView.text = placeholderText
             } else {
+                cell.textView.textColor = UIColor.black
                 cell.textView.text = text
             }
             cell.textView.tag = indexPath.row
@@ -86,6 +91,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
 //    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 //        return indexPath.section == TableSection.chiSection.rawValue ? 200 : 140
 //    }
+    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section != TableSection.chiSection.rawValue
+    }
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         let row = indexPath.row
         
@@ -115,46 +123,70 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
             pref.remove(at: rowToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+            var ip = indexPath
+            
+            pref.add()
+            ip.row = pref.numPositions - 1
+            tableView.insertRows(at: [ip], with: .automatic)
+        }
     }
     
     override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
         if indexPath.section == TableSection.chiSection.rawValue {
             return .none
         }
-        return .delete
+        let rowCount = tableView.numberOfRows(inSection: indexPath.section)
+        
+        return indexPath.row == rowCount-1 && rowCount < maxNumPositions  ? .insert : .delete
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        if pref.numPositions == 1 {
+            return false
+        }
         return indexPath.section != TableSection.chiSection.rawValue
     }
     
     override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        let section = TableSection(rawValue: sourceIndexPath.section)!
+        let toSection = TableSection(rawValue: proposedDestinationIndexPath.section)!
         
-        switch section {
-        case .chiSection:
-            return sourceIndexPath
-        case .positionSection:
-            return proposedDestinationIndexPath
+        if toSection == .chiSection {
+            return IndexPath(row: 0, section: TableSection.positionSection.rawValue)
         }
+        return proposedDestinationIndexPath
     }
     
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-        pref.swap(fromRow: fromIndexPath.row, to: to.row)
-    }
-    
+        func updateTags(forRow idx: Int, to: Int)
+        {
+            let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
 
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
+            cellToUpdate.cardButton.tag = idx
+            cellToUpdate.textView.tag = idx
+            cellToUpdate.trendOrTarget.tag = idx
+        }
+        let toIdx = to.row
+        let fromIdx = fromIndexPath.row
+        
+        guard fromIdx != toIdx else {
+            return
+        }
+        
+        if fromIdx > toIdx {
+            for idx in toIdx+1 ... fromIdx {
+                updateTags(forRow: idx, to: idx+1)
+            }
+        } else {
+            for idx in fromIdx+1 ... toIdx {
+                updateTags(forRow: idx, to: idx-1)
+            }
+        }
+        updateTags(forRow: fromIdx, to: toIdx)
+        
+        pref.move(fromRow: fromIndexPath.row, to: to.row)
+        tableView.reloadData()
     }
-    */
-
     
     // MARK: - Navigation
 
@@ -180,7 +212,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let img = UIImage(named: "AoD/\(cardVC.imageIdx + 1)")
         
-        pref.setImageIndex(index: cardVC.imageIdx, forRow: row!)
+        pref.set(imageIndex: cardVC.imageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
     }
     
@@ -210,7 +242,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let idx = textView.tag
         
-        pref.setText(text: textView.text, forRow: idx, ofType: selectedSegment)
+        pref.set(text: textView.text, forRow: idx, ofType: selectedSegment)
     }
     
     // MARK: - Segmented Control -
@@ -221,6 +253,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         
         selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         cell.textView.text = pref.userText(forRow: idx, ofType: selectedSegment)
+        pref.set(segment: selectedSegment, forRow: idx)
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {

@@ -22,7 +22,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let f = dd.appendingPathComponent("positions")
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
-        pref = p ?? Preference(imageIndex: nil, trendText: [ "", "", "" ], targetText: [ "", "", "" ], numPositions: maxNumPositions)
+        pref = p ?? Preference(imageIndex: nil, trendText: [ "", "", "" ], targetText: [ "", "", "" ], segments: nil, numPositions: maxNumPositions)
         super.viewDidLoad()
     }
 
