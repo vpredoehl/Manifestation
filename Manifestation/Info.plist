@@ -24,6 +24,8 @@
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Images in your Photos library can be added to rollover sequences.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
