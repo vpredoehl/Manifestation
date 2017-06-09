@@ -275,9 +275,15 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         
         cell.textView.text = pref.userText(forRow: idx, ofType: selectedSegment)
+        cell.textView.textColor = UIColor.black
         if rowBeingEdited != nil {
             cell.textView.becomeFirstResponder()
             rowBeingEdited = idx
+        }
+        else if cell.textView.text == "" {
+            // restore placeholder text
+            cell.textView.textColor = UIColor.lightGray
+            cell.textView.text = placeholderText
         }
         pref.set(segment: selectedSegment, forRow: idx)
     }
