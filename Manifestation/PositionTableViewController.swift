@@ -124,14 +124,24 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
     // Override to support editing the table view.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        let numRows = tableView.numberOfRows(inSection: TableSection.positionSection.rawValue)
+
         if editingStyle == .delete {
             let rowToDelete = indexPath.row
-            
+            let fromIdx = rowToDelete+1
+
+            for idx in fromIdx ..< numRows {
+                updateTags(forRow: idx, to: idx-1)
+            }
             pref.remove(at: rowToDelete)
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             var ip = indexPath
+            let fromIdx = ip.row+1
             
+            for idx in fromIdx ..< numRows {
+                updateTags(forRow: idx, to: idx+1)
+            }
             pref.add()
             ip.row = pref.numPositions - 1
             tableView.insertRows(at: [ip], with: .automatic)
@@ -165,14 +175,6 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
     
     // Override to support rearranging the table view.
     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-        func updateTags(forRow idx: Int, to: Int)
-        {
-            let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
-
-            cellToUpdate.cardButton.tag = idx
-            cellToUpdate.textView.tag = idx
-            cellToUpdate.trendOrTarget.tag = idx
-        }
         let toIdx = to.row
         let fromIdx = fromIndexPath.row
         
@@ -194,6 +196,17 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         pref.move(fromRow: fromIndexPath.row, to: to.row)
         tableView.reloadData()
     }
+    
+    private
+    func updateTags(forRow idx: Int, to: Int)
+    {
+        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
+        
+        cellToUpdate.cardButton.tag = to
+        cellToUpdate.textView.tag = to
+        cellToUpdate.trendOrTarget.tag = to
+    }
+
     
     // MARK: - Navigation
 
@@ -262,6 +275,10 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         let selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         
         cell.textView.text = pref.userText(forRow: idx, ofType: selectedSegment)
+        if rowBeingEdited != nil {
+            cell.textView.becomeFirstResponder()
+            rowBeingEdited = idx
+        }
         pref.set(segment: selectedSegment, forRow: idx)
     }
     
