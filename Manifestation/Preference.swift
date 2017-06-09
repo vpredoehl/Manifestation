@@ -23,10 +23,10 @@ class Preference: NSObject, NSCoding, NSCopying {
         if tr == nil || ta == nil {
             return nil
         }
-        imageIndex = ii ?? [ nil, nil, nil ]
+        imageIndex = ii ?? [ nil ]
         trendText = tr
         targetText = ta
-        selectedSegment = s ?? [ SegmentType.trend, SegmentType.trend, SegmentType.trend ]
+        selectedSegment = s ?? [ SegmentType.trend ]
         numPositions = n
     }
     
