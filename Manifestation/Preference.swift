@@ -8,7 +8,6 @@
 
 import Foundation
 
-
 class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: Properties -
@@ -16,13 +15,15 @@ class Preference: NSObject, NSCoding, NSCopying {
     private var trendText: [String]!
     private var targetText: [String]!
     private var selectedSegment: [SegmentType]!
+    var chiTransferImage: Data? = nil
     
     var numPositions: Int
     
-    init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
+    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
         if tr == nil || ta == nil {
             return nil
         }
+        chiTransferImage = t
         imageIndex = ii ?? [ nil ]
         trendText = tr
         targetText = ta
@@ -32,6 +33,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - Archiving -
     func encode(with aCoder: NSCoder) {
+        aCoder.encode(chiTransferImage, forKey: "chiImage")
         aCoder.encode(imageIndex, forKey: "imageIndex")
         aCoder.encode(trendText, forKey: "trendText")
         aCoder.encode(targetText, forKey: "targetText")
@@ -40,6 +42,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
+        let transferImage = aDecoder.decodeObject(forKey: "chiImage") as? Data
         let imageIndex = aDecoder.decodeObject(forKey: "imageIndex") as? [Int?]
         let trendText = aDecoder.decodeObject(forKey: "trendText") as? [String]
         let targetText = aDecoder.decodeObject(forKey: "targetText") as? [String]
@@ -54,7 +57,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             }
         }
         
-        self.init(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
+        self.init(transfer: transferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
     }
     
     private
@@ -137,6 +140,6 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying -
     func copy(with zone: NSZone? = nil) -> Any {
-        return Preference(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
+        return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
 }

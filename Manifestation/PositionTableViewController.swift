@@ -20,7 +20,8 @@ enum SegmentType: Int {
     case target
 }
 
-class PositionTableViewController: UITableViewController, UITextViewDelegate {
+class PositionTableViewController: UITableViewController, UITextViewDelegate,
+    UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     // MARK: Properties -
     @IBOutlet weak var editItem: UIBarButtonItem!
@@ -56,8 +57,12 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
 
         switch section {
         case .chiSection:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "ChiCell", for: indexPath)
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ChiCell", for: indexPath) as! ChiCellTableViewCell
             
+            if pref.chiTransferImage != nil {
+                let img = UIImage(data: pref.chiTransferImage!)
+                cell.chiButton.setImage(img, for: .normal)
+            }
             return cell
         case .positionSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
@@ -236,6 +241,22 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
         cell.cardButton.setImage(img, for: .normal)
     }
     
+    // MARK: - Image Picker -
+    @IBAction func chiTransferTapped(_ sender: UIButton) {
+        let imagePicker = UIImagePickerController()
+        
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.delegate = self
+        present(imagePicker, animated: true)
+    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let img = info[UIImagePickerControllerOriginalImage] as! UIImage
+        
+        pref.chiTransferImage = UIImagePNGRepresentation(img)
+        tableView.reloadData()
+        
+        dismiss(animated: true)
+    }
 
     // MARK: - Text View Delegage -
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -297,6 +318,10 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate {
             print("Positions saved.")
         }
         rolloverVC.pref = pref
+        
+        if let d = pref.chiTransferImage {
+            rolloverVC.rolloverImageView.image = UIImage(data: d)
+        }
         navigationController?.popViewController(animated: true)
     }
 }
