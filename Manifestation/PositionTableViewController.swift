@@ -310,11 +310,18 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
-        let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-        let f = dd.appendingPathComponent("positions")
+        let fPosn = Preference.DocDir.appendingPathComponent(positionFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
-        if NSKeyedArchiver.archiveRootObject(pref, toFile: f.path) {
+        if let img = pref.chiTransferImage {
+            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            
+            if rolloverVC.pref.chiTransferImage != pref.chiTransferImage
+                && NSKeyedArchiver.archiveRootObject(img, toFile: f.path) {
+                print("Image saved.")
+            }
+        }
+        if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
             print("Positions saved.")
         }
         rolloverVC.pref = pref

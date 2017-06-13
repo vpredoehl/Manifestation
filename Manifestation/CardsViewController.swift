@@ -47,4 +47,10 @@ class CardsViewController: UICollectionViewController {
 
         imageIdx = cell.imgIdx
     }
+    
+    // MARK: - Image Picker Controller -
+    @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
+        
+    }
+    
 }

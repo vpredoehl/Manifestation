@@ -8,9 +8,18 @@
 
 import Foundation
 
+let chiImageFile = "chiImage"
+let positionFile = "positions"
+
 class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: Properties -
+    static let DocDir =
+    {
+        () -> URL in
+        return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    }()
+    
     private var imageIndex: [Int?]!
     private var trendText: [String]!
     private var targetText: [String]!
@@ -19,11 +28,23 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     var numPositions: Int
     
+    override convenience init()
+    {
+        self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
+    }
+    
     init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
         if tr == nil || ta == nil {
             return nil
         }
-        chiTransferImage = t
+        
+        if let img = t {
+            chiTransferImage = img
+        }
+        else {
+            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
+        }
         imageIndex = ii ?? [ nil ]
         trendText = tr
         targetText = ta
@@ -33,7 +54,6 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - Archiving -
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(chiTransferImage, forKey: "chiImage")
         aCoder.encode(imageIndex, forKey: "imageIndex")
         aCoder.encode(trendText, forKey: "trendText")
         aCoder.encode(targetText, forKey: "targetText")
@@ -42,7 +62,6 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let transferImage = aDecoder.decodeObject(forKey: "chiImage") as? Data
         let imageIndex = aDecoder.decodeObject(forKey: "imageIndex") as? [Int?]
         let trendText = aDecoder.decodeObject(forKey: "trendText") as? [String]
         let targetText = aDecoder.decodeObject(forKey: "targetText") as? [String]
@@ -57,7 +76,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             }
         }
         
-        self.init(transfer: transferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
+        self.init(transfer: nil, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
     }
     
     private
@@ -93,6 +112,14 @@ class Preference: NSObject, NSCoding, NSCopying {
         targetText.remove(at: rowToDelete)
         selectedSegment.remove(at: rowToDelete)
         numPositions -= 1
+    }
+    
+    func removeAll() {
+        selectedSegment = [ SegmentType.trend ]
+        imageIndex = [ nil ]
+        trendText = [ "" ]
+        targetText = [ "" ]
+        numPositions = 1
     }
     
     func add() {
