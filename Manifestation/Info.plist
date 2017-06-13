@@ -19,13 +19,15 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
-	<string>5</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Images in your Photos library can be added to rollover sequences.</string>
+	<string>6</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Photos taken with your camera can be used in rollover sequences.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Images in your Photos library can be used in rollover sequences.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
