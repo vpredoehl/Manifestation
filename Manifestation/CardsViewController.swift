@@ -11,6 +11,8 @@ import UIKit
 class CardsViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: Properties -
+    @IBOutlet weak var cameraItem: UIBarButtonItem!
+
     var returnImageIdx, row: Int!
     var userImage: UIImage?
 
@@ -76,8 +78,12 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         
         if UIImagePickerController.isSourceTypeAvailable(.camera) {
             ac.addAction(cancel)
-            ac.addAction(photoLibrary)
             ac.addAction(camera)
+            ac.addAction(photoLibrary)
+            
+            if let vc = ac.popoverPresentationController {
+                vc.barButtonItem = cameraItem
+            }
             
             present(ac, animated: true)
         }

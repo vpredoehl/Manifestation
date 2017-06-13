@@ -15,6 +15,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     // MARK: Properties -
     @IBOutlet weak var chiImageView: UIImageView!
     @IBOutlet weak var rolloverImageView: UIImageView!
+    @IBOutlet weak var trashItem: UIBarButtonItem!
 
     var pref: Preference!
         
@@ -51,6 +52,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             
             self.pref.removeAll()
             NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
+        }
+        
+        if let vc = ac.popoverPresentationController {
+            vc.barButtonItem = trashItem
         }
         
         ac.addAction(cancel)
