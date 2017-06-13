@@ -52,26 +52,39 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     // MARK: - Image Picker Controller -
     @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
         let ac = UIAlertController()
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let photoLibrary = UIAlertAction(title: "Photo Library", style: .default)
+        let choosePhoto =
         {
-            (_) in
+            (_: UIAlertAction) in
             let ip = UIImagePickerController()
             
             ip.delegate = self
             ip.sourceType = .photoLibrary
             self.present(ip, animated: true)
         }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let photoLibrary = UIAlertAction(title: "Photo Library", style: .default, handler: choosePhoto)
         let camera = UIAlertAction(title: "Camera", style: .default)
         {
             (_) in
+            let ip = UIImagePickerController()
+            
+            ip.delegate = self
+            ip.sourceType = .camera
+            self.present(ip, animated: true)
         }
         
-        ac.addAction(cancel)
-        ac.addAction(photoLibrary)
-        ac.addAction(camera)
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            ac.addAction(cancel)
+            ac.addAction(photoLibrary)
+            ac.addAction(camera)
+            
+            present(ac, animated: true)
+        }
+        else {
+            choosePhoto(UIAlertAction())
+        }
         
-        present(ac, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
