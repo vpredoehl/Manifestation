@@ -19,7 +19,8 @@ class Preference: NSObject, NSCoding, NSCopying {
         () -> URL in
         return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     }()
-    
+    static var userImages = ImageStore()
+
     private var imageIndex: [Int?]!
     private var trendText: [String]!
     private var targetText: [String]!

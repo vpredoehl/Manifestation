@@ -68,7 +68,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
             let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
             
             if let idx = pref.rolloverIndex(forRow: row),
-                let img = UIImage(named: "AoD/\(idx + 1)") {
+                let img = idx < 0
+                    ? Preference.userImages.image(forKey: String(idx))
+                    : UIImage(named: "AoD/\(idx + 1)") {
                 cell.cardButton.setImage(img, for: .normal)
             }
             else {
@@ -235,9 +237,13 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         let row = cardVC.row
         let ip = IndexPath(row: cardVC.row, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
-        let img = UIImage(named: "AoD/\(cardVC.imageIdx + 1)")
+        let img = cardVC.userImage ?? UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)")
         
-        pref.set(imageIndex: cardVC.imageIdx, forRow: row!)
+        if let img = img {
+            let imgKey = String(cardVC.returnImageIdx)
+            Preference.userImages.setImage(img, forKey: imgKey)
+        }
+        pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
     }
     

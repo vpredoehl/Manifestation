@@ -240,7 +240,7 @@
                                 </constraints>
                                 <connections>
                                     <outlet property="imageView" destination="52e-Wz-SSd" id="EUb-nW-fd8"/>
-                                    <segue destination="UHq-Wk-T3n" kind="unwind" unwindAction="ImageSelectedUnwind:sender:" id="HWX-d0-dfZ"/>
+                                    <segue destination="UHq-Wk-T3n" kind="unwind" identifier="UnwindWithSelectedImage" unwindAction="ImageSelectedUnwind:sender:" id="HWX-d0-dfZ"/>
                                 </connections>
                             </collectionViewCell>
                         </cells>

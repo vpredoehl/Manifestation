@@ -16,6 +16,7 @@
 		086DDC321EB6C9F90091A199 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC301EB6C9F90091A199 /* Main.storyboard */; };
 		086DDC341EB6C9F90091A199 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC331EB6C9F90091A199 /* Assets.xcassets */; };
 		086DDC371EB6C9F90091A199 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */; };
+		08ACBA681EEF80F00017BD8D /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08ACBA671EEF80F00017BD8D /* ImageStore.swift */; };
 		08B87B611EBF515E0095A736 /* CardsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B601EBF515E0095A736 /* CardsViewController.swift */; };
 		08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */; };
 		08B87B651EBF8F0C0095A736 /* CardStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08B87B641EBF8F0C0095A736 /* CardStore.swift */; };
@@ -33,6 +34,7 @@
 		086DDC331EB6C9F90091A199 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		086DDC361EB6C9F90091A199 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		086DDC381EB6C9F90091A199 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		08ACBA671EEF80F00017BD8D /* ImageStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		08B87B601EBF515E0095A736 /* CardsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardsViewController.swift; sourceTree = "<group>"; };
 		08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };
 		08B87B641EBF8F0C0095A736 /* CardStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardStore.swift; sourceTree = "<group>"; };
@@ -81,6 +83,7 @@
 				086DDC381EB6C9F90091A199 /* Info.plist */,
 				08B87B641EBF8F0C0095A736 /* CardStore.swift */,
 				082356521EE7998100F0760E /* Preference.swift */,
+				08ACBA671EEF80F00017BD8D /* ImageStore.swift */,
 			);
 			path = Manifestation;
 			sourceTree = "<group>";
@@ -161,6 +164,7 @@
 				0823564D1EE4EFE700F0760E /* PositionTableViewCell.swift in Sources */,
 				0823564B1EE4ED5C00F0760E /* PositionTableViewController.swift in Sources */,
 				08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */,
+				08ACBA681EEF80F00017BD8D /* ImageStore.swift in Sources */,
 				08B87B651EBF8F0C0095A736 /* CardStore.swift in Sources */,
 				0823564F1EE73E0700F0760E /* ChiCellTableViewCell.swift in Sources */,
 				086DDC2F1EB6C9F90091A199 /* RolloverViewController.swift in Sources */,

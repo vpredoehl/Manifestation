@@ -8,10 +8,11 @@
 
 import UIKit
 
-class CardsViewController: UICollectionViewController {
+class CardsViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: Properties -
-    var imageIdx, row: Int!
+    var returnImageIdx, row: Int!
+    var userImage: UIImage?
 
     
     override func viewDidLoad() {
@@ -43,14 +44,39 @@ class CardsViewController: UICollectionViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cell = sender as! CardCollectionViewCell
-
-        imageIdx = cell.imgIdx
+        if let cell = sender as? CardCollectionViewCell {
+            returnImageIdx = cell.imgIdx
+        }
     }
     
     // MARK: - Image Picker Controller -
     @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
+        let ac = UIAlertController()
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        let photoLibrary = UIAlertAction(title: "Photo Library", style: .default)
+        {
+            (_) in
+            let ip = UIImagePickerController()
+            
+            ip.delegate = self
+            ip.sourceType = .photoLibrary
+            self.present(ip, animated: true)
+        }
+        let camera = UIAlertAction(title: "Camera", style: .default)
+        {
+            (_) in
+        }
         
+        ac.addAction(cancel)
+        ac.addAction(photoLibrary)
+        ac.addAction(camera)
+        
+        present(ac, animated: true)
     }
     
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        userImage = info[UIImagePickerControllerOriginalImage] as! UIImage?
+        returnImageIdx = -row - 1
+        performSegue(withIdentifier: "UnwindWithSelectedImage", sender: self)
+    }
 }
