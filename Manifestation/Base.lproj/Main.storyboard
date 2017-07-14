@@ -54,17 +54,14 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
-                                <rect key="frame" x="20" y="64" width="374" height="628"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
+                                <rect key="frame" x="20" y="64" width="120" height="120"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="M1q-TV-OXq" firstAttribute="top" secondItem="aze-yh-CBR" secondAttribute="bottom" id="1gf-bp-lqP"/>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="7mY-RG-o3E"/>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="EdQ-uX-feg"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Zrb-X2-JoO"/>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="lc9-nq-lZj"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
                         </constraints>
