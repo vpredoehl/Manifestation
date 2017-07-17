@@ -7,6 +7,8 @@ class AnimView : UIView
 {
     let iv: UIImageView!
     var isLarge = false
+    var smallConstraints: [NSLayoutConstraint]
+    var largeConstraints: [NSLayoutConstraint]!
     
     func Tap(_ s: UIButton)
     {
@@ -16,12 +18,16 @@ class AnimView : UIView
         {
             if self.isLarge
             {
-                self.iv.frame = CGRect(x: 50, y: 50, width: 120, height: 120)
-                self.iv.center = CGPoint(x: 207, y: 150)
-
+                NSLayoutConstraint.deactivate(self.largeConstraints)
+                NSLayoutConstraint.activate(self.smallConstraints)
+                self.layoutIfNeeded()
+                print("Now small")
             }
             else {
-                self.iv.frame = self.frame
+                NSLayoutConstraint.deactivate(self.smallConstraints)
+                NSLayoutConstraint.activate(self.largeConstraints)
+                self.layoutIfNeeded()
+                print("Now large")
             }
         }
         isLarge = !isLarge
@@ -29,14 +35,26 @@ class AnimView : UIView
         print("Tap")
     }
     
+    
+    
     override init(frame: CGRect) {
         iv = UIImageView(image: UIImage(named: "4202.jpg"))
+        iv.translatesAutoresizingMaskIntoConstraints = false
         iv.frame = CGRect(x: 50, y: 50, width: 120, height: 120)
         iv.center = CGPoint(x: 207, y: 150)
         iv.contentMode = .scaleAspectFit
+        largeConstraints = []
+        smallConstraints = []
         super.init(frame: frame)
+        smallConstraints.append(iv.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 50))
+        smallConstraints.append(iv.centerXAnchor.constraint(equalTo: centerXAnchor, constant: 0))
+        smallConstraints.append(iv.widthAnchor.constraint(equalToConstant: 120))
+        smallConstraints.append(iv.heightAnchor.constraint(equalToConstant: 120))
+        largeConstraints.append(iv.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor, constant: 0))
+        largeConstraints.append(iv.centerXAnchor.constraint(equalTo: layoutMarginsGuide.centerXAnchor, constant: 0))
+        largeConstraints.append(iv.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.9))
         addSubview(iv)
-
+        NSLayoutConstraint.activate(smallConstraints)
     }
     
     required init?(coder aDecoder: NSCoder) {
