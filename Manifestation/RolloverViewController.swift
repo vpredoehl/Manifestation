@@ -14,24 +14,31 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 {
     // MARK: Properties -
     @IBOutlet weak var chiImageView: UIImageView!
-    @IBOutlet weak var rolloverImageView: UIImageView!
     @IBOutlet weak var trashItem: UIBarButtonItem!
+    @IBOutlet weak var tb: UIToolbar!
 
+    @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
+    @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
+    
     var pref: Preference!
-        
+    var isAnimating = false
+    var chiImageLG = UILayoutGuide()
+    
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let f = dd.appendingPathComponent(positionFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
+        chiImageLG.topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
+        
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         
         if let d = pref?.chiTransferImage {
-            rolloverImageView.image = UIImage(data: d)
+            chiImageView.image = UIImage(data: d)
         }
         super.viewDidLoad()
     }
-
+    
     // MARK: - Tool Bar -
     @IBAction func trash(_ sender: Any) {
         let ac = UIAlertController()
@@ -63,7 +70,27 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         ac.addAction(position)
         present(ac, animated: true)
     }
-    @IBAction func playRollover(_ sender: UIBarButtonItem) {
+    @IBAction func playRollover(_ playBtn: UIBarButtonItem) {
+        let willBeAnimating = !isAnimating
+        let pt1 = CGPoint(x: 0.1, y: 1.0)
+        let pt2 = CGPoint(x: 0.5, y: 1.0)
+        
+
+        let anim = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
+//            self.chiImageView.frame = willBeAnimating ? self.view.frame.insetBy(dx: 16, dy: 16) :  self.frameForChiView
+            if willBeAnimating {
+                NSLayoutConstraint.deactivate(self.constraintsForReducedChiView)
+                NSLayoutConstraint.activate(self.constraintsForFullChiView)
+            } else {
+                NSLayoutConstraint.deactivate(self.constraintsForFullChiView)
+                NSLayoutConstraint.activate(self.constraintsForReducedChiView)
+            }
+            self.view.layoutIfNeeded()
+        }
+
+        tb.items![2] = UIBarButtonItem(barButtonSystemItem: isAnimating ? UIBarButtonSystemItem.play : UIBarButtonSystemItem.pause, target: self, action: #selector(RolloverViewController.playRollover(_:)))
+        anim.startAnimation()
+        isAnimating = !isAnimating
     }
     
     @IBAction func takePicture(_ sender: UIBarButtonItem) {
@@ -77,7 +104,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        rolloverImageView.image = img
+        chiImageView.image = img
         pref.chiTransferImage = UIImagePNGRepresentation(img)
         dismiss(animated: true, completion: nil)
     }

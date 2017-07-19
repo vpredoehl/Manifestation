@@ -23,6 +23,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
+                                <rect key="frame" x="147" y="72" width="120" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" identifier="widthReduced" id="E0V-TM-3Op"/>
+                                    <constraint firstAttribute="height" constant="120" identifier="heightReduced" id="aew-AK-glG"/>
+                                </constraints>
+                            </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" semanticContentAttribute="spatial" translatesAutoresizingMaskIntoConstraints="NO" id="M1q-TV-OXq">
                                 <rect key="frame" x="0.0" y="692" width="414" height="44"/>
                                 <constraints>
@@ -54,28 +61,36 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
-                                <rect key="frame" x="20" y="64" width="120" height="120"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="Zrb-X2-JoO"/>
+                            <constraint firstItem="aze-yh-CBR" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" identifier="topChiView" id="4el-d1-4rd"/>
+                            <constraint firstItem="aze-yh-CBR" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" identifier="centerYChiView" id="KSl-AJ-KzG"/>
+                            <constraint firstItem="aze-yh-CBR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" identifier="centerXChiView" id="Zx7-BM-GsW"/>
+                            <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fPM-gZ-qdC"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="KSl-AJ-KzG"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
                     <connections>
                         <outlet property="chiImageView" destination="aze-yh-CBR" id="1Ba-SJ-XWp"/>
-                        <outlet property="rolloverImageView" destination="aze-yh-CBR" id="1Jp-Re-xsO"/>
+                        <outlet property="tb" destination="M1q-TV-OXq" id="soV-eI-5bS"/>
                         <outlet property="trashItem" destination="c8o-o3-GIe" id="b6X-uM-BvQ"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="E0V-TM-3Op" collectionClass="NSMutableArray" id="60D-rB-zjL"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="aew-AK-glG" collectionClass="NSMutableArray" id="Lrb-XG-Q8Y"/>
+                        <outletCollection property="constraintsForFullChiView" destination="KSl-AJ-KzG" collectionClass="NSMutableArray" id="4O8-pH-6Bl"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="4el-d1-4rd" collectionClass="NSMutableArray" id="89y-P3-AgA"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2007.2" y="-56.221889055472268"/>
+            <point key="canvasLocation" x="2005.7971014492755" y="-56.250000000000007"/>
         </scene>
         <!--Positions-->
         <scene sceneID="7nJ-f2-xyD">
