@@ -23,13 +23,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="aze-yh-CBR">
-                                <rect key="frame" x="147" y="72" width="120" height="120"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="120" identifier="widthReduced" id="E0V-TM-3Op"/>
-                                    <constraint firstAttribute="height" constant="120" identifier="heightReduced" id="aew-AK-glG"/>
-                                </constraints>
-                            </imageView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" semanticContentAttribute="spatial" translatesAutoresizingMaskIntoConstraints="NO" id="M1q-TV-OXq">
                                 <rect key="frame" x="0.0" y="692" width="414" height="44"/>
                                 <constraints>
@@ -38,7 +31,7 @@
                                 <items>
                                     <barButtonItem title="Cards" id="e09-Wh-XoL">
                                         <connections>
-                                            <segue destination="NpI-hx-oAE" kind="show" id="9Bh-aF-PP4"/>
+                                            <segue destination="NpI-hx-oAE" kind="show" identifier="PositionSegue" id="9Bh-aF-PP4"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Vkj-oz-WYP"/>
@@ -61,31 +54,41 @@
                                     </barButtonItem>
                                 </items>
                             </toolbar>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tfU-eF-Nfh">
+                                <rect key="frame" x="147" y="72" width="120" height="120"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="120" id="ivB-ZR-5xA"/>
+                                    <constraint firstAttribute="width" constant="120" id="vcQ-VG-vo2"/>
+                                </constraints>
+                                <connections>
+                                    <segue destination="VMD-cF-AZN" kind="embed" identifier="AnimationSegue" id="IKv-6p-P4Y"/>
+                                </connections>
+                            </containerView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" identifier="topChiView" id="4el-d1-4rd"/>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" identifier="centerYChiView" id="KSl-AJ-KzG"/>
-                            <constraint firstItem="aze-yh-CBR" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" identifier="centerXChiView" id="Zx7-BM-GsW"/>
+                            <constraint firstItem="tfU-eF-Nfh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="879-mi-y7P"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fPM-gZ-qdC"/>
+                            <constraint firstItem="tfU-eF-Nfh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pdg-Oc-x60"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
+                            <constraint firstItem="tfU-eF-Nfh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="yLv-Vk-36z"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
-                                <exclude reference="KSl-AJ-KzG"/>
+                                <exclude reference="879-mi-y7P"/>
                             </mask>
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
                     <connections>
-                        <outlet property="chiImageView" destination="aze-yh-CBR" id="1Ba-SJ-XWp"/>
+                        <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>
                         <outlet property="tb" destination="M1q-TV-OXq" id="soV-eI-5bS"/>
                         <outlet property="trashItem" destination="c8o-o3-GIe" id="b6X-uM-BvQ"/>
-                        <outletCollection property="constraintsForReducedChiView" destination="E0V-TM-3Op" collectionClass="NSMutableArray" id="60D-rB-zjL"/>
-                        <outletCollection property="constraintsForReducedChiView" destination="aew-AK-glG" collectionClass="NSMutableArray" id="Lrb-XG-Q8Y"/>
-                        <outletCollection property="constraintsForFullChiView" destination="KSl-AJ-KzG" collectionClass="NSMutableArray" id="4O8-pH-6Bl"/>
-                        <outletCollection property="constraintsForReducedChiView" destination="4el-d1-4rd" collectionClass="NSMutableArray" id="89y-P3-AgA"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="pdg-Oc-x60" collectionClass="NSMutableArray" id="wWH-bk-hgK"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="ivB-ZR-5xA" collectionClass="NSMutableArray" id="Zip-VZ-8gr"/>
+                        <outletCollection property="constraintsForReducedChiView" destination="vcQ-VG-vo2" collectionClass="NSMutableArray" id="izy-83-af7"/>
+                        <outletCollection property="constraintsForFullChiView" destination="879-mi-y7P" collectionClass="NSMutableArray" id="fYH-N4-ChV"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -295,6 +298,38 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wZL-py-q74" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1068" y="-56.221889055472268"/>
+        </scene>
+        <!--Animation View Controller-->
+        <scene sceneID="WWN-dJ-Xou">
+            <objects>
+                <viewController id="VMD-cF-AZN" customClass="AnimationViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="v31-gw-mf4"/>
+                        <viewControllerLayoutGuide type="bottom" id="bSA-GU-P4G"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="3fP-mV-otw">
+                        <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Transfer/Chi Transfer" translatesAutoresizingMaskIntoConstraints="NO" id="J6a-0P-ZcV">
+                                <rect key="frame" x="0.0" y="0.0" width="120" height="120"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="J6a-0P-ZcV" secondAttribute="bottom" id="CtJ-83-Odb"/>
+                            <constraint firstItem="J6a-0P-ZcV" firstAttribute="leading" secondItem="3fP-mV-otw" secondAttribute="leading" id="O02-Y3-eDe"/>
+                            <constraint firstAttribute="trailing" secondItem="J6a-0P-ZcV" secondAttribute="trailing" id="TRz-eR-EiN"/>
+                            <constraint firstItem="J6a-0P-ZcV" firstAttribute="top" secondItem="3fP-mV-otw" secondAttribute="top" id="cjc-0M-s3a"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="chiImageView" destination="J6a-0P-ZcV" id="mND-4P-4k3"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="6pr-Zp-i0u" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2601" y="-790"/>
         </scene>
     </scenes>
     <resources>

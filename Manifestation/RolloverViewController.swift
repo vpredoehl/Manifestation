@@ -13,23 +13,35 @@ let maxNumPositions = 3
 class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     // MARK: Properties -
-    @IBOutlet weak var chiImageView: UIImageView!
+    @IBOutlet weak var animationView: UIView!
     @IBOutlet weak var trashItem: UIBarButtonItem!
     @IBOutlet weak var tb: UIToolbar!
 
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
     
+    let animLG = UILayoutGuide()
     var pref: Preference!
     var isAnimating = false
-    var chiImageLG = UILayoutGuide()
+    var animationVC: AnimationViewController!
+    
+    var chiImageView: UIImageView   {   get {   return animationVC.chiImageView }   }
     
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let f = dd.appendingPathComponent(positionFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
-        chiImageLG.topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
+        view.addLayoutGuide(animLG)
+        let topG = animLG.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 0)
+        let bottomG = animLG.bottomAnchor.constraint(equalTo: tb.topAnchor, constant: 0)
+        let leftG = animLG.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8)
+        let rightG = animLG.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8)
+        NSLayoutConstraint.activate([topG, bottomG, leftG, rightG])
+        
+        let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -16)
+        let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -16)
+        constraintsForFullChiView.append(contentsOf: [width, height])
         
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         
@@ -110,9 +122,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let dest = segue.destination as! PositionTableViewController
-        
-        dest.pref = pref.copy() as! Preference
+        switch segue.identifier! {
+        case  "PositionSegue":
+            let dest = segue.destination as! PositionTableViewController
+            
+            dest.pref = pref.copy() as! Preference
+        case "AnimationSegue":
+            animationVC = segue.destination as! AnimationViewController
+        default: break
+        }
     }
 }
 

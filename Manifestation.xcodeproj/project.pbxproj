@@ -16,6 +16,7 @@
 		086DDC321EB6C9F90091A199 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC301EB6C9F90091A199 /* Main.storyboard */; };
 		086DDC341EB6C9F90091A199 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC331EB6C9F90091A199 /* Assets.xcassets */; };
 		086DDC371EB6C9F90091A199 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */; };
+		0887F3091F2255CC001A7472 /* AnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0887F3081F2255CC001A7472 /* AnimationViewController.swift */; };
 		0898E2671F18859600CCBE83 /* UI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0898E2661F18859600CCBE83 /* UI_Tests.swift */; };
 		0898E26F1F18860F00CCBE83 /* iPhoneUITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0898E26E1F18860F00CCBE83 /* iPhoneUITest.swift */; };
 		08ACBA681EEF80F00017BD8D /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08ACBA671EEF80F00017BD8D /* ImageStore.swift */; };
@@ -46,6 +47,7 @@
 		086DDC331EB6C9F90091A199 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		086DDC361EB6C9F90091A199 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		086DDC381EB6C9F90091A199 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0887F3081F2255CC001A7472 /* AnimationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationViewController.swift; sourceTree = "<group>"; };
 		0898E2641F18859600CCBE83 /* UI Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "UI Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0898E2661F18859600CCBE83 /* UI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI_Tests.swift; sourceTree = "<group>"; };
 		0898E2681F18859600CCBE83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -97,22 +99,47 @@
 		086DDC2B1EB6C9F90091A199 /* Manifestation */ = {
 			isa = PBXGroup;
 			children = (
-				086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */,
-				086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */,
-				0823564A1EE4ED5C00F0760E /* PositionTableViewController.swift */,
-				0823564C1EE4EFE700F0760E /* PositionTableViewCell.swift */,
-				0823564E1EE73E0700F0760E /* ChiCellTableViewCell.swift */,
-				08B87B601EBF515E0095A736 /* CardsViewController.swift */,
+				0887F30A1F2255E8001A7472 /* View Controllers */,
+				0887F30B1F225605001A7472 /* Cells */,
 				086DDC301EB6C9F90091A199 /* Main.storyboard */,
-				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
+				0887F30C1F225617001A7472 /* Preferences */,
 				086DDC331EB6C9F90091A199 /* Assets.xcassets */,
 				086DDC351EB6C9F90091A199 /* LaunchScreen.storyboard */,
 				086DDC381EB6C9F90091A199 /* Info.plist */,
+			);
+			path = Manifestation;
+			sourceTree = "<group>";
+		};
+		0887F30A1F2255E8001A7472 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */,
+				0887F3081F2255CC001A7472 /* AnimationViewController.swift */,
+				086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */,
+				0823564A1EE4ED5C00F0760E /* PositionTableViewController.swift */,
+				08B87B601EBF515E0095A736 /* CardsViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		0887F30B1F225605001A7472 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				0823564C1EE4EFE700F0760E /* PositionTableViewCell.swift */,
+				0823564E1EE73E0700F0760E /* ChiCellTableViewCell.swift */,
+				08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		0887F30C1F225617001A7472 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
 				08B87B641EBF8F0C0095A736 /* CardStore.swift */,
 				082356521EE7998100F0760E /* Preference.swift */,
 				08ACBA671EEF80F00017BD8D /* ImageStore.swift */,
 			);
-			path = Manifestation;
+			name = Preferences;
 			sourceTree = "<group>";
 		};
 		0898E2651F18859600CCBE83 /* UI Tests */ = {
@@ -232,6 +259,7 @@
 			files = (
 				0823564D1EE4EFE700F0760E /* PositionTableViewCell.swift in Sources */,
 				0823564B1EE4ED5C00F0760E /* PositionTableViewController.swift in Sources */,
+				0887F3091F2255CC001A7472 /* AnimationViewController.swift in Sources */,
 				08B87B631EBF54410095A736 /* CardCollectionViewCell.swift in Sources */,
 				08ACBA681EEF80F00017BD8D /* ImageStore.swift in Sources */,
 				08B87B651EBF8F0C0095A736 /* CardStore.swift in Sources */,
@@ -462,6 +490,7 @@
 				0898E26C1F18859600CCBE83 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
