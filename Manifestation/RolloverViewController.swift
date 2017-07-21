@@ -33,14 +33,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
         view.addLayoutGuide(animLG)
+        let layoutInsets = view.layoutMargins
         let topG = animLG.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 0)
         let bottomG = animLG.bottomAnchor.constraint(equalTo: tb.topAnchor, constant: 0)
-        let leftG = animLG.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 8)
-        let rightG = animLG.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -8)
+        let leftG = animLG.leftAnchor.constraint(equalTo: view.leftAnchor, constant: layoutInsets.left)
+        let rightG = animLG.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -layoutInsets.right)
         NSLayoutConstraint.activate([topG, bottomG, leftG, rightG])
         
-        let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -16)
-        let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -16)
+        let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -(layoutInsets.right + layoutInsets.left))
+        let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(layoutInsets.bottom + layoutInsets.top))
         constraintsForFullChiView.append(contentsOf: [width, height])
         
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
