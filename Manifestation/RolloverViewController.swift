@@ -20,19 +20,25 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
     
+    let animationDuration = 0.5
     let animLG = UILayoutGuide()
-    var pref: Preference!
-    var isAnimating = false
+    var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
+    var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
     
-    var chiImageView: UIImageView   {   get {   return animationVC.chiImageView }   }
+    var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
+    override func viewWillAppear(_ animated: Bool) {
+        tb.items![2].isEnabled = pref.hasSequenceImages
+    }
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let f = dd.appendingPathComponent(positionFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
         view.addLayoutGuide(animLG)
+        
+        // constraints for layout guide
         let layoutInsets = view.layoutMargins
         let topG = animLG.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 0)
         let bottomG = animLG.bottomAnchor.constraint(equalTo: tb.topAnchor, constant: 0)
@@ -45,11 +51,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         constraintsForFullChiView.append(contentsOf: [width, height])
         
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
-        
-        if let d = pref?.chiTransferImage {
-            chiImageView.image = UIImage(data: d)
-        }
-        super.viewDidLoad()
+        animationVC.pref = pref
     }
     
     // MARK: - Tool Bar -
@@ -87,10 +89,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let willBeAnimating = !isAnimating
         let pt1 = CGPoint(x: 0.1, y: 1.0)
         let pt2 = CGPoint(x: 0.5, y: 1.0)
-        
-
-        let anim = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
-//            self.chiImageView.frame = willBeAnimating ? self.view.frame.insetBy(dx: 16, dy: 16) :  self.frameForChiView
+        let constraintAnimation = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
             if willBeAnimating {
                 NSLayoutConstraint.deactivate(self.constraintsForReducedChiView)
                 NSLayoutConstraint.activate(self.constraintsForFullChiView)
@@ -100,9 +99,40 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
             self.view.layoutIfNeeded()
         }
+        constraintAnimation.addCompletion {
+            UIViewAnimatingPosition in
+            if willBeAnimating {
+                self.animationVC.pref = self.pref
+                self.animationVC.animate()
+            }
+        }
+        
+        if !willBeAnimating {
+            UIView.transition(with: animationVC.targetTextLabel, duration: animationDuration,
+                              options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                              animations: { self.animationVC.targetTextStack.isHidden = !willBeAnimating },
+                              completion: nil)
+            UIView.transition(with: self.animationVC.trendTextLabel, duration: animationDuration,
+                              options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                              animations: { self.animationVC.trendTextStack.isHidden = !willBeAnimating },
+                              completion: nil)
+        }
 
-        tb.items![2] = UIBarButtonItem(barButtonSystemItem: isAnimating ? UIBarButtonSystemItem.play : UIBarButtonSystemItem.pause, target: self, action: #selector(RolloverViewController.playRollover(_:)))
-        anim.startAnimation()
+        UIView.transition(with: self.animationVC.rolloverIV,
+                          duration: willBeAnimating ? 0 : animationDuration * 0.75,  // make transition without animations if willBeAnimating
+                          options: UIViewAnimationOptions.transitionFlipFromRight,
+                          animations: { self.animationVC.rolloverIV.image = nil  },
+                          completion:
+            {
+                _ in
+                self.animationVC.rolloverStack.isHidden = !willBeAnimating
+                constraintAnimation.startAnimation()
+        })
+        
+        tb.items![0].isEnabled = !willBeAnimating
+        tb.items![4].isEnabled = !willBeAnimating
+        tb.items![6].isEnabled = !willBeAnimating
+        tb.items![2] = UIBarButtonItem(barButtonSystemItem: willBeAnimating ? UIBarButtonSystemItem.pause : UIBarButtonSystemItem.play, target: self, action: #selector(RolloverViewController.playRollover(_:)))
         isAnimating = !isAnimating
     }
     

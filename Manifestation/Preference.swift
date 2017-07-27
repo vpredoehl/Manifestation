@@ -21,13 +21,24 @@ class Preference: NSObject, NSCoding, NSCopying {
     }()
     static var userImages = ImageStore()
 
-    private var imageIndex: [Int?]!
-    private var trendText: [String]!
-    private var targetText: [String]!
+    open var imageIndex: [Int?]!
+    open var trendText: [String]!
+    open var targetText: [String]!
     private var selectedSegment: [SegmentType]!
     var chiTransferImage: Data? = nil
     
     var numPositions: Int
+    var hasSequenceImages: Bool
+    {
+        get {
+            if let ii = imageIndex {    // has non-nil image?
+                for i in ii {
+                    if i != nil    {   return true }
+                }
+            }
+            return false
+        }
+    }
     
     override convenience init()
     {
