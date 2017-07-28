@@ -10,12 +10,16 @@ import UIKit
 
 extension Preference
 {
-    func rolloverForDisplay(forIndex i: Int) -> (UIImage, String, String) {
-        let idx = rolloverIndex(forRow: i)!
+    func rolloverForDisplay() -> (UIImage, String, String) {
+        let idx = rolloverIndex(forRow: Preference.curRolloverPosition)!
         let img = Preference.userImages.image(forKey: String(idx))!
-        let trend = trendText[i]
-        let target = targetText[i]
+        let trend = trendText[Preference.curRolloverPosition]
+        let target = targetText[Preference.curRolloverPosition]
         
+        Preference.curRolloverPosition =
+            Preference.curRolloverPosition == numPositions - 1
+            ? 0
+            : Preference.curRolloverPosition + 1
         return (img, trend, target)
     }
 }
@@ -44,15 +48,14 @@ class AnimationViewController: UIViewController
         }
     }
     
-    func animate() {
-//        for i in 0..<pref.numPositions {
-        let i = 0
-            let (img, trend, target) = pref.rolloverForDisplay(forIndex: i)
-
+    func animate(t: Timer) {
+        let pref = t.userInfo as! Preference
+        let (img, trend, target) = pref.rolloverForDisplay()
+        
         UIView.transition(with: rolloverIV, duration: inTransitionDuration * 0.75,
                           options: UIViewAnimationOptions.transitionFlipFromLeft,
                           animations: {    self.rolloverIV.image = img })
-
+        
         UIView.transition(with: trendTextLabel, duration: inTransitionDuration,
                           options: UIViewAnimationOptions.transitionFlipFromLeft,
                           animations:
@@ -70,8 +73,5 @@ class AnimationViewController: UIViewController
                 self.targetTextLabel.text = target
                 self.targetTextLabel.sizeToFit()
         })
-        
-
-//        }
     }
 }

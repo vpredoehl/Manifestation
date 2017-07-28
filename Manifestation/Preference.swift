@@ -20,6 +20,7 @@ class Preference: NSObject, NSCoding, NSCopying {
         return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     }()
     static var userImages = ImageStore()
+    static var curRolloverPosition = 0
 
     open var imageIndex: [Int?]!
     open var trendText: [String]!

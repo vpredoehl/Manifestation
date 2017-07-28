@@ -22,14 +22,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     let animationDuration = 0.5
     let animLG = UILayoutGuide()
+
     var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
+    var rolloverTimer: Timer!
     
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
     override func viewWillAppear(_ animated: Bool) {
-        animationVC.rolloverIV.image = nil
         tb.items![2].isEnabled = pref.hasSequenceImages
     }
     override func viewDidLoad() {
@@ -107,9 +108,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 _ in
                 DispatchQueue.main.async {
                     self.animationVC.pref = self.pref
-                    self.animationVC.animate()
+                    self.rolloverTimer = Timer.scheduledTimer(timeInterval: 3, target: self.animationVC, selector: #selector(AnimationViewController.animate(t:)), userInfo: self.pref, repeats: true)
+                    self.rolloverTimer.fire()
                 }
             }
+        }
+        else {
+            rolloverTimer.invalidate()
+            rolloverTimer = nil
         }
         
         if !willBeAnimating {
