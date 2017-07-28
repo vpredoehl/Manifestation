@@ -29,6 +29,7 @@ class AnimationViewController: UIViewController
     @IBOutlet weak var targetTextLabel: UILabel!
     @IBOutlet weak var trendTextStack: UIStackView!
     @IBOutlet weak var targetTextStack: UIStackView!
+    @IBOutlet var constraintsForPauseAnimation: [NSLayoutConstraint]!
     
     let inTransitionDuration = 0.4
     

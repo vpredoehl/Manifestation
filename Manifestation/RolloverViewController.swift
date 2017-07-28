@@ -89,44 +89,61 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let willBeAnimating = !isAnimating
         let pt1 = CGPoint(x: 0.1, y: 1.0)
         let pt2 = CGPoint(x: 0.5, y: 1.0)
-        let constraintAnimation = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
+        let playOrPauseAnimation = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
             if willBeAnimating {
                 NSLayoutConstraint.deactivate(self.constraintsForReducedChiView)
                 NSLayoutConstraint.activate(self.constraintsForFullChiView)
+                NSLayoutConstraint.deactivate(self.animationVC.constraintsForPauseAnimation)
             } else {
                 NSLayoutConstraint.deactivate(self.constraintsForFullChiView)
                 NSLayoutConstraint.activate(self.constraintsForReducedChiView)
+                NSLayoutConstraint.activate(self.animationVC.constraintsForPauseAnimation)
             }
             self.view.layoutIfNeeded()
         }
-        constraintAnimation.addCompletion {
-            UIViewAnimatingPosition in
-            if willBeAnimating {
+        if willBeAnimating {
+            playOrPauseAnimation.addCompletion {
+                _ in
                 self.animationVC.pref = self.pref
                 self.animationVC.animate()
             }
         }
         
         if !willBeAnimating {
-            UIView.transition(with: animationVC.targetTextLabel, duration: animationDuration,
+            UIView.transition(with: self.animationVC.targetTextLabel, duration: self.animationDuration,
                               options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
                               animations: { self.animationVC.targetTextStack.isHidden = !willBeAnimating },
                               completion: nil)
-            UIView.transition(with: self.animationVC.trendTextLabel, duration: animationDuration,
+            UIView.transition(with: self.animationVC.trendTextLabel, duration: self.animationDuration,
                               options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
                               animations: { self.animationVC.trendTextStack.isHidden = !willBeAnimating },
                               completion: nil)
+            playOrPauseAnimation.addCompletion {
+                _ in
+                UIView.transition(with: self.animationVC.targetTextLabel, duration: self.animationDuration,
+                                  options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                                  animations: { self.animationVC.targetTextStack.isHidden = !willBeAnimating },
+                                  completion: nil)
+                UIView.transition(with: self.animationVC.trendTextLabel, duration: self.animationDuration,
+                                  options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                                  animations: { self.animationVC.trendTextStack.isHidden = !willBeAnimating },
+                                  completion: nil)
+                UIView.transition(with: self.animationVC.rolloverIV,
+                                  duration: willBeAnimating ? 0 : self.animationDuration / 0.75,  // make transition without animations if willBeAnimating
+                    options: UIViewAnimationOptions.transitionFlipFromRight,
+                    animations: {  self.animationVC.rolloverIV.image = nil  })
+            }
         }
 
         UIView.transition(with: self.animationVC.rolloverIV,
                           duration: willBeAnimating ? 0 : animationDuration * 0.75,  // make transition without animations if willBeAnimating
-                          options: UIViewAnimationOptions.transitionFlipFromRight,
-                          animations: { self.animationVC.rolloverIV.image = nil  },
-                          completion:
+            options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromRight : UIViewAnimationOptions.curveLinear,
+            animations: { if willBeAnimating { self.animationVC.rolloverIV.image = nil }  },
+            completion:
             {
                 _ in
-                self.animationVC.rolloverStack.isHidden = !willBeAnimating
-                constraintAnimation.startAnimation()
+                if willBeAnimating { self.animationVC.rolloverStack.isHidden = !willBeAnimating }
+                playOrPauseAnimation.startAnimation()
         })
         
         tb.items![0].isEnabled = !willBeAnimating
