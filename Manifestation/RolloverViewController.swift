@@ -12,7 +12,7 @@ let maxNumPositions = 3
 
 extension Preference
 {
-    var hasSequenceImages: Bool
+    var hasTransferSequence: Bool
     {
         get {
             if let ii = imageIndex {    // has non-nil image?
@@ -24,7 +24,6 @@ extension Preference
         }
     }
     var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
-    var hasTransferSequence: Bool   {   get     {   return imageIndex.count > 0     }   }
     var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
 }
@@ -50,6 +49,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         tb.items![2].isEnabled = pref.canPlay
         tb.items![6].isEnabled = pref.canHiliteTrash
     }
@@ -74,6 +74,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
+        if let d = pref.chiTransferImage {
+            chiImageView.image = UIImage(data: d)
+        }
     }
     
     // MARK: - Tool Bar -
@@ -88,6 +91,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             self.pref.chiTransferImage = nil
             self.chiImageView.image = nil
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
+
+            self.tb.items![2].isEnabled = self.pref.canPlay
+            self.tb.items![6].isEnabled = self.pref.canHiliteTrash
         }
         let deleteRollover = UIAlertAction(title: "Delete Rollver Images", style: .destructive)
         {
@@ -96,6 +102,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             
             self.pref.removeAll()
             NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
+            
+            self.tb.items![2].isEnabled = self.pref.canPlay
+            self.tb.items![6].isEnabled = self.pref.canHiliteTrash
         }
         
         if let vc = ac.popoverPresentationController {
