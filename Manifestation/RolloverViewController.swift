@@ -10,6 +10,25 @@ import UIKit
 
 let maxNumPositions = 3
 
+extension Preference
+{
+    var hasSequenceImages: Bool
+    {
+        get {
+            if let ii = imageIndex {    // has non-nil image?
+                for i in ii {
+                    if i != nil    {   return true }
+                }
+            }
+            return false
+        }
+    }
+    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
+    var hasTransferSequence: Bool   {   get     {   return imageIndex.count > 0     }   }
+    var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence  }   }
+    var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
+}
+
 class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
 {
     // MARK: Properties -
@@ -31,7 +50,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
     override func viewWillAppear(_ animated: Bool) {
-        tb.items![2].isEnabled = pref.hasSequenceImages
+        tb.items![2].isEnabled = pref.canPlay
+        tb.items![6].isEnabled = pref.canHiliteTrash
     }
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -60,7 +80,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBAction func trash(_ sender: Any) {
         let ac = UIAlertController()
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        let transfer = UIAlertAction(title: "Delete Transfer Image", style: .destructive)
+        let deleteChi = UIAlertAction(title: "Delete Transfer Image", style: .destructive)
         {
             (_) in
             let f = Preference.DocDir.appendingPathComponent(chiImageFile)
@@ -69,7 +89,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             self.chiImageView.image = nil
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
         }
-        let position = UIAlertAction(title: "Delete Rollver Images", style: .destructive)
+        let deleteRollover = UIAlertAction(title: "Delete Rollver Images", style: .destructive)
         {
             (_) in
             let f = Preference.DocDir.appendingPathComponent(positionFile)
@@ -83,8 +103,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         }
         
         ac.addAction(cancel)
-        ac.addAction(transfer)
-        ac.addAction(position)
+        if pref.hasChiImage {
+            ac.addAction(deleteChi)
+        }
+        if pref.hasTransferSequence {
+            ac.addAction(deleteRollover)
+        }
         present(ac, animated: true)
     }
     @IBAction func playRollover(_ playBtn: UIBarButtonItem) {

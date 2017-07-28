@@ -29,18 +29,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     var chiTransferImage: Data? = nil
     
     var numPositions: Int
-    var hasSequenceImages: Bool
-    {
-        get {
-            if let ii = imageIndex {    // has non-nil image?
-                for i in ii {
-                    if i != nil    {   return true }
-                }
-            }
-            return false
-        }
-    }
-    
+
     override convenience init()
     {
         self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
