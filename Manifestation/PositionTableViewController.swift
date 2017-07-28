@@ -20,6 +20,15 @@ enum SegmentType: Int {
     case target
 }
 
+extension Preference
+{
+    var canInsertRow: Bool {
+        get {
+            return imageIndex.filter { $0 == nil   }.count == 0 // check for nil rows
+        }
+    }
+}
+
 class PositionTableViewController: UITableViewController, UITextViewDelegate,
     UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
@@ -33,11 +42,6 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         super.viewDidLoad()
 
          navigationItem.rightBarButtonItems?[1] = editButtonItem
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 
     // MARK: - Table view data source
@@ -94,9 +98,6 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     }
     
     // MARK: - Table View Delegate -
-//    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//        return indexPath.section == TableSection.chiSection.rawValue ? 200 : 140
-//    }
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
@@ -161,7 +162,10 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         }
         let rowCount = tableView.numberOfRows(inSection: indexPath.section)
         
-        return indexPath.row == rowCount-1 && rowCount < maxNumPositions  ? .insert : .delete
+        return indexPath.row == rowCount-1 && rowCount < maxNumPositions
+            && pref.canInsertRow
+            || rowCount == 1
+            ? .insert : .delete
     }
     
     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
@@ -245,6 +249,8 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         }
         pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
+        tableView.isEditing = false
+        tableView.isEditing = true
     }
     
     // MARK: - Image Picker -
@@ -333,7 +339,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         rolloverVC.pref = pref
         
         if let d = pref.chiTransferImage {
-            rolloverVC.rolloverImageView.image = UIImage(data: d)
+            rolloverVC.chiImageView.image = UIImage(data: d)
         }
         navigationController?.popViewController(animated: true)
     }
