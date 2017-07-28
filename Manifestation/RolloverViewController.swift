@@ -140,6 +140,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             playOrPauseAnimation.addCompletion {
                 _ in
                 DispatchQueue.main.async {
+                    Preference.curRolloverPosition = 0
                     self.animationVC.pref = self.pref
                     self.rolloverTimer = Timer.scheduledTimer(timeInterval: 3, target: self.animationVC, selector: #selector(AnimationViewController.animate(t:)), userInfo: self.pref, repeats: true)
                     self.rolloverTimer.fire()

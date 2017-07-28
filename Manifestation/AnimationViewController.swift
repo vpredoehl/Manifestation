@@ -10,6 +10,8 @@ import UIKit
 
 extension Preference
 {
+    var numRolloverImages: Int  {   get     {   return imageIndex.filter { $0 != nil   }.count  }   }
+
     func rolloverForDisplay() -> (UIImage, String, String) {
         let idx = rolloverIndex(forRow: Preference.curRolloverPosition)!
         let img = Preference.userImages.image(forKey: String(idx))!
@@ -17,7 +19,7 @@ extension Preference
         let target = targetText[Preference.curRolloverPosition]
         
         Preference.curRolloverPosition =
-            Preference.curRolloverPosition == numPositions - 1
+            Preference.curRolloverPosition == numRolloverImages - 1
             ? 0
             : Preference.curRolloverPosition + 1
         return (img, trend, target)
