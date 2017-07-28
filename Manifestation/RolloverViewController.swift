@@ -29,6 +29,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
     override func viewWillAppear(_ animated: Bool) {
+        animationVC.rolloverIV.image = nil
         tb.items![2].isEnabled = pref.hasSequenceImages
     }
     override func viewDidLoad() {
@@ -89,7 +90,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let willBeAnimating = !isAnimating
         let pt1 = CGPoint(x: 0.1, y: 1.0)
         let pt2 = CGPoint(x: 0.5, y: 1.0)
-        let playOrPauseAnimation = UIViewPropertyAnimator(duration: 2, controlPoint1: pt1, controlPoint2: pt2) {
+        let playOrPauseAnimation = UIViewPropertyAnimator(duration: willBeAnimating ? 2 : 5, controlPoint1: pt1, controlPoint2: pt2) {
             if willBeAnimating {
                 NSLayoutConstraint.deactivate(self.constraintsForReducedChiView)
                 NSLayoutConstraint.activate(self.constraintsForFullChiView)
@@ -104,8 +105,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if willBeAnimating {
             playOrPauseAnimation.addCompletion {
                 _ in
-                self.animationVC.pref = self.pref
-                self.animationVC.animate()
+                DispatchQueue.main.async {
+                    self.animationVC.pref = self.pref
+                    self.animationVC.animate()
+                }
             }
         }
         
@@ -120,18 +123,21 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                               completion: nil)
             playOrPauseAnimation.addCompletion {
                 _ in
-                UIView.transition(with: self.animationVC.targetTextLabel, duration: self.animationDuration,
-                                  options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
-                                  animations: { self.animationVC.targetTextStack.isHidden = !willBeAnimating },
-                                  completion: nil)
-                UIView.transition(with: self.animationVC.trendTextLabel, duration: self.animationDuration,
-                                  options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
-                                  animations: { self.animationVC.trendTextStack.isHidden = !willBeAnimating },
-                                  completion: nil)
-                UIView.transition(with: self.animationVC.rolloverIV,
-                                  duration: willBeAnimating ? 0 : self.animationDuration / 0.75,  // make transition without animations if willBeAnimating
-                    options: UIViewAnimationOptions.transitionFlipFromRight,
-                    animations: {  self.animationVC.rolloverIV.image = nil  })
+                DispatchQueue.main.async {
+                    UIView.transition(with: self.animationVC.targetTextLabel, duration: self.animationDuration,
+                                      options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                                      animations: { self.animationVC.targetTextStack.isHidden = !willBeAnimating },
+                                      completion: nil)
+                    UIView.transition(with: self.animationVC.trendTextLabel, duration: self.animationDuration,
+                                      options: willBeAnimating ? UIViewAnimationOptions.transitionFlipFromLeft :  UIViewAnimationOptions.transitionFlipFromRight,
+                                      animations: { self.animationVC.trendTextStack.isHidden = !willBeAnimating },
+                                      completion: nil)
+                    UIView.transition(with: self.animationVC.rolloverIV,
+                                      duration: willBeAnimating ? 0 : self.animationDuration / 0.75,  // make transition without animations if willBeAnimating
+                        options: UIViewAnimationOptions.transitionFlipFromRight,
+                        animations: {  self.animationVC.rolloverIV.image = nil  })
+                    
+                }
             }
         }
 
@@ -142,9 +148,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             completion:
             {
                 _ in
-                if willBeAnimating { self.animationVC.rolloverStack.isHidden = !willBeAnimating }
-                playOrPauseAnimation.startAnimation()
+                DispatchQueue.main.async {
+                    if willBeAnimating { self.animationVC.rolloverStack.isHidden = !willBeAnimating }
+                }
         })
+        playOrPauseAnimation.startAnimation()
         
         tb.items![0].isEnabled = !willBeAnimating
         tb.items![4].isEnabled = !willBeAnimating
