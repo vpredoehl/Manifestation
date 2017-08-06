@@ -44,7 +44,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
-    var rolloverTimer: Timer!
+    var rolloverTimer: Timer?
+    var curAnim: UIViewPropertyAnimator?
     
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
@@ -143,12 +144,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     Preference.curRolloverPosition = 0
                     self.animationVC.pref = self.pref
                     self.rolloverTimer = Timer.scheduledTimer(timeInterval: 3, target: self.animationVC, selector: #selector(AnimationViewController.animate(t:)), userInfo: self.pref, repeats: true)
-                    self.rolloverTimer.fire()
+                    self.rolloverTimer?.fire()
                 }
             }
         }
         else {
-            rolloverTimer.invalidate()
+            rolloverTimer?.invalidate()
             rolloverTimer = nil
         }
         
@@ -192,6 +193,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     if willBeAnimating { self.animationVC.rolloverStack.isHidden = !willBeAnimating }
                 }
         })
+        curAnim?.stopAnimation(!willBeAnimating)
+        curAnim = playOrPauseAnimation
         playOrPauseAnimation.startAnimation()
         
         tb.items![0].isEnabled = !willBeAnimating
