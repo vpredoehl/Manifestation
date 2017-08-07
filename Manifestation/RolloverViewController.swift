@@ -52,7 +52,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tb.items![2].isEnabled = pref.canPlay
-        tb.items![6].isEnabled = pref.canHiliteTrash
+        tb.items![4].isEnabled = pref.canHiliteTrash
     }
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -94,7 +94,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![6].isEnabled = self.pref.canHiliteTrash
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
         }
         let deleteRollover = UIAlertAction(title: "Delete Rollver Images", style: .destructive)
         {
@@ -105,7 +105,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
             
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![6].isEnabled = self.pref.canHiliteTrash
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
         }
         
         if let vc = ac.popoverPresentationController {
@@ -199,7 +199,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         
         tb.items![0].isEnabled = !willBeAnimating
         tb.items![4].isEnabled = !willBeAnimating
-        tb.items![6].isEnabled = !willBeAnimating
         tb.items![2] = UIBarButtonItem(barButtonSystemItem: willBeAnimating ? UIBarButtonSystemItem.pause : UIBarButtonSystemItem.play, target: self, action: #selector(RolloverViewController.playRollover(_:)))
         isAnimating = !isAnimating
     }

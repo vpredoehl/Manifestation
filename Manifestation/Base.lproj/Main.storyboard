@@ -42,12 +42,6 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="oh2-mO-UTZ"/>
-                                    <barButtonItem systemItem="camera" id="mv2-i6-yZp">
-                                        <connections>
-                                            <action selector="takePicture:" destination="BYZ-38-t0r" id="0Hg-da-72T"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="530-c8-VV2"/>
                                     <barButtonItem style="plain" systemItem="trash" id="c8o-o3-GIe">
                                         <connections>
                                             <action selector="trash:" destination="BYZ-38-t0r" id="wd7-t8-BW2"/>
