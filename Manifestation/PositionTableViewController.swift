@@ -249,8 +249,10 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         }
         pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
-        tableView.isEditing = false
-        tableView.isEditing = true
+        if tableView.isEditing {    // update editing styles
+            tableView.isEditing = false
+            tableView.isEditing = true
+        }
     }
     
     // MARK: - Image Picker -
