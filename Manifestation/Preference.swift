@@ -25,6 +25,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     open var imageIndex: [Int?]!
     open var trendText: [String]!
     open var targetText: [String]!
+    private var userPhotoKeys: [Int]?
     private var selectedSegment: [SegmentType]!
     var chiTransferImage: Data? = nil
     
@@ -32,10 +33,10 @@ class Preference: NSObject, NSCoding, NSCopying {
 
     override convenience init()
     {
-        self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
+        self.init(transfer: nil, userKeys: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
     }
     
-    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
+    init?(transfer t: Data?, userKeys uk: [Int]?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
         if tr == nil || ta == nil {
             return nil
         }
@@ -47,6 +48,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             let f = Preference.DocDir.appendingPathComponent(chiImageFile)
             chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
         }
+        userPhotoKeys = uk
         imageIndex = ii ?? [ nil ]
         trendText = tr
         targetText = ta
@@ -56,6 +58,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - Archiving -
     func encode(with aCoder: NSCoder) {
+        aCoder.encode(userPhotoKeys, forKey: "userPhotoKeys")
         aCoder.encode(imageIndex, forKey: "imageIndex")
         aCoder.encode(trendText, forKey: "trendText")
         aCoder.encode(targetText, forKey: "targetText")
@@ -64,6 +67,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
+        let userPhotos = aDecoder.decodeObject(forKey: "userPhotoKeys") as! [Int]?
         let imageIndex = aDecoder.decodeObject(forKey: "imageIndex") as? [Int?]
         let trendText = aDecoder.decodeObject(forKey: "trendText") as? [String]
         let targetText = aDecoder.decodeObject(forKey: "targetText") as? [String]
@@ -78,7 +82,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             }
         }
         
-        self.init(transfer: nil, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
+        self.init(transfer: nil, userKeys: userPhotos, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
     }
     
     private
@@ -169,6 +173,6 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying -
     func copy(with zone: NSZone? = nil) -> Any {
-        return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
+        return Preference(transfer: chiTransferImage, userKeys: userPhotoKeys, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
 }

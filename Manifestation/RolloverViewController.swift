@@ -73,7 +73,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(layoutInsets.bottom + layoutInsets.top))
         constraintsForFullChiView.append(contentsOf: [width, height])
         
-        pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
+        pref = p ?? Preference(transfer: nil, userKeys: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
