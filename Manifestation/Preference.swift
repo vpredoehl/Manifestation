@@ -19,13 +19,12 @@ class Preference: NSObject, NSCoding, NSCopying {
         () -> URL in
         return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     }()
-    static var userImages = ImageStore()
     static var curRolloverPosition = 0
 
     open var imageIndex: [Int?]!
     open var trendText: [String]!
     open var targetText: [String]!
-    private var userPhotoKeys: [Int]?
+    open var userPhotoKeys: [Int]?
     private var selectedSegment: [SegmentType]!
     var chiTransferImage: Data? = nil
     

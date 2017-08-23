@@ -8,34 +8,43 @@
 
 import UIKit
 
-class ImageStore
+extension Preference
 {
-    let cache = NSCache<NSString, UIImage>()
+    static let cache = NSCache<NSString, UIImage>()
     
-    func setImage(_ image: UIImage, forKey key: String)
+    func setImage(_ image: UIImage, forKey key: Int)
     {
         let url = imageURL(forKey: key)
         if let data = UIImageJPEGRepresentation(image, 0.5) {
             try? data.write(to: url, options: [.atomic])
+            if key < 0 {    // store user photo key
+                if userPhotoKeys == nil {
+                    userPhotoKeys = [ key ]
+                }
+                else {
+                    userPhotoKeys?.append(key)
+                }
+
+            }
         }
         
-        cache.setObject(image, forKey: key as NSString)
+        Preference.cache.setObject(image, forKey: String(key) as NSString)
     }
     
-    func image(forKey key: String) -> UIImage? {
-        if let existingImage = cache.object(forKey: key as NSString) {
+    func image(forKey key: Int) -> UIImage? {
+        if let existingImage = Preference.cache.object(forKey: String(key) as NSString) {
             return existingImage
         }
         
         let url = imageURL(forKey: key)
         guard let imageFromDisk = UIImage(contentsOfFile: url.path)
             else    {   return nil  }
-        cache.setObject(imageFromDisk, forKey: key as NSString)
+        Preference.cache.setObject(imageFromDisk, forKey: String(key) as NSString)
         return imageFromDisk
     }
     
-    func deleteImage(forKey key: String) {
-        cache.removeObject(forKey: key as NSString)
+    func deleteImage(forKey key: Int) {
+        Preference.cache.removeObject(forKey: String(key) as NSString)
         
         let url = imageURL(forKey: key)
         do {
@@ -45,10 +54,10 @@ class ImageStore
         }
     }
     
-    func imageURL(forKey key: String) -> URL {
+    func imageURL(forKey key: Int) -> URL {
         let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docDir = docsDirs.first!
         
-        return docDir.appendingPathComponent("UI" + key)
+        return docDir.appendingPathComponent("UI" + String(key))
     }
 }

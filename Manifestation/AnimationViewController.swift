@@ -14,7 +14,7 @@ extension Preference
 
     func rolloverForDisplay() -> (UIImage, String, String) {
         let idx = rolloverIndex(forRow: Preference.curRolloverPosition)!
-        let img = Preference.userImages.image(forKey: String(idx))!
+        let img = image(forKey: idx)!
         let trend = trendText[Preference.curRolloverPosition]
         let target = targetText[Preference.curRolloverPosition]
         

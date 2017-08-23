@@ -73,7 +73,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
             
             if let idx = pref.rolloverIndex(forRow: row),
                 let img = idx < 0
-                    ? Preference.userImages.image(forKey: String(idx))
+                    ? pref.image(forKey: idx)
                     : UIImage(named: "AoD/\(idx + 1)") {
                 cell.cardButton.setImage(img, for: .normal)
             }
@@ -244,12 +244,12 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         let img = cardVC.userImage ?? UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)")
         
         if let img = img {
-            let imgKey = String(cardVC.returnImageIdx)
-            Preference.userImages.setImage(img, forKey: imgKey)
+            let imgKey = cardVC.returnImageIdx!
+            pref.setImage(img, forKey: imgKey)
         }
         pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
         cell.cardButton.setImage(img, for: .normal)
-        if tableView.isEditing {    // update editing styles
+        if tableView.isEditing {    //
             tableView.isEditing = false
             tableView.isEditing = true
         }
