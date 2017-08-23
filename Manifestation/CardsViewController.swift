@@ -94,8 +94,10 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        let timestamp = Int(CFAbsoluteTimeGetCurrent())
+        
         userImage = info[UIImagePickerControllerOriginalImage] as! UIImage?
-        returnImageIdx = -row - 1
+        returnImageIdx = -timestamp
         performSegue(withIdentifier: "UnwindWithSelectedImage", sender: self)
     }
 }
