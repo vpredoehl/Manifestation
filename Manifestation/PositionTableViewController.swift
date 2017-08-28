@@ -325,6 +325,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     
     @IBAction func save(_ sender: UIBarButtonItem) {
         let fPosn = Preference.DocDir.appendingPathComponent(positionFile)
+        let tempPhotosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
         if let img = pref.chiTransferImage {
@@ -335,10 +336,13 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
                 print("Image saved.")
             }
         }
+        
+        rolloverVC.pref = pref
         if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
             print("Positions saved.")
+            pref.userPhotoKeys = nil    // prevent resaving in viewWillDisappear
+            try? FileManager.default.removeItem(atPath: tempPhotosF.path)
         }
-        rolloverVC.pref = pref
         
         if let d = pref.chiTransferImage {
             rolloverVC.chiImageView.image = UIImage(data: d)

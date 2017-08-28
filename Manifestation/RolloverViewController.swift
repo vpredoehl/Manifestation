@@ -57,7 +57,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let f = dd.appendingPathComponent(positionFile)
+        let tempPhotosF = dd.appendingPathComponent(tempPhotoKeysFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
+        let userPhotos = NSKeyedUnarchiver.unarchiveObject(withFile: tempPhotosF.path) as? [Int]
         
         view.addLayoutGuide(animLG)
         
@@ -73,7 +75,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(layoutInsets.bottom + layoutInsets.top))
         constraintsForFullChiView.append(contentsOf: [width, height])
         
-        pref = p ?? Preference(transfer: nil, userKeys: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
+        pref = p ?? Preference(transfer: nil, userKeys: userPhotos, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)

@@ -10,6 +10,7 @@ import Foundation
 
 let chiImageFile = "chiImage"
 let positionFile = "positions"
+let tempPhotoKeysFile = "userPhotos"
 
 class Preference: NSObject, NSCoding, NSCopying {
     
@@ -66,12 +67,15 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     required convenience init?(coder aDecoder: NSCoder) {
-        let userPhotos = aDecoder.decodeObject(forKey: "userPhotoKeys") as! [Int]?
         let imageIndex = aDecoder.decodeObject(forKey: "imageIndex") as? [Int?]
         let trendText = aDecoder.decodeObject(forKey: "trendText") as? [String]
         let targetText = aDecoder.decodeObject(forKey: "targetText") as? [String]
         let ss = aDecoder.decodeObject(forKey: "selectedSegment") as? [Int]
         let numPositions = aDecoder.decodeInteger(forKey: "numPositions")
+        let tempPhotosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
+        let userPhotos: [Int]? = FileManager.default.fileExists(atPath: tempPhotosF.path)
+            ? NSKeyedUnarchiver.unarchiveObject(withFile: tempPhotosF.path) as? [Int]
+            : aDecoder.decodeObject(forKey: "userPhotoKeys") as! [Int]?
         var st: [SegmentType]? = nil
         
         if ss != nil {
@@ -112,6 +116,11 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func remove(at rowToDelete: Int) {
+        if let idx = imageIndex[rowToDelete] {
+            if idx < 0 {
+                deleteImage(forKey: idx) // delete user image, if exists
+            }
+        }
         imageIndex.remove(at: rowToDelete)
         trendText.remove(at: rowToDelete)
         targetText.remove(at: rowToDelete)
@@ -167,6 +176,11 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func set(imageIndex i: Int, forRow r: Int) {
+        if let idx = imageIndex[r] {
+            if idx < 0 {
+                deleteImage(forKey: idx)
+            }
+        }
         imageIndex[r] = i
     }
     
