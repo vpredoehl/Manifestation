@@ -208,6 +208,21 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         tableView.reloadData()
     }
     
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0:
+            return "Transfer Image"
+        default:
+            return "Positions"
+        }
+    }
+    
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        let v = view as! UITableViewHeaderFooterView
+        
+        v.textLabel?.textAlignment = .center
+    }
+    
     private
     func updateTags(forRow idx: Int, to: Int)
     {
