@@ -14,18 +14,21 @@ extension Preference
     
     func setImage(_ image: UIImage, forKey key: Int)
     {
+        let matchesKey = Preference.userPhotoKeys?.filter   { $0 == key }
         let url = imageURL(forKey: key)
+        
+        guard key >= 0 || key < 0 && (matchesKey == nil || matchesKey?.count == 0) else {  return } // ignore user images that are already saved
         if let data = UIImageJPEGRepresentation(image, 0.5) {
             try? data.write(to: url, options: [.atomic])
             if key < 0 {    // store user photo key
-                if userPhotoKeys == nil {
-                    userPhotoKeys = [ key ]
+                if Preference.userPhotoKeys == nil {
+                    Preference.userPhotoKeys = [ key ]
                 }
                 else {
-                    userPhotoKeys!.append(key)
+                    Preference.userPhotoKeys!.append(key)
                 }
                 let photosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
-                NSKeyedArchiver.archiveRootObject(userPhotoKeys!, toFile: photosF.path)
+                NSKeyedArchiver.archiveRootObject(Preference.userPhotoKeys!, toFile: photosF.path)
             }
         }
         
@@ -59,6 +62,6 @@ extension Preference
         let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let docDir = docsDirs.first!
         
-        return docDir.appendingPathComponent("UI" + String(key))
+        return docDir.appendingPathComponent("UI\(key)")
     }
 }

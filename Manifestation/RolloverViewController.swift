@@ -12,6 +12,13 @@ let maxNumPositions = 3
 
 extension Preference
 {
+    var hasUserPhotos: Bool
+    {
+        get {
+            guard let userKeys = Preference.userPhotoKeys else { return false }
+            return userKeys.count > 0
+        }
+    }
     var hasTransferSequence: Bool
     {
         get {
@@ -24,7 +31,7 @@ extension Preference
         }
     }
     var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
-    var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence  }   }
+    var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence || hasUserPhotos  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
 }
 
@@ -75,7 +82,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(layoutInsets.bottom + layoutInsets.top))
         constraintsForFullChiView.append(contentsOf: [width, height])
         
-        pref = p ?? Preference(transfer: nil, userKeys: userPhotos, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
+        if userPhotos != nil {
+            Preference.userPhotoKeys = userPhotos
+        }
+        pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
@@ -98,7 +108,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash
         }
-        let deleteRollover = UIAlertAction(title: "Delete Rollver Images", style: .destructive)
+        let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
             let f = Preference.DocDir.appendingPathComponent(positionFile)
@@ -108,6 +118,28 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash
+        }
+        let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
+        {
+            (_) in
+            if let files = try? FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path) {
+                let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+                let docDir = docsDirs.first!
+                let userPhotos = files.filter {   $0.hasPrefix("UI-") }
+                let _ = userPhotos.map
+                {
+                    let f = docDir.appendingPathComponent($0)
+                    try? FileManager.default.removeItem(at: f)
+                }
+                Preference.userPhotoKeys = [ ]
+                self.pref.imageIndex = self.pref.imageIndex.map
+                    {
+                        (idx) in
+                        guard let idx = idx else {   return nil }
+                        return idx < 0 ? nil : idx
+                }
+                NSKeyedArchiver.archiveRootObject(Preference.userPhotoKeys as Any, toFile: docDir.appendingPathComponent(tempPhotoKeysFile).path)
+            }
         }
         
         if let vc = ac.popoverPresentationController {
@@ -120,6 +152,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         }
         if pref.hasTransferSequence {
             ac.addAction(deleteRollover)
+        }
+        if pref.hasUserPhotos {
+            ac.addAction(deleteUserPhotos)
         }
         present(ac, animated: true)
     }

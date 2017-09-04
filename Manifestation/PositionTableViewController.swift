@@ -241,6 +241,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         let cardVC = segue.destination as! CardsViewController
         let cardButton = sender as! UIButton
         
+        cardVC.pref = pref
         cardVC.row = cardButton.tag
         if let row = rowBeingEdited {
             let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
@@ -256,7 +257,9 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         let row = cardVC.row
         let ip = IndexPath(row: cardVC.row, section: TableSection.positionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
-        let img = cardVC.userImage ?? UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)")
+        let img = cardVC.userImage ?? (cardVC.returnImageIdx < 0
+            ? pref.image(forKey: cardVC.returnImageIdx)
+            : UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)"))
         
         if let img = img {
             let imgKey = cardVC.returnImageIdx!
@@ -355,7 +358,6 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         rolloverVC.pref = pref
         if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
             print("Positions saved.")
-            pref.userPhotoKeys = nil    // prevent resaving in viewWillDisappear
             try? FileManager.default.removeItem(atPath: tempPhotosF.path)
         }
         
