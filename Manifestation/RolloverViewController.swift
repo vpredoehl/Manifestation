@@ -102,7 +102,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let f = Preference.DocDir.appendingPathComponent(chiImageFile)
 
             self.pref.chiTransferImage = nil
-            self.chiImageView.image = nil
+            self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
@@ -167,10 +167,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 NSLayoutConstraint.deactivate(self.constraintsForReducedChiView)
                 NSLayoutConstraint.activate(self.constraintsForFullChiView)
                 NSLayoutConstraint.deactivate(self.animationVC.constraintsForPauseAnimation)
+                self.chiImageView.alpha = 0.2
             } else {
                 NSLayoutConstraint.deactivate(self.constraintsForFullChiView)
                 NSLayoutConstraint.activate(self.constraintsForReducedChiView)
                 NSLayoutConstraint.activate(self.animationVC.constraintsForPauseAnimation)
+                self.chiImageView.alpha = 1
             }
             self.view.layoutIfNeeded()
         }
