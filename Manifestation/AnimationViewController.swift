@@ -10,19 +10,24 @@ import UIKit
 
 extension Preference
 {
-    var numRolloverImages: Int  {   get     {   return imageIndex.filter { $0 != nil   }.count  }   }
-
-    func rolloverForDisplay() -> (UIImage, String, String) {
-        let idx = rolloverIndex(forRow: Preference.curRolloverPosition)!
-        let img = image(forKey: idx)!
+    func rolloverForDisplay() -> (UIImage?, String, String) {
         let trend = trendText[Preference.curRolloverPosition]
         let target = targetText[Preference.curRolloverPosition]
-        
+        let rolloverPosition = Preference.curRolloverPosition
+
         Preference.curRolloverPosition =
-            Preference.curRolloverPosition == numRolloverImages - 1
+            Preference.curRolloverPosition == numPositions - 1
             ? 0
             : Preference.curRolloverPosition + 1
-        return (img, trend, target)
+
+        guard let idx = rolloverIndex(forRow: rolloverPosition) else
+        {
+            guard trend != "" || target != "" else {
+                return rolloverForDisplay() // nothing to display in this position
+            }
+            return (nil, trend, target)
+        }
+        return (image(forKey: idx), trend, target)
     }
 }
 
@@ -57,7 +62,7 @@ class AnimationViewController: UIViewController
                           animations:
             {
                 self.trendTextStack.isHidden = false
-                self.trendTextLabel.text = trend
+                self.trendTextLabel.text = trend == "" ? "<NOT SET>" : trend
                 self.trendTextLabel.sizeToFit()
                 
         })
@@ -66,7 +71,7 @@ class AnimationViewController: UIViewController
                           animations:
             {
                 self.targetTextStack.isHidden = false
-                self.targetTextLabel.text = target
+                self.targetTextLabel.text = target == "" ? "<NOT SET>" : target
                 self.targetTextLabel.sizeToFit()
         })
     }
