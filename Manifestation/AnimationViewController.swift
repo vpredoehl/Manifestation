@@ -49,6 +49,7 @@ class AnimationViewController: UIViewController
     var trendText: String!   {   didSet  {   trendTextLabel.text = trendText }   }
     var targetText: String! {   didSet  {   targetTextLabel.text = targetText   }   }
     
+    @objc
     func animate(t: Timer) {
         let pref = t.userInfo as! Preference
         let (img, trend, target) = pref.rolloverForDisplay()
