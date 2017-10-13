@@ -29,35 +29,89 @@ extension Preference
     }
 }
 
-class PositionTableViewController: UITableViewController, UITextViewDelegate,
-    UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class PositionTableViewController: UIViewController, UITextViewDelegate,
+    UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: Properties -
-    @IBOutlet weak var editItem: UIBarButtonItem!
-
+    @IBOutlet weak var tableView: UITableView!
+    
     var pref: Preference!
     var rowBeingEdited: Int?
+    var adaptedPositionSection: TableSection {
+        get {
+            return traitCollection.horizontalSizeClass == .regular
+                ? TableSection(rawValue: 0)!
+                : .positionSection
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-         navigationItem.rightBarButtonItems?[1] = editButtonItem
+        navigationItem.rightBarButtonItems?[1] = editButtonItem
+        NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardAppearing(_:)), name: .UIKeyboardDidShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardDisappearing(_:)), name: .UIKeyboardWillHide, object: nil)
+    }
+    
+    // MARK: - Keyboard Notifications -
+    
+    var oldContentInset = UIEdgeInsets.zero
+    var oldIndicatorInset = UIEdgeInsets.zero
+    var oldContent = CGPoint.zero
+    var keyboardShowing = false
+    
+    @objc
+    func keyboardAppearing(_ n: Notification) {
+        if keyboardShowing {
+            return
+        }
+        let d = n.userInfo!
+        var r = d[UIKeyboardFrameEndUserInfoKey] as! CGRect
+        r = tableView.convert(r, to: nil)
+
+        keyboardShowing = true
+        oldContentInset = tableView.contentInset
+        oldIndicatorInset = tableView.scrollIndicatorInsets
+        oldContent = tableView.contentOffset
+        
+        
+        tableView.contentInset.bottom = r.size.height
+        tableView.scrollIndicatorInsets.bottom = r.size.height
+        r = tableView.rectForRow(at: IndexPath(row: rowBeingEdited!, section: adaptedPositionSection.rawValue))
+        tableView.scrollRectToVisible(r, animated: true)
+    }
+    
+    @objc
+    func keyboardDisappearing(_ n: Notification) {
+        if !keyboardShowing {
+            return
+        }
+        keyboardShowing = false
+        tableView.contentInset = oldContentInset
+        tableView.scrollIndicatorInsets = oldIndicatorInset
+        tableView.contentOffset = oldContent
+        tableView.setNeedsDisplay()
     }
 
     // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return traitCollection.horizontalSizeClass == .compact ? 2 : 1
     }
 
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if traitCollection.horizontalSizeClass == .regular {
+            return pref.numPositions
+        }
         return section == TableSection.chiSection.rawValue ? 1 : pref.numPositions
     }
 
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let row = indexPath.row
-        let section = TableSection(rawValue: indexPath.section)!
+        let section = traitCollection.horizontalSizeClass == .regular
+            ? TableSection.positionSection
+            : TableSection(rawValue: indexPath.section)!
 
         switch section {
         case .chiSection:
@@ -101,19 +155,23 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
+        tableView.setEditing(editing, animated: true)
         if editing,
             let row = rowBeingEdited {
-            let cell = tableView.cellForRow(at: IndexPath(row: row, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
             
             cell.textView.resignFirstResponder()
         }
     }
-    override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        if traitCollection.horizontalSizeClass == .regular {
+            return true
+        }
         return indexPath.section != TableSection.chiSection.rawValue
     }
-    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if let row = rowBeingEdited {
-            let ipBeingEdited = IndexPath(row: row, section: TableSection.positionSection.rawValue)
+            let ipBeingEdited = IndexPath(row: row, section: adaptedPositionSection.rawValue)
             let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
             cell.textView.resignFirstResponder()
         }
@@ -131,12 +189,14 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
 
     
     // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        let numRows = tableView.numberOfRows(inSection: TableSection.positionSection.rawValue)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        let numRows = tableView.numberOfRows(inSection: adaptedPositionSection.rawValue)
 
         if editingStyle == .delete {
             let rowToDelete = indexPath.row
-            let fromIdx = rowToDelete+1
+            let fromIdx = traitCollection.horizontalSizeClass == .compact
+                ? rowToDelete+1
+                : rowToDelete
 
             for idx in fromIdx ..< numRows {
                 updateTags(forRow: idx, to: idx-1)
@@ -156,11 +216,11 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         }
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
-        if indexPath.section == TableSection.chiSection.rawValue {
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCellEditingStyle {
+        if traitCollection.horizontalSizeClass == .compact && indexPath.section == TableSection.chiSection.rawValue {
             return .none
         }
-        let rowCount = tableView.numberOfRows(inSection: indexPath.section)
+        let rowCount = tableView.numberOfRows(inSection: adaptedPositionSection.rawValue)
         
         return indexPath.row == rowCount-1 && rowCount < maxNumPositions
             && pref.canInsertRow
@@ -168,16 +228,19 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
             ? .insert : .delete
     }
     
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
         if pref.numPositions == 1 {
             return false
         }
         return indexPath.section != TableSection.chiSection.rawValue
     }
     
-    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
         let toSection = TableSection(rawValue: proposedDestinationIndexPath.section)!
         
+        if traitCollection.horizontalSizeClass == .regular {
+            return proposedDestinationIndexPath
+        }
         if toSection == .chiSection {
             return IndexPath(row: 0, section: TableSection.positionSection.rawValue)
         }
@@ -185,7 +248,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     }
     
     // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+    func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
         let toIdx = to.row
         let fromIdx = fromIndexPath.row
         
@@ -208,7 +271,11 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         tableView.reloadData()
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if traitCollection.horizontalSizeClass == .regular {
+            return "Positions"
+        }
+
         switch section {
         case 0:
             return "Transfer Image"
@@ -217,7 +284,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         }
     }
     
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let v = view as! UITableViewHeaderFooterView
         
         v.textLabel?.textAlignment = .center
@@ -226,7 +293,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     private
     func updateTags(forRow idx: Int, to: Int)
     {
-        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: TableSection.positionSection.rawValue)) as! PositionTableViewCell
+        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
         
         cellToUpdate.cardButton.tag = to
         cellToUpdate.textView.tag = to
@@ -244,7 +311,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
         cardVC.pref = pref
         cardVC.row = cardButton.tag
         if let row = rowBeingEdited {
-            let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
+            let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
             let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
             
             cell.textView.resignFirstResponder()
@@ -255,7 +322,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     func ImageSelectedUnwind(_ segue: UIStoryboardSegue, sender: CardCollectionViewCell) {
         let cardVC = segue.source as! CardsViewController
         let row = cardVC.row
-        let ip = IndexPath(row: cardVC.row, section: TableSection.positionSection.rawValue)
+        let ip = IndexPath(row: cardVC.row, section: adaptedPositionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let img = cardVC.userImage ?? (cardVC.returnImageIdx < 0
             ? pref.image(forKey: cardVC.returnImageIdx)
@@ -293,7 +360,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     // MARK: - Text View Delegage -
     func textViewDidBeginEditing(_ textView: UITextView) {
         let row = textView.tag
-        let ip = IndexPath(row: row, section: TableSection.positionSection.rawValue)
+        let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let selIdx = SegmentType(rawValue: cell.trendOrTarget.selectedSegmentIndex)!
         let text = pref.userText(forRow: row, ofType: selIdx)
@@ -323,7 +390,7 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
     // MARK: - Segmented Control -
     @IBAction func selectTrendOrTarget(_ sender: UISegmentedControl) {
         let idx = sender.tag
-        let ip = IndexPath(row: idx, section: TableSection.positionSection.rawValue)
+        let ip = IndexPath(row: idx, section: adaptedPositionSection.rawValue)
         let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
         let selectedSegment = SegmentType(rawValue: sender.selectedSegmentIndex)!
         
@@ -365,5 +432,16 @@ class PositionTableViewController: UITableViewController, UITextViewDelegate,
             rolloverVC.chiImageView.image = UIImage(data: d)
         }
         navigationController?.popViewController(animated: true)
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        let h = traitCollection.horizontalSizeClass
+        let v = traitCollection.verticalSizeClass
+        
+        print("h: \(h.rawValue)")
+        print("v: \(v.rawValue)")
+        
+        tableView.reloadData()
     }
 }

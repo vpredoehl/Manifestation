@@ -32,7 +32,7 @@
                                 <items>
                                     <barButtonItem title="Setup" id="e09-Wh-XoL">
                                         <connections>
-                                            <segue destination="NpI-hx-oAE" kind="show" identifier="PositionSegue" id="9Bh-aF-PP4"/>
+                                            <segue destination="ZOQ-ns-fhf" kind="show" identifier="PositionSegue" id="sfN-ia-P7O"/>
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="Vkj-oz-WYP"/>
@@ -89,130 +89,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2004.3478260869567" y="-57.065217391304351"/>
-        </scene>
-        <!--Positions-->
-        <scene sceneID="7nJ-f2-xyD">
-            <objects>
-                <tableViewController id="NpI-hx-oAE" customClass="PositionTableViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="28" sectionFooterHeight="28" id="0p7-rB-Y3B">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="140"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bto-6u-UY8" id="LrX-Ks-JC3">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="139.66666666666666"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
-                                            <rect key="frame" x="147" y="10" width="120" height="120"/>
-                                            <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="120" id="TB2-AB-8x1"/>
-                                            </constraints>
-                                            <state key="normal" title="Chi Transfer">
-                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                            <connections>
-                                                <action selector="chiTransferTapped:" destination="NpI-hx-oAE" eventType="touchUpInside" id="mw9-5h-iu1"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="top" secondItem="LrX-Ks-JC3" secondAttribute="topMargin" constant="2" id="eqW-Ab-YRH"/>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerX" secondItem="LrX-Ks-JC3" secondAttribute="centerX" id="sJD-Oy-dDn"/>
-                                        <constraint firstItem="aAR-zI-BcP" firstAttribute="centerY" secondItem="LrX-Ks-JC3" secondAttribute="centerY" id="wQv-vP-hmF"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="chiButton" destination="aAR-zI-BcP" id="28u-Ci-SuC"/>
-                                </connections>
-                            </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="168" width="414" height="140"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="139.66666666666666"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
-                                            <rect key="frame" x="105" y="44" width="301" height="88"/>
-                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                            <connections>
-                                                <outlet property="delegate" destination="NpI-hx-oAE" id="cRU-JE-QBL"/>
-                                            </connections>
-                                        </textView>
-                                        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
-                                            <rect key="frame" x="299" y="8" width="107" height="29"/>
-                                            <segments>
-                                                <segment title="Trend"/>
-                                                <segment title="Target"/>
-                                            </segments>
-                                            <connections>
-                                                <action selector="selectTrendOrTarget:" destination="NpI-hx-oAE" eventType="valueChanged" id="Kx6-sF-62h"/>
-                                            </connections>
-                                        </segmentedControl>
-                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bbr-tT-eFu">
-                                            <rect key="frame" x="8" y="42" width="90" height="90"/>
-                                            <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="90" id="mCM-k2-cVC"/>
-                                            </constraints>
-                                            <state key="normal" title="No Image">
-                                                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                            </state>
-                                            <connections>
-                                                <segue destination="XeA-6l-AL1" kind="show" id="hfN-8q-bbJ"/>
-                                            </connections>
-                                        </button>
-                                    </subviews>
-                                    <constraints>
-                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="leading" secondItem="Bbr-tT-eFu" secondAttribute="trailing" constant="7" id="G6b-9w-e0R"/>
-                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="bottom" secondItem="ET1-RQ-nWK" secondAttribute="bottom" id="MB2-V8-aux"/>
-                                        <constraint firstAttribute="trailingMargin" secondItem="0fc-7T-zBP" secondAttribute="trailing" id="Wfn-vE-5BC"/>
-                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" id="Y2C-Dp-MEM"/>
-                                        <constraint firstItem="ET1-RQ-nWK" firstAttribute="top" secondItem="0fc-7T-zBP" secondAttribute="bottom" constant="8" symbolic="YES" id="iPH-no-33I"/>
-                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="leading" secondItem="BkG-V0-WIM" secondAttribute="leadingMargin" id="jlR-oQ-MnB"/>
-                                        <constraint firstAttribute="bottomMargin" secondItem="Bbr-tT-eFu" secondAttribute="bottom" constant="-0.5" id="m5k-Dp-FSZ"/>
-                                        <constraint firstItem="0fc-7T-zBP" firstAttribute="trailing" secondItem="ET1-RQ-nWK" secondAttribute="trailing" id="naK-td-jYR"/>
-                                        <constraint firstItem="Bbr-tT-eFu" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" constant="34" id="r8i-xI-12z"/>
-                                    </constraints>
-                                </tableViewCellContentView>
-                                <connections>
-                                    <outlet property="cardButton" destination="Bbr-tT-eFu" id="M9a-C9-Pcv"/>
-                                    <outlet property="textView" destination="ET1-RQ-nWK" id="XUA-Em-JdV"/>
-                                    <outlet property="trendOrTarget" destination="0fc-7T-zBP" id="wUm-mG-5FM"/>
-                                </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="NpI-hx-oAE" id="jPf-d5-fdV"/>
-                            <outlet property="delegate" destination="NpI-hx-oAE" id="E5R-QY-LlA"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Positions" id="wwh-6P-afi">
-                        <barButtonItem key="backBarButtonItem" title="Cancel" id="q8N-Ky-ksL"/>
-                        <rightBarButtonItems>
-                            <barButtonItem style="done" systemItem="save" id="nmm-Ls-wGk">
-                                <connections>
-                                    <action selector="save:" destination="NpI-hx-oAE" id="bsR-2D-4ys"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Item" id="UQg-aM-DBs"/>
-                        </rightBarButtonItems>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="editItem" destination="UQg-aM-DBs" id="k60-yS-d2j"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="far-Oy-jHt" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="3093.5999999999999" y="-56.221889055472268"/>
         </scene>
         <!--Title-->
         <scene sceneID="Bij-eC-JCt">
@@ -415,6 +291,141 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6pr-Zp-i0u" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2598.5507246376815" y="-790.76086956521749"/>
+        </scene>
+        <!--Positions-->
+        <scene sceneID="eeJ-GO-bRn">
+            <objects>
+                <viewController id="ZOQ-ns-fhf" customClass="PositionTableViewController" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="ge5-Sf-dFO"/>
+                        <viewControllerLayoutGuide type="bottom" id="Au5-Gr-BvY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="C4i-8z-myG">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="140" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="0p7-rB-Y3B">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="414" height="140"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bto-6u-UY8" id="LrX-Ks-JC3">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="139.66666666666666"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
+                                                    <rect key="frame" x="147" y="10" width="120" height="120"/>
+                                                    <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="120" id="TB2-AB-8x1"/>
+                                                    </constraints>
+                                                    <state key="normal" title="Chi Transfer">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="chiTransferTapped:" destination="ZOQ-ns-fhf" eventType="touchUpInside" id="Rj9-fJ-cco"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="aAR-zI-BcP" firstAttribute="top" secondItem="LrX-Ks-JC3" secondAttribute="topMargin" constant="2" id="eqW-Ab-YRH"/>
+                                                <constraint firstItem="aAR-zI-BcP" firstAttribute="centerX" secondItem="LrX-Ks-JC3" secondAttribute="centerX" id="sJD-Oy-dDn"/>
+                                                <constraint firstItem="aAR-zI-BcP" firstAttribute="centerY" secondItem="LrX-Ks-JC3" secondAttribute="centerY" id="wQv-vP-hmF"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="chiButton" destination="aAR-zI-BcP" id="28u-Ci-SuC"/>
+                                        </connections>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="168" width="414" height="140"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="139.66666666666666"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
+                                                    <rect key="frame" x="105" y="44" width="301" height="88"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="ZOQ-ns-fhf" id="GQ6-xg-SHW"/>
+                                                    </connections>
+                                                </textView>
+                                                <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
+                                                    <rect key="frame" x="299" y="8" width="107" height="29"/>
+                                                    <segments>
+                                                        <segment title="Trend"/>
+                                                        <segment title="Target"/>
+                                                    </segments>
+                                                    <connections>
+                                                        <action selector="selectTrendOrTarget:" destination="ZOQ-ns-fhf" eventType="valueChanged" id="kjf-np-YNH"/>
+                                                    </connections>
+                                                </segmentedControl>
+                                                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Bbr-tT-eFu">
+                                                    <rect key="frame" x="8" y="42" width="90" height="90"/>
+                                                    <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="90" id="mCM-k2-cVC"/>
+                                                    </constraints>
+                                                    <state key="normal" title="No Image">
+                                                        <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                    </state>
+                                                    <connections>
+                                                        <segue destination="XeA-6l-AL1" kind="show" id="hfN-8q-bbJ"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ET1-RQ-nWK" firstAttribute="leading" secondItem="Bbr-tT-eFu" secondAttribute="trailing" constant="7" id="G6b-9w-e0R"/>
+                                                <constraint firstItem="Bbr-tT-eFu" firstAttribute="bottom" secondItem="ET1-RQ-nWK" secondAttribute="bottom" id="MB2-V8-aux"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="0fc-7T-zBP" secondAttribute="trailing" id="Wfn-vE-5BC"/>
+                                                <constraint firstItem="0fc-7T-zBP" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" id="Y2C-Dp-MEM"/>
+                                                <constraint firstItem="ET1-RQ-nWK" firstAttribute="top" secondItem="0fc-7T-zBP" secondAttribute="bottom" constant="8" symbolic="YES" id="iPH-no-33I"/>
+                                                <constraint firstItem="Bbr-tT-eFu" firstAttribute="leading" secondItem="BkG-V0-WIM" secondAttribute="leadingMargin" id="jlR-oQ-MnB"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Bbr-tT-eFu" secondAttribute="bottom" constant="-0.5" id="m5k-Dp-FSZ"/>
+                                                <constraint firstItem="0fc-7T-zBP" firstAttribute="trailing" secondItem="ET1-RQ-nWK" secondAttribute="trailing" id="naK-td-jYR"/>
+                                                <constraint firstItem="Bbr-tT-eFu" firstAttribute="top" secondItem="BkG-V0-WIM" secondAttribute="topMargin" constant="34" id="r8i-xI-12z"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="cardButton" destination="Bbr-tT-eFu" id="M9a-C9-Pcv"/>
+                                            <outlet property="textView" destination="ET1-RQ-nWK" id="XUA-Em-JdV"/>
+                                            <outlet property="trendOrTarget" destination="0fc-7T-zBP" id="wUm-mG-5FM"/>
+                                        </connections>
+                                    </tableViewCell>
+                                </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="ZOQ-ns-fhf" id="uoB-wx-5uv"/>
+                                    <outlet property="delegate" destination="ZOQ-ns-fhf" id="DnY-oJ-bcc"/>
+                                </connections>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Positions" id="wwh-6P-afi">
+                        <barButtonItem key="backBarButtonItem" title="Cancel" id="q8N-Ky-ksL"/>
+                        <rightBarButtonItems>
+                            <barButtonItem style="done" systemItem="save" id="nmm-Ls-wGk">
+                                <connections>
+                                    <action selector="save:" destination="ZOQ-ns-fhf" id="OsG-rd-n2D"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Item" id="UQg-aM-DBs"/>
+                        </rightBarButtonItems>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="tableView" destination="0p7-rB-Y3B" id="YYg-x2-ITb"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nfj-qP-OyR" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3009" y="-57"/>
         </scene>
     </scenes>
     <resources>
