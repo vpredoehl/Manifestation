@@ -309,14 +309,14 @@
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="576" height="140"/>
+                                        <rect key="frame" x="0.0" y="28" width="898" height="140"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bto-6u-UY8" id="LrX-Ks-JC3">
-                                            <rect key="frame" x="0.0" y="0.0" width="576" height="139.66666666666666"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="898" height="139.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
-                                                    <rect key="frame" x="228" y="10" width="120" height="120"/>
+                                                    <rect key="frame" x="389" y="10" width="120" height="120"/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="120" id="TB2-AB-8x1"/>
@@ -340,14 +340,14 @@
                                         </connections>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="168" width="576" height="140"/>
+                                        <rect key="frame" x="0.0" y="168" width="898" height="140"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
-                                            <rect key="frame" x="0.0" y="0.0" width="576" height="139.66666666666666"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="898" height="139.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
-                                                    <rect key="frame" x="105" y="44" width="463" height="88"/>
+                                                    <rect key="frame" x="105" y="44" width="785" height="88"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -357,7 +357,7 @@
                                                     </connections>
                                                 </textView>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
-                                                    <rect key="frame" x="461" y="8" width="107" height="29"/>
+                                                    <rect key="frame" x="783" y="8" width="107" height="29"/>
                                                     <segments>
                                                         <segment title="Trend"/>
                                                         <segment title="Target"/>
@@ -404,6 +404,12 @@
                                     <outlet property="delegate" destination="ZOQ-ns-fhf" id="DnY-oJ-bcc"/>
                                 </connections>
                             </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Transfer Image" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PPs-Jv-PTL">
+                                <rect key="frame" x="20" y="118.66666666666669" width="120.33333333333334" height="20.333333333333314"/>
+                                <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GaF-SS-Fc0">
                                 <rect key="frame" x="20" y="147" width="120" height="120"/>
                                 <constraints>
@@ -435,27 +441,33 @@
                             <constraint firstItem="0p7-rB-Y3B" firstAttribute="top" secondItem="C4i-8z-myG" secondAttribute="top" id="Tny-NT-uo5"/>
                             <constraint firstAttribute="trailing" secondItem="0p7-rB-Y3B" secondAttribute="trailing" id="WLU-nR-anQ"/>
                             <constraint firstItem="GaF-SS-Fc0" firstAttribute="centerY" secondItem="C4i-8z-myG" secondAttribute="centerY" id="Wly-rI-L1S"/>
+                            <constraint firstItem="GaF-SS-Fc0" firstAttribute="top" secondItem="PPs-Jv-PTL" secondAttribute="bottom" constant="8" id="gET-Of-Ghh"/>
+                            <constraint firstItem="PPs-Jv-PTL" firstAttribute="centerX" secondItem="GaF-SS-Fc0" secondAttribute="centerX" id="sqr-MI-QOH"/>
                             <constraint firstItem="GaF-SS-Fc0" firstAttribute="leading" secondItem="C4i-8z-myG" secondAttribute="leadingMargin" id="zEa-aw-511"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
+                                <exclude reference="PPs-Jv-PTL"/>
                                 <exclude reference="GaF-SS-Fc0"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="sqr-MI-QOH"/>
+                                <exclude reference="gET-Of-Ghh"/>
                                 <exclude reference="zEa-aw-511"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=regular">
+                            <color key="backgroundColor" red="0.96078431369999995" green="0.95686274510000002" blue="0.94509803920000002" alpha="1" colorSpace="calibratedRGB"/>
                             <mask key="subviews">
+                                <include reference="PPs-Jv-PTL"/>
                                 <include reference="GaF-SS-Fc0"/>
                             </mask>
                             <mask key="constraints">
+                                <include reference="sqr-MI-QOH"/>
+                                <include reference="gET-Of-Ghh"/>
                                 <include reference="zEa-aw-511"/>
                                 <exclude reference="Etc-EE-LCO"/>
                             </mask>
-                        </variation>
-                        <variation key="heightClass=compact-widthClass=regular">
-                            <color key="backgroundColor" red="0.96078431372549022" green="0.95686274509803915" blue="0.94509803921568625" alpha="1" colorSpace="calibratedRGB"/>
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Positions" id="wwh-6P-afi">
