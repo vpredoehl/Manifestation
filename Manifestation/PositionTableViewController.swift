@@ -34,6 +34,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     
     // MARK: Properties -
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var chiImageAdapted: UIButton!
     
     var pref: Preference!
     var rowBeingEdited: Int?
@@ -51,6 +52,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         navigationItem.rightBarButtonItems?[1] = editButtonItem
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardAppearing(_:)), name: .UIKeyboardDidShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardDisappearing(_:)), name: .UIKeyboardWillHide, object: nil)
+        
+        if let d = pref.chiTransferImage,
+            let img = UIImage(data: d) {
+            chiImageAdapted.setImage(img, for: .normal)
+        }
+
     }
     
     // MARK: - Keyboard Notifications -
@@ -352,7 +359,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
         pref.chiTransferImage = UIImagePNGRepresentation(img)
-        tableView.reloadData()
+        chiImageAdapted.setImage(img, for: .normal)
+        if traitCollection.horizontalSizeClass != .regular {
+            tableView.reloadData()
+        }
         
         dismiss(animated: true)
     }
