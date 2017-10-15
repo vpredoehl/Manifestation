@@ -220,6 +220,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             pref.add()
             ip.row = pref.numPositions - 1
             tableView.insertRows(at: [ip], with: .automatic)
+            tableView.scrollToRow(at: ip, at: .none, animated: true)
         }
     }
     
