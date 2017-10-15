@@ -326,6 +326,18 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
     }
     
+    @IBAction func chiLongPress(_ sender: UILongPressGestureRecognizer) {
+        let iVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! ImageVC
+        
+        if let img = pref.chiTransferImage {
+            iVC.loadViewIfNeeded()
+            iVC.imageView.image = UIImage(data: img)
+            iVC.modalPresentationStyle = .overFullScreen
+            iVC.modalTransitionStyle = .coverVertical
+            present(iVC, animated: true)
+        }
+    }
+    
     @IBAction
     func ImageSelectedUnwind(_ segue: UIStoryboardSegue, sender: CardCollectionViewCell) {
         let cardVC = segue.source as! CardsViewController
@@ -455,4 +467,21 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         
         tableView.reloadData()
     }
+    
+    // MARK: - View Controller Animated Transitioning -
+    
+}
+
+class ImageVC: UIViewController {
+    @IBOutlet weak var imageView: UIImageView!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        print("ImgaeVC loaded")
+    }
+    
+    @IBAction func tap(_ sender: UITapGestureRecognizer) {
+        presentingViewController?.dismiss(animated: true)
+    }
+    
 }
