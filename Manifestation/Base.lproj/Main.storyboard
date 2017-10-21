@@ -7,6 +7,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
@@ -293,25 +294,32 @@
             </objects>
             <point key="canvasLocation" x="2598.5507246376815" y="-790.76086956521749"/>
         </scene>
-        <!--ImageVC-->
+        <!--PreviewVC-->
         <scene sceneID="Wzn-pm-O6w">
             <objects>
-                <viewController storyboardIdentifier="ShowImage" id="TAO-lY-Lkx" customClass="ImageVC" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ShowImage" modalTransitionStyle="crossDissolve" modalPresentationStyle="overCurrentContext" id="TAO-lY-Lkx" customClass="PreviewVC" customModule="Manifestation" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="cxQ-2I-8kp"/>
                         <viewControllerLayoutGuide type="bottom" id="fzW-AM-rn4"/>
                     </layoutGuides>
-                    <view key="view" opaque="NO" alpha="0.75" contentMode="scaleToFill" id="gDl-K6-GTD">
+                    <view key="view" opaque="NO" alpha="0.90000000000000002" contentMode="scaleToFill" id="gDl-K6-GTD">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.69999999999999996" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dh2-TF-je9">
-                                <rect key="frame" x="20" y="20" width="374" height="696"/>
-                                <autoresizingMask key="autoresizingMask"/>
+                            <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.90000000000000002" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dh2-TF-je9">
+                                <rect key="frame" x="20" y="181" width="374" height="374"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="dh2-TF-je9" secondAttribute="height" multiplier="1:1" id="cwB-no-i4s"/>
+                                </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="dh2-TF-je9" firstAttribute="trailing" secondItem="gDl-K6-GTD" secondAttribute="trailingMargin" id="dXV-XE-d4E"/>
+                            <constraint firstItem="dh2-TF-je9" firstAttribute="centerY" secondItem="gDl-K6-GTD" secondAttribute="centerY" id="mrC-oT-m0c"/>
+                            <constraint firstItem="dh2-TF-je9" firstAttribute="leading" secondItem="gDl-K6-GTD" secondAttribute="leadingMargin" id="qq3-lo-olT"/>
+                        </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="9HO-e3-5gP" appends="YES" id="nBq-SZ-HNx"/>
                         </connections>
@@ -352,7 +360,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="139.66666666666666"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
+                                                <button opaque="NO" tag="-1" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
                                                     <rect key="frame" x="147" y="10" width="120" height="120"/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <gestureRecognizers/>
@@ -529,6 +537,7 @@
                 <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="47x-6C-5fG">
                     <connections>
                         <action selector="chiLongPress:" destination="ZOQ-ns-fhf" id="LaM-dl-vM2"/>
+                        <outlet property="delegate" destination="ZOQ-ns-fhf" id="Tjz-ca-is2"/>
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>

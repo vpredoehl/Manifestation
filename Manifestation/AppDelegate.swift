@@ -12,6 +12,8 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    let previewA = PreviewAnim()
+    let dismissA = DismissAnim()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
@@ -19,29 +21,77 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("DocDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path))")
         return true
     }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
-    }
-
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
-
 }
 
+
+class PreviewVC: UIViewController {
+    @IBOutlet weak var imageView: UIImageView!
+    @IBAction func tap(_ sender: UITapGestureRecognizer) {
+        presentingViewController?.dismiss(animated: true)
+    }
+}
+
+let animationDuration = 0.4
+class PreviewAnim: NSObject, UIViewControllerAnimatedTransitioning {
+    var startFrame = CGRect.zero
+    
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return animationDuration
+    }
+    
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let containerV = transitionContext.containerView
+        let toView = transitionContext.view(forKey: .to)!
+        let finalFrame = toView.frame
+        let xScale = startFrame.width / finalFrame.width
+        let yScale = startFrame.height / finalFrame.height
+        let squareScale = max(xScale, yScale)
+        let scaleTransform = CGAffineTransform(scaleX: squareScale, y: squareScale)
+        let toAlpha = toView.alpha
+        
+        toView.transform = scaleTransform
+        toView.center = CGPoint(x: startFrame.midX, y: startFrame.midY)
+        toView.alpha = 0.5
+        
+        containerV.addSubview(toView)
+        UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.3, initialSpringVelocity: 0, options: [], animations: {
+            toView.transform = CGAffineTransform.identity
+            toView.center = CGPoint(x: finalFrame.midX, y: finalFrame.midY)
+            toView.alpha = toAlpha
+        }) { (_) in
+            transitionContext.completeTransition(true)
+        }
+    }
+}
+
+class DismissAnim: NSObject, UIViewControllerAnimatedTransitioning {
+    var endFrame = CGRect.zero
+    var dismissCompletion: (() -> Void)?
+    
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
+        return animationDuration
+    }
+
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
+        let containerV = transitionContext.containerView
+        let fromView = transitionContext.view(forKey: .from)!
+        let imageV = fromView.subviews.first as! UIImageView
+        let initialFrame = imageV.frame
+        let xScale = endFrame.width / initialFrame.width
+        let yScale = endFrame.height / initialFrame.height
+        let squareScale = max(xScale, yScale)
+        let scaleTransform = CGAffineTransform(scaleX: squareScale, y: squareScale)
+        
+        fromView.alpha = 0.9
+        
+        containerV.addSubview(fromView)
+        UIView.animate(withDuration: animationDuration, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: [], animations: {
+            fromView.transform = scaleTransform
+            fromView.center = CGPoint(x: self.endFrame.midX, y: self.endFrame.midY)
+            fromView.alpha = 1
+        }) { (_) in
+            self.dismissCompletion?()
+            transitionContext.completeTransition(true)
+        }
+    }
+}

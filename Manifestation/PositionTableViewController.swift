@@ -30,6 +30,7 @@ extension Preference
 }
 
 class PositionTableViewController: UIViewController, UITextViewDelegate,
+    UIViewControllerTransitioningDelegate,
     UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: Properties -
@@ -60,7 +61,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
     }
     
-    // MARK: - Keyboard Notifications -
+    // MARK: - Keyboard Notifications
     
     var oldContentInset = UIEdgeInsets.zero
     var oldIndicatorInset = UIEdgeInsets.zero
@@ -127,6 +128,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             if pref.chiTransferImage != nil {
                 let img = UIImage(data: pref.chiTransferImage!)
                 cell.chiButton.setImage(img, for: .normal)
+                cell.chiButton.imageView!.contentMode = .scaleAspectFit
             }
             return cell
         case .positionSection:
@@ -158,7 +160,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
     }
     
-    // MARK: - Table View Delegate -
+    // MARK: - Table View Delegate
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
@@ -326,14 +328,22 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
     }
     
+    var previewFrame: CGRect?
+    var previewCompletion: (() -> Void)?
     @IBAction func chiLongPress(_ sender: UILongPressGestureRecognizer) {
-        let iVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! ImageVC
-        
+        let iVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! PreviewVC
         if let img = pref.chiTransferImage {
             iVC.loadViewIfNeeded()
             iVC.imageView.image = UIImage(data: img)
-            iVC.modalPresentationStyle = .overFullScreen
-            iVC.modalTransitionStyle = .coverVertical
+            iVC.modalPresentationStyle = .custom
+            iVC.transitioningDelegate = self
+            
+            let previewView = sender.view?.subviews.first as! UIImageView
+            previewCompletion = {
+                previewView.isHidden = false
+            }
+            previewView.isHidden = true
+            previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
             present(iVC, animated: true)
         }
     }
@@ -360,7 +370,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
     }
     
-    // MARK: - Image Picker -
+    // MARK: - Image Picker
     @IBAction func chiTransferTapped(_ sender: UIButton) {
         let imagePicker = UIImagePickerController()
         
@@ -380,7 +390,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         dismiss(animated: true)
     }
 
-    // MARK: - Text View Delegage -
+    // MARK: - Text View Delegage
     func textViewDidBeginEditing(_ textView: UITextView) {
         let row = textView.tag
         let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
@@ -410,7 +420,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         pref.set(text: textView.text, forRow: idx, ofType: pref.segment(forRow: idx))
     }
     
-    // MARK: - Segmented Control -
+    // MARK: - Segmented Control
     @IBAction func selectTrendOrTarget(_ sender: UISegmentedControl) {
         let idx = sender.tag
         let ip = IndexPath(row: idx, section: adaptedPositionSection.rawValue)
@@ -468,20 +478,22 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         tableView.reloadData()
     }
     
-    // MARK: - View Controller Animated Transitioning -
+    // MARK: - View Controller Transitioning Delegate
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let d = UIApplication.shared.delegate as! AppDelegate
+        let a = d.previewA
+        
+        a.startFrame = previewFrame!
+        return a
+    }
     
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let a = (UIApplication.shared.delegate as! AppDelegate).dismissA
+        
+        a.dismissCompletion = previewCompletion
+        a.endFrame = previewFrame!
+        return a
+    }
 }
 
-class ImageVC: UIViewController {
-    @IBOutlet weak var imageView: UIImageView!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("ImgaeVC loaded")
-    }
-    
-    @IBAction func tap(_ sender: UITapGestureRecognizer) {
-        presentingViewController?.dismiss(animated: true)
-    }
-    
-}
+
