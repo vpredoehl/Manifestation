@@ -143,6 +143,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             else {
                 cell.cardButton.setImage(nil, for: .normal)
             }
+            
+            if cell.cardButton.gestureRecognizers == nil {
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(PositionTableViewController.chiLongPress(_:)))
+                cell.cardButton.addGestureRecognizer(longPress)
+            }
             cell.cardButton.tag = row
             cell.trendOrTarget.selectedSegmentIndex = pref.segment(forRow: row).rawValue
             
@@ -332,20 +337,35 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     var previewCompletion: (() -> Void)?
     @IBAction func chiLongPress(_ sender: UILongPressGestureRecognizer) {
         let iVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! PreviewVC
-        if let img = pref.chiTransferImage {
-            iVC.loadViewIfNeeded()
-            iVC.imageView.image = UIImage(data: img)
-            iVC.modalPresentationStyle = .custom
-            iVC.transitioningDelegate = self
-            
-            let previewView = sender.view?.subviews.first as! UIImageView
-            previewCompletion = {
-                previewView.isHidden = false
-            }
-            previewView.isHidden = true
-            previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
-            present(iVC, animated: true)
+
+        iVC.loadViewIfNeeded()
+        iVC.modalPresentationStyle = .custom
+        iVC.transitioningDelegate = self
+        
+        let previewView = sender.view?.subviews.first as! UIImageView
+        previewCompletion = {
+            previewView.isHidden = false
         }
+        previewView.isHidden = true
+        previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
+
+        switch sender.view!.tag {
+        case -1:
+            if let img = pref.chiTransferImage {
+                iVC.imageView.image = UIImage(data: img)
+            }
+        case 0..<maxNumPositions:
+            let row = sender.view!.tag
+            if let idx = pref.rolloverIndex(forRow: row),
+                let img = idx < 0
+                    ? pref.image(forKey: idx)
+                    : UIImage(named: "AoD/\(idx + 1)") {
+                iVC.imageView.image = img
+            }
+        default:
+            return
+        }
+        present(iVC, animated: true)
     }
     
     @IBAction
