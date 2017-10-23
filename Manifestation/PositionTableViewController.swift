@@ -46,6 +46,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 : .positionSection
         }
     }
+    
+    lazy var expandA = ExpandDel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,6 +145,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             else {
                 cell.cardButton.setImage(nil, for: .normal)
             }
+            cell.cardButton.imageView!.contentMode = .scaleAspectFit
             
             if cell.cardButton.gestureRecognizers == nil {
                 let longPress = UILongPressGestureRecognizer(target: self, action: #selector(PositionTableViewController.chiLongPress(_:)))
@@ -333,26 +336,24 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
     }
     
-    var previewFrame: CGRect?
-    var previewCompletion: (() -> Void)?
     @IBAction func chiLongPress(_ sender: UILongPressGestureRecognizer) {
-        let iVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! PreviewVC
+        let previewVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! PreviewVC
 
-        iVC.loadViewIfNeeded()
-        iVC.modalPresentationStyle = .custom
-        iVC.transitioningDelegate = self
+        previewVC.loadViewIfNeeded()
+        previewVC.modalPresentationStyle = .custom
+        previewVC.transitioningDelegate = expandA
         
         let previewView = sender.view?.subviews.first as! UIImageView
-        previewCompletion = {
+        expandA.previewCompletion = {
             previewView.isHidden = false
         }
         previewView.isHidden = true
-        previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
+        expandA.previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
 
         switch sender.view!.tag {
         case -1:
             if let img = pref.chiTransferImage {
-                iVC.imageView.image = UIImage(data: img)
+                previewVC.imageView.image = UIImage(data: img)
             }
         case 0..<maxNumPositions:
             let row = sender.view!.tag
@@ -360,12 +361,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 let img = idx < 0
                     ? pref.image(forKey: idx)
                     : UIImage(named: "AoD/\(idx + 1)") {
-                iVC.imageView.image = img
+                previewVC.imageView.image = img
             }
         default:
             return
         }
-        present(iVC, animated: true)
+        present(previewVC, animated: true)
     }
     
     @IBAction
@@ -497,6 +498,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         
         tableView.reloadData()
     }
+}
+
+class ExpandDel: NSObject, UIViewControllerTransitioningDelegate {
+    var previewFrame: CGRect?
+    var previewCompletion: (() -> Void)?
     
     // MARK: - View Controller Transitioning Delegate
     func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
@@ -515,5 +521,4 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         return a
     }
 }
-
 

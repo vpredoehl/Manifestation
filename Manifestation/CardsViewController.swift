@@ -51,7 +51,14 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
             cell.imageView.image = img
             cell.imgIdx = indexPath.item
         default:
-            break
+            return CardCollectionViewCell()
+        }
+        cell.imageView.contentMode = .scaleAspectFit
+        cell.tag = indexPath.section
+
+        if cell.gestureRecognizers == nil {
+            let longPress = UILongPressGestureRecognizer(target: self, action: #selector(CardsViewController.longPress(_:)))
+            cell.addGestureRecognizer(longPress)
         }
         return cell
     }
@@ -157,4 +164,34 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         returnImageIdx = -timestamp
         performSegue(withIdentifier: "UnwindWithSelectedImage", sender: self)
     }
+    
+    // MARK: - Navigation
+    lazy var expandTransition = ExpandDel()
+    @objc func longPress(_ sender: UILongPressGestureRecognizer) {
+        let previewVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShowImage") as! PreviewVC
+        let cell = sender.view as! CardCollectionViewCell
+        let imgV = cell.imageView!
+        let section = cell.tag
+        
+        previewVC.loadViewIfNeeded()
+        previewVC.modalPresentationStyle = .custom
+        previewVC.transitioningDelegate = expandTransition
+        switch section {
+        case 0:
+            previewVC.imageView.image = pref.image(forKey: cell.imgIdx)
+        case 1:
+            let img = UIImage(named: "AoD/\(cell.imgIdx + 1)")
+            previewVC.imageView.image = img
+        default:
+            return
+        }
+        
+        imgV.isHidden = true
+        expandTransition.previewFrame = imgV.superview!.convert(imgV.frame, to: nil)
+        expandTransition.previewCompletion = {
+            cell.imageView.isHidden = false
+        }
+        present(previewVC, animated: true)
+    }
 }
+
