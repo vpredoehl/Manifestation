@@ -372,7 +372,6 @@
                                                     </state>
                                                     <connections>
                                                         <action selector="chiTransferTapped:" destination="ZOQ-ns-fhf" eventType="touchUpInside" id="Rj9-fJ-cco"/>
-                                                        <outletCollection property="gestureRecognizers" destination="47x-6C-5fG" appends="YES" id="YUQ-0l-36W"/>
                                                     </connections>
                                                 </button>
                                             </subviews>
@@ -452,13 +451,14 @@
                                 </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Transfer Image" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PPs-Jv-PTL">
-                                <rect key="frame" x="20" y="423.5" width="120.5" height="20.5"/>
+                                <rect key="frame" x="20" y="295.5" width="120.5" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GaF-SS-Fc0">
-                                <rect key="frame" x="20" y="452" width="120" height="120"/>
+                                <rect key="frame" x="20" y="324" width="120" height="120"/>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="Glg-uL-VZm"/>
                                     <constraint firstAttribute="height" constant="120" id="XGA-Rg-uGv"/>
@@ -478,9 +478,11 @@
                                 </variation>
                                 <connections>
                                     <action selector="chiTransferTapped:" destination="ZOQ-ns-fhf" eventType="touchUpInside" id="1wk-VF-Ra6"/>
+                                    <outletCollection property="gestureRecognizers" destination="8xz-8D-Wtm" appends="YES" id="gZy-J2-e7G"/>
                                 </connections>
                             </button>
                         </subviews>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="0p7-rB-Y3B" firstAttribute="leading" secondItem="C4i-8z-myG" secondAttribute="leading" id="Etc-EE-LCO"/>
                             <constraint firstItem="0p7-rB-Y3B" firstAttribute="leading" secondItem="GaF-SS-Fc0" secondAttribute="trailing" constant="20" id="MEj-ws-cbl"/>
@@ -534,14 +536,13 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nfj-qP-OyR" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="47x-6C-5fG">
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="8xz-8D-Wtm">
                     <connections>
-                        <action selector="chiLongPress:" destination="ZOQ-ns-fhf" id="LaM-dl-vM2"/>
-                        <outlet property="delegate" destination="ZOQ-ns-fhf" id="Tjz-ca-is2"/>
+                        <action selector="chiLongPress:" destination="ZOQ-ns-fhf" id="AJf-2J-CmU"/>
                     </connections>
                 </pongPressGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="3032.608695652174" y="-126.08695652173914"/>
+            <point key="canvasLocation" x="2892" y="-84"/>
         </scene>
     </scenes>
     <resources>

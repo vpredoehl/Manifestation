@@ -59,8 +59,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         if let d = pref.chiTransferImage,
             let img = UIImage(data: d) {
             chiImageAdapted.setImage(img, for: .normal)
+            chiImageAdapted.imageView!.contentMode = .scaleAspectFit
         }
-
     }
     
     // MARK: - Keyboard Notifications
@@ -131,6 +131,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 let img = UIImage(data: pref.chiTransferImage!)
                 cell.chiButton.setImage(img, for: .normal)
                 cell.chiButton.imageView!.contentMode = .scaleAspectFit
+            }
+            if cell.chiButton.gestureRecognizers == nil {
+                let longPress = UILongPressGestureRecognizer(target: self, action: #selector(PositionTableViewController.chiLongPress(_:)))
+                cell.chiButton.addGestureRecognizer(longPress)
             }
             return cell
         case .positionSection:
@@ -350,14 +354,14 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         previewView.isHidden = true
         expandA.previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
 
-        switch sender.view!.tag {
+        let tag = sender.view == chiImageAdapted ? -1 : sender.view!.tag
+        switch tag {
         case -1:
             if let img = pref.chiTransferImage {
                 previewVC.imageView.image = UIImage(data: img)
             }
         case 0..<maxNumPositions:
-            let row = sender.view!.tag
-            if let idx = pref.rolloverIndex(forRow: row),
+            if let idx = pref.rolloverIndex(forRow: tag),
                 let img = idx < 0
                     ? pref.image(forKey: idx)
                     : UIImage(named: "AoD/\(idx + 1)") {
@@ -439,6 +443,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         let idx = textView.tag
         
         pref.set(text: textView.text, forRow: idx, ofType: pref.segment(forRow: idx))
+    }
+    @IBAction func dismissKeyboardTap(_ sender: UITapGestureRecognizer) {
+        setEditing(false, animated: true)
     }
     
     // MARK: - Segmented Control
