@@ -408,6 +408,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         
         pref.chiTransferImage = UIImagePNGRepresentation(img)
         chiImageAdapted.setImage(img, for: .normal)
+        chiImageAdapted.imageView!.contentMode = .scaleAspectFit
         if traitCollection.horizontalSizeClass != .regular {
             tableView.reloadData()
         }

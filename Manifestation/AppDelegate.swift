@@ -26,9 +26,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 class PreviewVC: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
+    
+    
     @IBAction func tap(_ sender: UITapGestureRecognizer) {
         presentingViewController?.dismiss(animated: true)
     }
+    override var shouldAutorotate: Bool {
+        return false
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        UIViewController.attemptRotationToDeviceOrientation()
+    }
+    
+    
 }
 
 let animationDuration = 0.4
