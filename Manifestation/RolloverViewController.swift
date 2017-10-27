@@ -68,20 +68,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         let userPhotos = NSKeyedUnarchiver.unarchiveObject(withFile: tempPhotosF.path) as? [Int]
         
-        view.addLayoutGuide(animLG)
-        
-        // constraints for layout guide
-        let layoutInsets = view.layoutMargins
-        let topG = animLG.topAnchor.constraint(equalTo: topLayoutGuide.bottomAnchor, constant: 0)
-        let bottomG = animLG.bottomAnchor.constraint(equalTo: tb.topAnchor, constant: 0)
-        let leftG = animLG.leftAnchor.constraint(equalTo: view.leftAnchor, constant: layoutInsets.left)
-        let rightG = animLG.rightAnchor.constraint(equalTo: view.rightAnchor, constant: -layoutInsets.right)
-        NSLayoutConstraint.activate([topG, bottomG, leftG, rightG])
-        
-        let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -(layoutInsets.right + layoutInsets.left))
-        let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(layoutInsets.bottom + layoutInsets.top))
-        constraintsForFullChiView.append(contentsOf: [width, height])
-        
         if userPhotos != nil {
             Preference.userPhotoKeys = userPhotos
         }
@@ -90,6 +76,24 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        view.addLayoutGuide(animLG)
+        // constraints for layout guide
+        let margins = UIEdgeInsetsMake(8, 8, 8, 8)
+        let safeLG = view.safeAreaLayoutGuide
+        let topG = animLG.topAnchor.constraint(equalTo: safeLG.topAnchor, constant: 0)
+        let bottomG = animLG.bottomAnchor.constraint(equalTo: tb.topAnchor, constant: 0)
+        let leftG = animLG.leftAnchor.constraint(equalTo: safeLG.leftAnchor, constant: margins.left)
+        let rightG = animLG.rightAnchor.constraint(equalTo: safeLG.rightAnchor, constant: -margins.right)
+        NSLayoutConstraint.activate([topG, bottomG, leftG, rightG])
+        
+        let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -(margins.left + margins.right))
+        let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(margins.top + margins.bottom))
+        constraintsForFullChiView = [ constraintsForFullChiView.removeFirst() ]
+        constraintsForFullChiView.append(contentsOf: [width, height])
     }
     
     // MARK: - Tool Bar -
