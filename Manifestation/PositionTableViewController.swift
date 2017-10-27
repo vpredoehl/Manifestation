@@ -348,17 +348,19 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         previewVC.transitioningDelegate = expandA
         
         let previewView = sender.view?.subviews.first as! UIImageView
-        expandA.previewCompletion = {
-            previewView.isHidden = false
-        }
-        previewView.isHidden = true
-        expandA.previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
-
         let tag = sender.view == chiImageAdapted ? -1 : sender.view!.tag
+
+        
+        guard previewView.image != nil else {
+            return
+        }
         switch tag {
         case -1:
             if let img = pref.chiTransferImage {
                 previewVC.imageView.image = UIImage(data: img)
+            }
+            else {
+                return
             }
         case 0..<maxNumPositions:
             if let idx = pref.rolloverIndex(forRow: tag),
@@ -370,6 +372,13 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         default:
             return
         }
+        expandA.previewCompletion = {
+            previewView.isHidden = false
+        }
+        previewView.isHidden = true
+        expandA.previewFrame = previewView.superview!.convert(previewView.frame, to: nil)
+        
+
         present(previewVC, animated: true)
     }
     
