@@ -30,7 +30,7 @@ extension Preference
 }
 
 class PositionTableViewController: UIViewController, UITextViewDelegate,
-    UIViewControllerTransitioningDelegate,
+    UIViewControllerTransitioningDelegate, UIGestureRecognizerDelegate,
     UINavigationControllerDelegate, UIImagePickerControllerDelegate, UITableViewDataSource, UITableViewDelegate {
     
     // MARK: Properties -
@@ -102,7 +102,29 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         tableView.contentOffset = oldContent
         tableView.setNeedsDisplay()
     }
-
+    
+    // MARK: - Keyboard Dismiss Tap Gesture Recognizer
+    @IBAction func keyboardDismissTap(_ sender: UITapGestureRecognizer) {
+        if let row = rowBeingEdited {
+            let path = IndexPath(row: row, section: adaptedPositionSection.rawValue)
+            let cell = tableView.cellForRow(at: path) as! PositionTableViewCell
+            
+            cell.textView.resignFirstResponder()
+        }
+    }
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        let pt = gestureRecognizer.location(in: view)
+        let visibleRows = tableView.indexPathsForVisibleRows
+        
+        if let lastRow = visibleRows?.last {
+            let r = tableView.convert(tableView.rectForRow(at: lastRow), to: view)
+            guard pt.y < r.origin.y + r.size.height else {
+                return true
+            }
+        }
+        return pt.x < tableView.frame.origin.x
+    }
+    
     // MARK: - Table view data source
 
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -558,7 +580,6 @@ class CardPopoverSegue: UIStoryboardSegue {
     var sourceV : UIView!
     
     override func perform() {
-        let cardVC = destination as! CardsViewController
         guard let pop = destination.popoverPresentationController
             else {
                 super.perform()
