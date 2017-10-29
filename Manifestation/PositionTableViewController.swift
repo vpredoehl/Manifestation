@@ -413,6 +413,14 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBAction func chiTransferTapped(_ sender: UIButton) {
         let imagePicker = UIImagePickerController()
         
+        if traitCollection.userInterfaceIdiom == .pad {
+            imagePicker.modalPresentationStyle = .popover
+            let pop = imagePicker.popoverPresentationController!
+            
+            pop.sourceView = chiImageAdapted
+            pop.sourceRect = chiImageAdapted.bounds
+            pop.permittedArrowDirections = [ .up, .down, .right ]
+        }
         imagePicker.sourceType = .photoLibrary
         imagePicker.delegate = self
         present(imagePicker, animated: true)
