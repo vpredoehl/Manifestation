@@ -329,9 +329,14 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let cardVC = segue.destination as! CardsViewController
         let cardButton = sender as! UIButton
-        
+        guard let popoverS = segue as? CardPopoverSegue else { return }
+
         cardVC.pref = pref
+        if traitCollection.userInterfaceIdiom == .pad {
+            cardVC.modalPresentationStyle = .popover
+        }
         cardVC.row = cardButton.tag
+        popoverS.sourceV = cardButton
         if let row = rowBeingEdited {
             let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
             let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
@@ -517,6 +522,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     }
 }
 
+// MARK: -
 class ExpandDel: NSObject, UIViewControllerTransitioningDelegate {
     var previewFrame: CGRect?
     var previewCompletion: (() -> Void)?
@@ -537,5 +543,25 @@ class ExpandDel: NSObject, UIViewControllerTransitioningDelegate {
         a.endFrame = previewFrame!
         return a
     }
+}
+
+// MARK: -
+class CardPopoverSegue: UIStoryboardSegue {
+    var sourceV : UIView!
+    
+    override func perform() {
+        let cardVC = destination as! CardsViewController
+        guard let pop = destination.popoverPresentationController
+            else {
+                super.perform()
+                return
+        }
+        
+        pop.sourceView = sourceV
+        pop.sourceRect = sourceV.bounds
+        pop.permittedArrowDirections = .any
+        source.present(destination, animated: true)
+    }
+    
 }
 
