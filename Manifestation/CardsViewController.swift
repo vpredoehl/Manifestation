@@ -28,6 +28,9 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         let insets = UIEdgeInsets(top: statusBarHeight, left: 0, bottom: 0, right: 0)
         
         collectionView?.scrollIndicatorInsets = insets
+        if popoverPresentationController != nil {
+            navigationItem.leftBarButtonItem = nil
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -116,6 +119,12 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     }
     
     // MARK: - Image Picker Controller -
+    enum UserPhotoSelectionActionType {
+        case none
+        case camera
+        case photoLibrary
+    }
+    var actionType: UserPhotoSelectionActionType = .none
     @IBAction func cameraTapped(_ sender: UIBarButtonItem) {
         let ac = UIAlertController()
         let choosePhoto =
@@ -124,7 +133,9 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
             let ip = UIImagePickerController()
             
             ip.delegate = self
+            ip.modalPresentationStyle = .overCurrentContext
             ip.sourceType = .photoLibrary
+            self.actionType = .photoLibrary
             self.present(ip, animated: true)
         }
         
@@ -136,7 +147,9 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
             let ip = UIImagePickerController()
             
             ip.delegate = self
+            ip.modalPresentationStyle = .overCurrentContext
             ip.sourceType = .camera
+            self.actionType = .camera
             self.present(ip, animated: true)
         }
         
@@ -162,6 +175,14 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         
         userImage = info[UIImagePickerControllerOriginalImage] as! UIImage?
         returnImageIdx = -timestamp
+        switch actionType {
+        case .none:
+            break
+        case .camera:   // camera photos are
+            returnImageIdx = returnImageIdx -  returnImageIdx & 1
+        case .photoLibrary:
+            returnImageIdx = returnImageIdx | 1
+        }
         performSegue(withIdentifier: "UnwindWithSelectedImage", sender: self)
     }
     

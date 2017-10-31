@@ -349,13 +349,14 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let cardVC = segue.destination as! CardsViewController
+        let navVC = segue.destination as! UINavigationController
+        let cardVC = navVC.topViewController as! CardsViewController
         let cardButton = sender as! UIButton
         guard let popoverS = segue as? CardPopoverSegue else { return }
 
         cardVC.pref = pref
         if traitCollection.userInterfaceIdiom == .pad {
-            cardVC.modalPresentationStyle = .popover
+            navVC.modalPresentationStyle = .popover
         }
         cardVC.row = cardButton.tag
         popoverS.sourceV = cardButton
@@ -429,6 +430,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             tableView.isEditing = false
             tableView.isEditing = true
         }
+    }
+    
+    @IBAction
+    func CancelUnwind(_ segue: UIStoryboardSegue, sender: Any?) {
     }
     
     // MARK: - Image Picker
@@ -516,7 +521,6 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     
     @IBAction func save(_ sender: UIBarButtonItem) {
         let fPosn = Preference.DocDir.appendingPathComponent(positionFile)
-        let tempPhotosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
         if let img = pref.chiTransferImage {
@@ -531,7 +535,6 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         rolloverVC.pref = pref
         if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
             print("Positions saved.")
-            try? FileManager.default.removeItem(atPath: tempPhotosF.path)
         }
         
         if let d = pref.chiTransferImage {

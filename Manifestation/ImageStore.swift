@@ -27,8 +27,6 @@ extension Preference
                 else {
                     Preference.userPhotoKeys!.append(key)
                 }
-                let photosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
-                NSKeyedArchiver.archiveRootObject(Preference.userPhotoKeys!, toFile: photosF.path)
             }
         }
         

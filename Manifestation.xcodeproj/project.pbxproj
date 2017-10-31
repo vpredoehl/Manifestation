@@ -52,7 +52,7 @@
 		0898E2661F18859600CCBE83 /* UI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UI_Tests.swift; sourceTree = "<group>"; };
 		0898E2681F18859600CCBE83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0898E26E1F18860F00CCBE83 /* iPhoneUITest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = iPhoneUITest.swift; sourceTree = "<group>"; };
-		0898E2701F18876D00CCBE83 /* Rollover.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Rollover.playground; sourceTree = "<group>"; };
+		0898E2701F18876D00CCBE83 /* Rollover.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Rollover.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		08ACBA671EEF80F00017BD8D /* ImageStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		08B87B601EBF515E0095A736 /* CardsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardsViewController.swift; sourceTree = "<group>"; };
 		08B87B621EBF54410095A736 /* CardCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCollectionViewCell.swift; sourceTree = "<group>"; };

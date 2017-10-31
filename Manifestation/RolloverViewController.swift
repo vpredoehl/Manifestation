@@ -64,13 +64,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
         let f = dd.appendingPathComponent(positionFile)
-        let tempPhotosF = dd.appendingPathComponent(tempPhotoKeysFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
-        let userPhotos = NSKeyedUnarchiver.unarchiveObject(withFile: tempPhotosF.path) as? [Int]
         
-        if userPhotos != nil {
-            Preference.userPhotoKeys = userPhotos
-        }
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
@@ -142,7 +137,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                         guard let idx = idx else {   return nil }
                         return idx < 0 ? nil : idx
                 }
-                NSKeyedArchiver.archiveRootObject(Preference.userPhotoKeys as Any, toFile: docDir.appendingPathComponent(tempPhotoKeysFile).path)
             }
         }
         

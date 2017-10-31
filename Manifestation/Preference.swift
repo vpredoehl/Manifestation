@@ -10,7 +10,6 @@ import Foundation
 
 let chiImageFile = "chiImage"
 let positionFile = "positions"
-let tempPhotoKeysFile = "userPhotos"
 
 class Preference: NSObject, NSCoding, NSCopying {
     
@@ -57,7 +56,6 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - Archiving -
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(Preference.userPhotoKeys, forKey: "userPhotoKeys")
         aCoder.encode(imageIndex, forKey: "imageIndex")
         aCoder.encode(trendText, forKey: "trendText")
         aCoder.encode(targetText, forKey: "targetText")
@@ -71,13 +69,16 @@ class Preference: NSObject, NSCoding, NSCopying {
         let targetText = aDecoder.decodeObject(forKey: "targetText") as? [String]
         let ss = aDecoder.decodeObject(forKey: "selectedSegment") as? [Int]
         let numPositions = aDecoder.decodeInteger(forKey: "numPositions")
-        let tempPhotosF = Preference.DocDir.appendingPathComponent(tempPhotoKeysFile)
         var st: [SegmentType]? = nil
-        
-        Preference.userPhotoKeys = FileManager.default.fileExists(atPath: tempPhotosF.path)
-            ? NSKeyedUnarchiver.unarchiveObject(withFile: tempPhotosF.path) as? [Int]
-            : aDecoder.decodeObject(forKey: "userPhotoKeys") as! [Int]?
-        
+
+        if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path) {
+            let userKeys = dirContents.filter { $0.starts(with: "UI-")  }
+                .map { $0.components(separatedBy: "-").last! }
+                .flatMap {    Int("-" + $0)    }
+            
+            Preference.userPhotoKeys = userKeys
+        }
+
         // remove dangling user photo  indexes
         let docDir = Preference.DocDir
         imageIndex = imageIndex?.map
@@ -128,8 +129,9 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     func remove(at rowToDelete: Int) {
         if let idx = imageIndex[rowToDelete] {
-            if idx < 0 {
+            if idx < 0 && idx & 1 == 1 { // don't delete images taken by the camera
                 deleteImage(forKey: idx) // delete user image, if exists
+                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != idx   }
             }
         }
         imageIndex.remove(at: rowToDelete)
@@ -188,8 +190,9 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     func set(imageIndex i: Int, forRow r: Int) {
         if let idx = imageIndex[r] {
-            if idx < 0 {
+            if idx < 0  && idx & 1 == 1 {   // don't delete images taken by the camera
                 deleteImage(forKey: idx)
+                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != idx   }
             }
         }
         imageIndex[r] = i
