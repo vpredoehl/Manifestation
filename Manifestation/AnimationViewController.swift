@@ -20,7 +20,7 @@ extension Preference
             ? 0
             : Preference.curRolloverPosition + 1
 
-        guard let idx = rolloverIndex(forRow: rolloverPosition) else
+        guard let idx = rolloverIndex(forRow: rolloverPosition).key else
         {
             guard trend != "" || target != "" else {
                 return rolloverForDisplay() // nothing to display in this position

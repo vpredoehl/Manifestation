@@ -17,7 +17,7 @@ extension Preference
         let matchesKey = Preference.userPhotoKeys?.filter   { $0 == key }
         let url = imageURL(forKey: key)
         
-        guard key >= 0 || key < 0 && (matchesKey == nil || matchesKey?.count == 0) else {  return } // ignore user images that are already saved
+        guard key < 0 && (matchesKey == nil || matchesKey?.count == 0) else {  return } // ignore user images that are already saved
         if let data = UIImageJPEGRepresentation(image, 0.5) {
             try? data.write(to: url, options: [.atomic])
             if key < 0 {    // store user photo key
@@ -47,12 +47,14 @@ extension Preference
     
     func deleteImage(forKey key: Int) {
         Preference.cache.removeObject(forKey: String(key) as NSString)
-        
-        let url = imageURL(forKey: key)
-        do {
-            try FileManager.default.removeItem(at: url)
-        } catch let deleteError  {  // implicit error constant if not specified
-            print("Error removing image from disk \(deleteError)")
+        if key >= 0 || key < 0  && key & 1 == 1 {   // don't delete images taken by the camera
+            let url = imageURL(forKey: key)
+            do {
+                try FileManager.default.removeItem(at: url)
+            } catch let deleteError  {  // implicit error constant if not specified
+                print("Error removing image from disk \(deleteError)")
+            }
+            Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != key   }
         }
     }
     

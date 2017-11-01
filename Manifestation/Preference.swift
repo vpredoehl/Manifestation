@@ -119,8 +119,10 @@ class Preference: NSObject, NSCoding, NSCopying {
         }
     }
     
-    func rolloverIndex(forRow r: Int) -> Int? {
-        return imageIndex[r]
+    func rolloverIndex(forRow r: Int) -> (key: Int?, useCount: Int) {
+        let key = imageIndex[r]
+        let c = imageIndex.filter   {   $0 == key   }.count
+        return (key, c)
     }
     
     func segment(forRow r: Int) -> SegmentType {
@@ -128,11 +130,9 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func remove(at rowToDelete: Int) {
-        if let idx = imageIndex[rowToDelete] {
-            if idx < 0 && idx & 1 == 1 { // don't delete images taken by the camera
-                deleteImage(forKey: idx) // delete user image, if exists
-                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != idx   }
-            }
+        let kc = rolloverIndex(forRow: rowToDelete)
+        if let idx = kc.key, kc.useCount == 1 {
+            deleteImage(forKey: idx) // delete user image, if exists
         }
         imageIndex.remove(at: rowToDelete)
         trendText.remove(at: rowToDelete)
@@ -189,11 +189,9 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func set(imageIndex i: Int, forRow r: Int) {
-        if let idx = imageIndex[r] {
-            if idx < 0  && idx & 1 == 1 {   // don't delete images taken by the camera
-                deleteImage(forKey: idx)
-                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != idx   }
-            }
+        let kc = rolloverIndex(forRow: r)
+        if let idx = kc.key, kc.useCount == 1 {
+            deleteImage(forKey: idx)
         }
         imageIndex[r] = i
     }
