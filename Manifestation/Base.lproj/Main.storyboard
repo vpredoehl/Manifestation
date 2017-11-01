@@ -60,19 +60,59 @@
                                     <segue destination="VMD-cF-AZN" kind="embed" identifier="AnimationSegue" id="IKv-6p-P4Y"/>
                                 </connections>
                             </containerView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="30" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Q1G-Gk-YFT">
+                                <rect key="frame" x="87" y="238" width="240" height="260"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="240" id="26d-yB-c80"/>
+                                    <constraint firstAttribute="height" constant="260" id="jeu-kM-nso"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SavedSetup" id="Sme-Z3-n6R">
+                                        <rect key="frame" x="0.0" y="28" width="240" height="30"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sme-Z3-n6R" id="wgU-it-mYK">
+                                            <rect key="frame" x="0.0" y="0.0" width="240" height="29.666666666666668"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="abn-Jg-Vml">
+                                                    <rect key="frame" x="0.0" y="0.0" width="240" height="29.666666666666668"/>
+                                                    <state key="normal" title="Button"/>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="abn-Jg-Vml" secondAttribute="trailing" id="3zG-Ia-ms0"/>
+                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="top" secondItem="wgU-it-mYK" secondAttribute="top" id="PJe-4G-zKf"/>
+                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="centerY" secondItem="wgU-it-mYK" secondAttribute="centerY" id="QII-c0-spf"/>
+                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="leading" secondItem="wgU-it-mYK" secondAttribute="leading" id="QRx-LS-lLL"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="879-mi-y7P"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fPM-gZ-qdC"/>
+                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jo1-CK-pj2"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pdg-Oc-x60"/>
+                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="tTw-J4-Npj"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="yLv-Vk-36z"/>
                         </constraints>
                         <variation key="default">
+                            <mask key="subviews">
+                                <exclude reference="Q1G-Gk-YFT"/>
+                            </mask>
                             <mask key="constraints">
                                 <exclude reference="879-mi-y7P"/>
+                            </mask>
+                        </variation>
+                        <variation key="widthClass=compact">
+                            <mask key="subviews">
+                                <include reference="Q1G-Gk-YFT"/>
                             </mask>
                         </variation>
                     </view>
@@ -510,13 +550,13 @@
                                 </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Transfer Image" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PPs-Jv-PTL">
-                                <rect key="frame" x="20" y="467.5" width="120.5" height="20.5"/>
+                                <rect key="frame" x="20" y="423.5" width="120.5" height="20.5"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GaF-SS-Fc0">
-                                <rect key="frame" x="20" y="496" width="120" height="120"/>
+                                <rect key="frame" x="20" y="452" width="120" height="120"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="Glg-uL-VZm"/>
