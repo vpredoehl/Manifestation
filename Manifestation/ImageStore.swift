@@ -37,10 +37,13 @@ extension Preference
         if let existingImage = Preference.cache.object(forKey: String(key) as NSString) {
             return existingImage
         }
-        
         let url = imageURL(forKey: key)
-        guard let imageFromDisk = UIImage(contentsOfFile: url.path)
-            else    {   return nil  }
+        
+        guard let imageFromDisk = key < 0
+            ? UIImage(contentsOfFile: url.path)
+            : UIImage(named: "AoD/\(key + 1)")
+            else { return nil }
+        
         Preference.cache.setObject(imageFromDisk, forKey: String(key) as NSString)
         return imageFromDisk
     }
