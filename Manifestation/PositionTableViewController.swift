@@ -163,9 +163,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             let cell = tableView.dequeueReusableCell(withIdentifier: "PositionTableViewCell", for: indexPath) as! PositionTableViewCell
             
             if let idx = pref.rolloverIndex(forRow: row).key,
-                let img = idx < 0
-                    ? pref.image(forKey: idx)
-                    : UIImage(named: "AoD/\(idx + 1)") {
+                let img = pref.image(forKey: idx) {
                 cell.cardButton.setImage(img, for: .normal)
             }
             else {
