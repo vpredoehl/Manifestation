@@ -230,7 +230,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     if willBeAnimating { self.animationVC.rolloverStack.isHidden = !willBeAnimating }
                 }
         })
-        curAnim?.stopAnimation(!willBeAnimating)
+        curAnim?.stopAnimation(true)
         curAnim = playOrPauseAnimation
         playOrPauseAnimation.startAnimation()
         
