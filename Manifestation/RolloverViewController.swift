@@ -71,10 +71,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
-    }
-    
-    override func viewSafeAreaInsetsDidChange() {
-        super.viewSafeAreaInsetsDidChange()
+        
         view.addLayoutGuide(animLG)
         // constraints for layout guide
         let margins = UIEdgeInsetsMake(8, 8, 8, 8)
@@ -87,7 +84,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         
         let width = animationView.widthAnchor.constraint(equalTo: animLG.widthAnchor, constant: -(margins.left + margins.right))
         let height = animationView.heightAnchor.constraint(equalTo: animLG.heightAnchor, constant: -(margins.top + margins.bottom))
-        constraintsForFullChiView = [ constraintsForFullChiView.removeFirst() ]
         constraintsForFullChiView.append(contentsOf: [width, height])
     }
     
@@ -214,7 +210,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                                       duration: willBeAnimating ? 0 : self.animationDuration / 0.75,  // make transition without animations if willBeAnimating
                         options: UIViewAnimationOptions.transitionFlipFromRight,
                         animations: {  self.animationVC.rolloverIV.image = nil  })
-                    
                 }
             }
         }
