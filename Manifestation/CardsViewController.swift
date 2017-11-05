@@ -8,8 +8,9 @@
 
 import UIKit
 
-class HeaderView: UICollectionViewCell {
+class HeaderView: UICollectionReusableView {
     @IBOutlet weak var headerText: UILabel!
+    @IBOutlet weak var sizeSlider: UISlider!
 }
 
 class CardsViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -40,6 +41,14 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     
     // MARK: - Collection View Data Source -
 
+    @IBAction func sliderMoved(_ sender: UISlider) {
+        let l = collectionView?.collectionViewLayout as! UICollectionViewFlowLayout
+        let v = Int(sender.value)
+        
+        l.itemSize = CGSize(width: v, height: v)
+        l.invalidateLayout()
+        print("Slider: \(sender.value)")
+    }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let img = UIImage(named: "AoD/\(indexPath.row + 1)")

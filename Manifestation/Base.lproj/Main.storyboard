@@ -218,21 +218,32 @@
                             <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
                             <autoresizingMask key="autoresizingMask"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rOt-Gs-YR4">
-                                    <rect key="frame" x="8" y="8" width="398" height="34"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rOt-Gs-YR4">
+                                    <rect key="frame" x="20" y="0.0" width="228" height="50"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
+                                <slider opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="749" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="90" minValue="70" maxValue="150" translatesAutoresizingMaskIntoConstraints="NO" id="7ph-Nd-I0H">
+                                    <rect key="frame" x="254" y="9.6666666666666643" width="142" height="31"/>
+                                    <color key="minimumTrackTintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <connections>
+                                        <action selector="sliderMoved:" destination="XeA-6l-AL1" eventType="valueChanged" id="Dp7-Ot-FlR"/>
+                                    </connections>
+                                </slider>
                             </subviews>
                             <constraints>
-                                <constraint firstItem="rOt-Gs-YR4" firstAttribute="leading" secondItem="uux-3V-3Wp" secondAttribute="leadingMargin" id="3hh-y6-N4G"/>
+                                <constraint firstAttribute="trailing" secondItem="7ph-Nd-I0H" secondAttribute="trailing" constant="20" symbolic="YES" id="5na-DH-Ucq"/>
                                 <constraint firstItem="rOt-Gs-YR4" firstAttribute="top" secondItem="uux-3V-3Wp" secondAttribute="topMargin" id="Asd-Jy-bgv"/>
+                                <constraint firstItem="7ph-Nd-I0H" firstAttribute="leading" secondItem="rOt-Gs-YR4" secondAttribute="trailing" constant="8" symbolic="YES" id="X1G-1N-3ux"/>
                                 <constraint firstItem="rOt-Gs-YR4" firstAttribute="bottom" secondItem="uux-3V-3Wp" secondAttribute="bottomMargin" id="XM1-Km-zFa"/>
-                                <constraint firstItem="rOt-Gs-YR4" firstAttribute="trailing" secondItem="uux-3V-3Wp" secondAttribute="trailingMargin" id="YOX-qZ-tAg"/>
+                                <constraint firstItem="7ph-Nd-I0H" firstAttribute="width" secondItem="uux-3V-3Wp" secondAttribute="width" multiplier="1:3" id="k1M-wM-xRg"/>
+                                <constraint firstItem="7ph-Nd-I0H" firstAttribute="centerY" secondItem="uux-3V-3Wp" secondAttribute="centerY" id="nDl-5r-q2w"/>
+                                <constraint firstItem="rOt-Gs-YR4" firstAttribute="leading" secondItem="uux-3V-3Wp" secondAttribute="leading" constant="20" symbolic="YES" id="ztA-mf-POY"/>
                             </constraints>
                             <connections>
                                 <outlet property="headerText" destination="rOt-Gs-YR4" id="fAV-cL-Gcf"/>
+                                <outlet property="sizeSlider" destination="7ph-Nd-I0H" id="QLg-fd-AZG"/>
                             </connections>
                         </collectionReusableView>
                         <connections>
@@ -261,7 +272,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="J5o-px-aMQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="UHq-Wk-T3n" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="5040" y="303"/>
+            <point key="canvasLocation" x="5039.130434782609" y="302.44565217391306"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="FGK-YO-nTE">
