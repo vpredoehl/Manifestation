@@ -10,6 +10,7 @@ import Foundation
 
 let chiImageFile = "chiImage"
 let positionFile = "positions"
+let presetsFile = "presets"
 
 class Preference: NSObject, NSCoding, NSCopying {
     

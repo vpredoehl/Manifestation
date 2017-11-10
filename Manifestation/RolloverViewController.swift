@@ -35,13 +35,15 @@ extension Preference
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
 }
 
-class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
+// MARK: -
+class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,
+    UITableViewDataSource, UITableViewDelegate
 {
-    // MARK: Properties -
     @IBOutlet weak var animationView: UIView!
     @IBOutlet weak var trashItem: UIBarButtonItem!
     @IBOutlet weak var tb: UIToolbar!
-
+    @IBOutlet weak var presetView: UITableView!
+    
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
     
@@ -71,6 +73,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             chiImageView.image = UIImage(data: d)
         }
         
+        presetView.layer.borderWidth = 2.0
+        presetView.layer.borderColor = UIColor.lightGray.cgColor
+        
         view.addLayoutGuide(animLG)
         // constraints for layout guide
         let margins = UIEdgeInsetsMake(8, 8, 8, 8)
@@ -86,7 +91,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         constraintsForFullChiView.append(contentsOf: [width, height])
     }
     
-    // MARK: - Tool Bar -
+    // MARK: - Tool Bar
     @IBAction func trash(_ sender: Any) {
         let ac = UIAlertController()
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
@@ -261,5 +266,76 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         default: break
         }
     }
+    
+    // MARK: - Preset Table View -
+    var presetNames = [ "a","b", "c" ]
+    @IBOutlet weak var editPresetBtn: UIButton!
+    
+    @IBAction func addPreset(_ sender: UIButton) {
+        let a = UIAlertController(title: "Add New Preset", message: "What is the name of the new preset?", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
+            let n = a.textFields![0].text!
+            let ip = IndexPath(row: self.presetNames.count, section: 0)
+            
+            self.presetNames.append(n)
+            self.presetView.insertRows(at: [ip], with: .bottom)
+        }
+        
+        a.addTextField { (tf) in
+            tf.keyboardType = .alphabet
+            tf.addTarget(self, action: #selector(RolloverViewController.textChanged(_:)), for: .editingChanged)
+        }
+        
+        a.addAction(cancel)
+        a.addAction(ok)
+        a.actions[1].isEnabled = false
+        present(a, animated: true)
+    }
+    
+    @IBAction func editPresets(_ sender: UIButton) {
+        presetView.setEditing(!presetView.isEditing, animated: true)
+        editPresetBtn.setTitle(presetView.isEditing ? "Done" : "Edit", for: .normal)
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            presetNames.remove(at: indexPath.row)
+            presetView.deleteRows(at: [indexPath], with: .fade)
+        case .insert, .none:
+            break
+        }
+    }
+    
+    @objc
+    func textChanged(_ tf: UITextField) {
+        var resp: UIResponder! = tf
+        while !(resp is UIAlertController) {
+            resp = resp.next
+        }
+        (resp as! UIAlertController).actions[1].isEnabled = tf.text != ""
+    }
+    
+    // MARK: - Table View Data Source
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return presetNames.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SavedSetup", for: indexPath) as! PresetTableViewCell
+        
+        cell.presetButton.setTitle(presetNames[indexPath.row], for: .normal)
+        return cell
+    }
+}
+
+// MARK: -
+class PresetTableViewCell: UITableViewCell {
+    @IBOutlet weak var presetButton: UIButton!
+    
 }
 
