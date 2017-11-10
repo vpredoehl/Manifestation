@@ -17,7 +17,11 @@ class Preference: NSObject, NSCoding, NSCopying {
     static let DocDir =
     {
         () -> URL in
-        return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+    }()
+    static let AppDir = {
+        () -> URL in
+        return try! FileManager.default.url(for: .applicationDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }()
     static var curRolloverPosition = 0
 
@@ -44,7 +48,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             chiTransferImage = img
         }
         else {
-            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
             chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
         }
         imageIndex = ii ?? [ nil ]

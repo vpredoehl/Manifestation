@@ -62,8 +62,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         tb.items![4].isEnabled = pref.canHiliteTrash
     }
     override func viewDidLoad() {
-        let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-        let f = dd.appendingPathComponent(positionFile)
+        let f = Preference.AppDir.appendingPathComponent(positionFile)
         let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
         
         pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
@@ -94,7 +93,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteChi = UIAlertAction(title: "Delete Transfer Image", style: .destructive)
         {
             (_) in
-            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
 
             self.pref.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
@@ -106,7 +105,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
-            let f = Preference.DocDir.appendingPathComponent(positionFile)
+            let f = Preference.AppDir.appendingPathComponent(positionFile)
             
             self.pref.removeAll()
             NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)

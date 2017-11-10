@@ -51,7 +51,7 @@
                                 </items>
                             </toolbar>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tfU-eF-Nfh">
-                                <rect key="frame" x="147" y="72" width="120" height="120"/>
+                                <rect key="frame" x="147" y="92" width="120" height="120"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="ivB-ZR-5xA"/>
                                     <constraint firstAttribute="width" constant="120" id="vcQ-VG-vo2"/>
