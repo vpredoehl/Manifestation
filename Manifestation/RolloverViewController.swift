@@ -75,6 +75,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
+        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
+            for preset in dirContents {
+                if preset.hasDirectoryPath {
+                    presetNames.append(preset.lastPathComponent)
+                }
+            }
+        }
+        editPresetBtn.isEnabled = presetNames.count > 0
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -268,7 +276,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     // MARK: - Preset Table View -
-    var presetNames = [ "a","b", "c" ]
+    var presetNames: [String] = [] {
+        didSet {
+            editPresetBtn.isEnabled = presetNames.count > 0
+        }
+    }
     @IBOutlet weak var editPresetBtn: UIButton!
     
     @IBAction func addPreset(_ sender: UIButton) {
@@ -277,9 +289,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             let n = a.textFields![0].text!
             let ip = IndexPath(row: self.presetNames.count, section: 0)
-            
+            let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
+            let posF = Preference.AppDir.appendingPathComponent(positionFile)
+
             self.presetNames.append(n)
             self.presetView.insertRows(at: [ip], with: .bottom)
+            // move files to preset folder
+            try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
+            try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
         }
         
         a.addTextField { (tf) in
@@ -301,8 +318,16 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
         case .delete:
-            presetNames.remove(at: indexPath.row)
+            let row = indexPath.row
+            let dirName = presetNames[row]
+
+            try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
+            presetNames.remove(at: row)
             presetView.deleteRows(at: [indexPath], with: .fade)
+            if presetNames.count == 0 {
+                presetView.setEditing(false, animated: false)
+                editPresetBtn.setTitle("Edit", for: .normal)
+            }
         case .insert, .none:
             break
         }
