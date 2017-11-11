@@ -83,6 +83,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
         }
         editPresetBtn.isEnabled = presetNames.count > 0
+        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -125,6 +126,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash
+            self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence
         }
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
         {
@@ -282,6 +284,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         }
     }
     @IBOutlet weak var editPresetBtn: UIButton!
+    @IBOutlet weak var addCurrentPresetBtn: UIButton!
     
     @IBAction func addPreset(_ sender: UIButton) {
         let a = UIAlertController(title: "Add New Preset", message: "What is the name of the new preset?", preferredStyle: .alert)

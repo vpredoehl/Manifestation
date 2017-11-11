@@ -141,6 +141,7 @@
                     </view>
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
                     <connections>
+                        <outlet property="addCurrentPresetBtn" destination="d5R-SE-CTU" id="KYO-mo-jTb"/>
                         <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>
                         <outlet property="editPresetBtn" destination="G6A-Ba-212" id="cKw-Jt-s9c"/>
                         <outlet property="presetView" destination="Q1G-Gk-YFT" id="UQI-by-eWK"/>

@@ -531,6 +531,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
         
         rolloverVC.pref = pref
+        rolloverVC.addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
         if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
             print("Positions saved.")
         }
