@@ -60,91 +60,87 @@
                                     <segue destination="VMD-cF-AZN" kind="embed" identifier="AnimationSegue" id="IKv-6p-P4Y"/>
                                 </connections>
                             </containerView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="30" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Q1G-Gk-YFT">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GMX-K9-mCg">
                                 <rect key="frame" x="69" y="377.66666666666674" width="276" height="294.33333333333326"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SavedSetup" id="Sme-Z3-n6R" customClass="PresetTableViewCell" customModule="Manifestation" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="276" height="30"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SavedSetup" id="xzY-8c-iUj" customClass="PresetTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="276" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Sme-Z3-n6R" id="wgU-it-mYK">
-                                            <rect key="frame" x="0.0" y="0.0" width="276" height="29.666666666666668"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xzY-8c-iUj" id="bcF-67-e9e">
+                                            <rect key="frame" x="0.0" y="0.0" width="276" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="abn-Jg-Vml">
-                                                    <rect key="frame" x="0.0" y="0.0" width="276" height="29.666666666666668"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iYC-y9-Jxq">
+                                                    <rect key="frame" x="0.0" y="0.0" width="276" height="44"/>
                                                     <state key="normal" title="Button"/>
+                                                    <connections>
+                                                        <action selector="switchPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="geR-Zv-oOp"/>
+                                                    </connections>
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="abn-Jg-Vml" secondAttribute="trailing" id="3zG-Ia-ms0"/>
-                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="top" secondItem="wgU-it-mYK" secondAttribute="top" id="PJe-4G-zKf"/>
-                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="centerY" secondItem="wgU-it-mYK" secondAttribute="centerY" id="QII-c0-spf"/>
-                                                <constraint firstItem="abn-Jg-Vml" firstAttribute="leading" secondItem="wgU-it-mYK" secondAttribute="leading" id="QRx-LS-lLL"/>
+                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="top" secondItem="bcF-67-e9e" secondAttribute="top" id="Red-DP-6K0"/>
+                                                <constraint firstAttribute="trailing" secondItem="iYC-y9-Jxq" secondAttribute="trailing" id="jKF-oG-ehN"/>
+                                                <constraint firstAttribute="bottom" secondItem="iYC-y9-Jxq" secondAttribute="bottom" id="w1B-Qy-6Cx"/>
+                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="leading" secondItem="bcF-67-e9e" secondAttribute="leading" id="wiZ-Ug-lEr"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="presetButton" destination="abn-Jg-Vml" id="Kyl-2W-JIf"/>
+                                            <outlet property="presetButton" destination="iYC-y9-Jxq" id="oad-x1-vfN"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
-                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="cBL-A2-vzn"/>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="0jf-23-kTm"/>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="O2a-th-3hG"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="pqP-cv-BYG"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d5R-SE-CTU">
-                                <rect key="frame" x="69" y="339" width="132" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YXO-A9-Afl">
+                                <rect key="frame" x="69" y="339.66666666666669" width="132" height="30"/>
                                 <state key="normal" title="Add Current Preset"/>
                                 <connections>
-                                    <action selector="addPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="zgG-f9-hQB"/>
+                                    <action selector="addPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Sor-xS-cVS"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G6A-Ba-212">
-                                <rect key="frame" x="315" y="339" width="30" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="61k-Xz-W3W">
+                                <rect key="frame" x="315" y="339.66666666666669" width="30" height="30"/>
                                 <state key="normal" title="Edit"/>
                                 <connections>
-                                    <action selector="editPresets:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vwc-eD-IlV"/>
+                                    <action selector="editPresets:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8bM-BS-2gr"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="leading" secondItem="d5R-SE-CTU" secondAttribute="leading" id="6N9-gL-ALe"/>
+                            <constraint firstItem="M1q-TV-OXq" firstAttribute="top" secondItem="GMX-K9-mCg" secondAttribute="bottom" constant="20" id="3LA-fd-olw"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="66m-JS-x6j"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="879-mi-y7P"/>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="4:10" id="CzZ-fW-cAv"/>
-                            <constraint firstItem="M1q-TV-OXq" firstAttribute="top" secondItem="Q1G-Gk-YFT" secondAttribute="bottom" constant="20" id="LQb-CN-hwe"/>
-                            <constraint firstItem="G6A-Ba-212" firstAttribute="trailing" secondItem="Q1G-Gk-YFT" secondAttribute="trailing" id="SRm-xJ-MtO"/>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="top" secondItem="G6A-Ba-212" secondAttribute="bottom" constant="8" symbolic="YES" id="eAC-bi-1oU"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="tfU-eF-Nfh" secondAttribute="bottom" constant="20" id="KF5-PJ-qxj"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="2:3" id="MI6-cF-7BJ"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="4:10" priority="999" id="N4b-f6-OMz"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="YXO-A9-Afl" secondAttribute="bottom" constant="8" id="Sn0-7y-C95"/>
+                            <constraint firstItem="61k-Xz-W3W" firstAttribute="trailing" secondItem="GMX-K9-mCg" secondAttribute="trailing" id="bEj-XF-bS6"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fPM-gZ-qdC"/>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="jo1-CK-pj2"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="YXO-A9-Afl" secondAttribute="leading" id="g16-gi-HGm"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pdg-Oc-x60"/>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="top" secondItem="d5R-SE-CTU" secondAttribute="bottom" constant="8" symbolic="YES" id="t4f-mh-VuI"/>
-                            <constraint firstItem="Q1G-Gk-YFT" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="2:3" id="taW-WM-nQU"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="61k-Xz-W3W" secondAttribute="bottom" constant="8" id="xwD-OP-xdp"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="yLv-Vk-36z"/>
                         </constraints>
                         <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="Q1G-Gk-YFT"/>
-                            </mask>
                             <mask key="constraints">
                                 <exclude reference="879-mi-y7P"/>
-                            </mask>
-                        </variation>
-                        <variation key="widthClass=compact">
-                            <mask key="subviews">
-                                <include reference="Q1G-Gk-YFT"/>
                             </mask>
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
                     <connections>
-                        <outlet property="addCurrentPresetBtn" destination="d5R-SE-CTU" id="KYO-mo-jTb"/>
+                        <outlet property="addCurrentPresetBtn" destination="YXO-A9-Afl" id="S9J-FI-OWd"/>
                         <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>
-                        <outlet property="editPresetBtn" destination="G6A-Ba-212" id="cKw-Jt-s9c"/>
-                        <outlet property="presetView" destination="Q1G-Gk-YFT" id="UQI-by-eWK"/>
+                        <outlet property="editPresetBtn" destination="61k-Xz-W3W" id="ch7-KD-4UJ"/>
+                        <outlet property="presetView" destination="GMX-K9-mCg" id="JxN-zN-O0O"/>
                         <outlet property="tb" destination="M1q-TV-OXq" id="soV-eI-5bS"/>
                         <outlet property="trashItem" destination="c8o-o3-GIe" id="b6X-uM-BvQ"/>
                         <outletCollection property="constraintsForReducedChiView" destination="pdg-Oc-x60" collectionClass="NSMutableArray" id="wWH-bk-hgK"/>
@@ -155,7 +151,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2004.3478260869567" y="-57.065217391304351"/>
+            <point key="canvasLocation" x="2004.0345821325648" y="-57.8125"/>
         </scene>
         <!--Title-->
         <scene sceneID="Bij-eC-JCt">
@@ -576,13 +572,13 @@
                                 </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Transfer Image" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PPs-Jv-PTL">
-                                <rect key="frame" x="20" y="423.5" width="120.5" height="20.5"/>
+                                <rect key="frame" x="20" y="118.66666666666669" width="120.66666666666666" height="20.333333333333314"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GaF-SS-Fc0">
-                                <rect key="frame" x="20" y="452" width="120" height="120"/>
+                                <rect key="frame" x="20" y="147" width="120" height="120"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="120" id="Glg-uL-VZm"/>

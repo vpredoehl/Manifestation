@@ -317,6 +317,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         presetView.setEditing(!presetView.isEditing, animated: true)
         editPresetBtn.setTitle(presetView.isEditing ? "Done" : "Edit", for: .normal)
     }
+    @IBAction func switchPreset(_ sender: UIButton) {
+        let n = sender.titleLabel!.text!
+        let url = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
+        let posFile = url.appendingPathComponent(positionFile)
+        
+        pref = NSKeyedUnarchiver.unarchiveObject(withFile: posFile.path) as? Preference
+        addCurrentPresetBtn.isEnabled = false
+    }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         switch editingStyle {
