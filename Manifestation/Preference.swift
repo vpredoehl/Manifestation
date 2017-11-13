@@ -12,6 +12,24 @@ let chiImageFile = "chiImage"
 let positionFile = "positions"
 let presetsFile = "presets"
 
+class RolloverPresets : NSObject {
+    @objc dynamic
+    var names: [String] = []
+    var ctx = 0
+    
+    override init() {
+        super.init()
+        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
+            for preset in dirContents {
+                if preset.hasDirectoryPath {
+                    names.append(preset.lastPathComponent)
+                }
+            }
+        }
+    }
+    
+}
+
 class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: Properties -

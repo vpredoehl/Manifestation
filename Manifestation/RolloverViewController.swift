@@ -50,6 +50,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     let animationDuration = 0.5
     let animLG = UILayoutGuide()
 
+    var preset = RolloverPresets()
     var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
@@ -57,6 +58,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     var curAnim: UIViewPropertyAnimator?
     
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+    }
+    
+    deinit {
+        removeObserver(self, forKeyPath: "names")
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -75,14 +85,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
-        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
-            for preset in dirContents {
-                if preset.hasDirectoryPath {
-                    presetNames.append(preset.lastPathComponent)
-                }
-            }
-        }
-        editPresetBtn.isEnabled = presetNames.count > 0
+        editPresetBtn.isEnabled = preset.names.count > 0
         addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
         
         view.addLayoutGuide(animLG)
@@ -278,12 +281,23 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     // MARK: - Preset Table View -
-    var selectedPreset: Int? = nil
-    var presetNames: [String] = [] {
+    var selectedPreset: Int? = nil {
         didSet {
-            editPresetBtn.isEnabled = presetNames.count > 0
+            if let s = oldValue {
+                let ip = IndexPath(row: s, section: 0)
+                let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+                
+                cell.presetButton.isSelected = false
+                cell.setSelected(false, animated: false)
+            }
         }
     }
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        let names = change![NSKeyValueChangeKey.newKey] as! [String]
+        editPresetBtn.isEnabled = names.count > 0
+    }
+    
     @IBOutlet weak var editPresetBtn: UIButton!
     @IBOutlet weak var addCurrentPresetBtn: UIButton!
     
@@ -292,11 +306,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             let n = a.textFields![0].text!
-            let ip = IndexPath(row: self.presetNames.count, section: 0)
+            let ip = IndexPath(row: self.preset.names.count, section: 0)
             let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
             let posF = Preference.AppDir.appendingPathComponent(positionFile)
 
-            self.presetNames.append(n)
+            self.preset.names.append(n)
             self.presetView.insertRows(at: [ip], with: .bottom)
             // move files to preset folder
             try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
@@ -331,8 +345,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if let s = selectedPreset {
             let ip = IndexPath(row: s, section: 0)
             let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+            
             cell.presetButton.isSelected = false
             cell.setSelected(false, animated: false)
+            guard s != sender.tag else {
+                // tapped selected preset
+                selectedPreset = nil
+                return
+            }
         }
         selectedCell?.setSelected(true, animated: false)
         addCurrentPresetBtn.isEnabled = false
@@ -344,12 +364,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         switch editingStyle {
         case .delete:
             let row = indexPath.row
-            let dirName = presetNames[row]
+            let dirName = preset.names[row]
 
             try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
-            presetNames.remove(at: row)
+            preset.names.remove(at: row)
             presetView.deleteRows(at: [indexPath], with: .fade)
-            if presetNames.count == 0 {
+            if preset.names.count == 0 {
                 presetView.setEditing(false, animated: false)
                 editPresetBtn.setTitle("Edit", for: .normal)
             }
@@ -372,7 +392,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         return 1
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presetNames.count
+        return preset.names.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -389,7 +409,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if let s = selectedPreset  {
             cell.isSelected = s == indexPath.row
         }
-        cell.presetButton.setTitle(presetNames[indexPath.row], for: .normal)
+        cell.presetButton.setTitle(preset.names[indexPath.row], for: .normal)
         cell.presetButton.setTitleColor(UIColor.brown, for: .selected)
         cell.presetButton.setBackgroundImage(hiliteImage, for: .selected)
         return cell
