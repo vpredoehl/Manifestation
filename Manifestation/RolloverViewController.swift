@@ -278,6 +278,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     // MARK: - Preset Table View -
+    var selectedPreset: Int? = nil
     var presetNames: [String] = [] {
         didSet {
             editPresetBtn.isEnabled = presetNames.count > 0
@@ -321,9 +322,22 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let n = sender.titleLabel!.text!
         let url = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
         let posFile = url.appendingPathComponent(positionFile)
-        
+        let selectedIP = IndexPath(row: sender.tag, section: 0)
+        let selectedCell = presetView.cellForRow(at: selectedIP)
+
         pref = NSKeyedUnarchiver.unarchiveObject(withFile: posFile.path) as? Preference
+
+        // unselect previous cell
+        if let s = selectedPreset {
+            let ip = IndexPath(row: s, section: 0)
+            let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+            cell.presetButton.isSelected = false
+            cell.setSelected(false, animated: false)
+        }
+        selectedCell?.setSelected(true, animated: false)
         addCurrentPresetBtn.isEnabled = false
+        selectedPreset = sender.tag
+        sender.isSelected = true
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
@@ -363,8 +377,21 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "SavedSetup", for: indexPath) as! PresetTableViewCell
-        
+        let render = UIGraphicsImageRenderer(size: CGSize(width: 10, height: 5))
+        let hiliteImage = render.image { (rctx) in
+            let ctx = rctx.cgContext
+            
+            ctx.setFillColor(UIColor.green.cgColor)
+            ctx.fill(CGRect(x: 0, y: 0, width: 10, height: 5))
+            }.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
+
+        cell.presetButton.tag = indexPath.row
+        if let s = selectedPreset  {
+            cell.isSelected = s == indexPath.row
+        }
         cell.presetButton.setTitle(presetNames[indexPath.row], for: .normal)
+        cell.presetButton.setTitleColor(UIColor.brown, for: .selected)
+        cell.presetButton.setBackgroundImage(hiliteImage, for: .selected)
         return cell
     }
 }

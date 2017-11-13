@@ -72,7 +72,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iYC-y9-Jxq">
-                                                    <rect key="frame" x="0.0" y="0.0" width="276" height="44"/>
+                                                    <rect key="frame" x="4" y="4" width="268" height="35.666666666666664"/>
                                                     <state key="normal" title="Button"/>
                                                     <connections>
                                                         <action selector="switchPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="geR-Zv-oOp"/>
@@ -80,10 +80,10 @@
                                                 </button>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="top" secondItem="bcF-67-e9e" secondAttribute="top" id="Red-DP-6K0"/>
-                                                <constraint firstAttribute="trailing" secondItem="iYC-y9-Jxq" secondAttribute="trailing" id="jKF-oG-ehN"/>
-                                                <constraint firstAttribute="bottom" secondItem="iYC-y9-Jxq" secondAttribute="bottom" id="w1B-Qy-6Cx"/>
-                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="leading" secondItem="bcF-67-e9e" secondAttribute="leading" id="wiZ-Ug-lEr"/>
+                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="top" secondItem="bcF-67-e9e" secondAttribute="top" constant="4" id="Red-DP-6K0"/>
+                                                <constraint firstAttribute="trailing" secondItem="iYC-y9-Jxq" secondAttribute="trailing" constant="4" id="jKF-oG-ehN"/>
+                                                <constraint firstAttribute="bottom" secondItem="iYC-y9-Jxq" secondAttribute="bottom" constant="4" id="w1B-Qy-6Cx"/>
+                                                <constraint firstItem="iYC-y9-Jxq" firstAttribute="leading" secondItem="bcF-67-e9e" secondAttribute="leading" constant="4" id="wiZ-Ug-lEr"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
