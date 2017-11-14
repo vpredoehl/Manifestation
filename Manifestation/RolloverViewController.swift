@@ -184,6 +184,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 NSLayoutConstraint.activate(self.animationVC.constraintsForPauseAnimation)
                 self.chiImageView.alpha = 1
             }
+            self.addCurrentPresetBtn.isHidden = willBeAnimating
+            self.editPresetBtn.isHidden = willBeAnimating
             self.view.layoutIfNeeded()
         }
         if willBeAnimating {
