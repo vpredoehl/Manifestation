@@ -15,7 +15,7 @@ let presetsFile = "presets"
 class RolloverPresets : NSObject {
     @objc dynamic var names: [String] = []
     var presetPref: [Preference] = []
-    var defaultPref: Preference? = nil
+    @objc dynamic var defaultPref: Preference? = nil
     var ctx = 0
     
     override init() {

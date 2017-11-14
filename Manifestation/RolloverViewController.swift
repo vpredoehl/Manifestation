@@ -19,20 +19,23 @@ extension Preference
             return userKeys.count > 0
         }
     }
-    var hasTransferSequence: Bool
-    {
-        get {
-            if let ii = imageIndex {    // has non-nil image?
-                for i in ii {
-                    if i != nil    {   return true }
-                }
-            }
+    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
+    var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
+    
+    func hasTransferSequence(currentPreset p: Int? = nil) -> Bool {
+        guard p == nil else {
             return false
         }
+        if let ii = imageIndex {    // has non-nil image?
+            for i in ii {
+                if i != nil    {   return true }
+            }
+        }
+        return false
     }
-    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
-    var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence || hasUserPhotos  }   }
-    var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
+    func canHiliteTrash(currentPreset p: Int?) -> Bool {
+        return hasChiImage || hasTransferSequence(currentPreset: p) || hasUserPhotos
+    }
 }
 
 // MARK: -
@@ -64,6 +67,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let p = preset.defaultPref
 
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
         pref = p ?? Preference()
     }
     
@@ -74,7 +78,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tb.items![2].isEnabled = pref.canPlay
-        tb.items![4].isEnabled = pref.canHiliteTrash
+        tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
     }
     override func viewDidLoad() {
         animationVC.pref = pref
@@ -85,7 +89,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
         editPresetBtn.isEnabled = preset.names.count > 0
-        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
+        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence()
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -116,7 +120,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
         }
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
@@ -127,8 +131,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
             
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
-            self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
+            self.addCurrentPresetBtn.isEnabled = false
         }
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
         {
@@ -160,7 +164,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if pref.hasChiImage {
             ac.addAction(deleteChi)
         }
-        if pref.hasTransferSequence {
+        if pref.hasTransferSequence(currentPreset: selectedPreset) {
             ac.addAction(deleteRollover)
         }
         if pref.hasUserPhotos {
@@ -291,6 +295,13 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 cell.presetButton.isSelected = false
                 cell.setSelected(false, animated: false)
             }
+            else {
+                let fPos = Preference.AppDir.appendingPathComponent(positionFile)
+                let hasDefaultPositions = FileManager.default.fileExists(atPath: fPos.path)
+                
+                // enable add current preset button if has default positions
+                addCurrentPresetBtn.isEnabled = hasDefaultPositions
+            }
             if let s = selectedPreset {
                 let ip = IndexPath(row: s, section: 0)
                 let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
@@ -302,8 +313,20 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
 
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        let names = change![NSKeyValueChangeKey.newKey] as! [String]
-        editPresetBtn.isEnabled = names.count > 0
+        switch keyPath {
+        case "names"?:
+            let names = change![NSKeyValueChangeKey.newKey] as! [String]
+            editPresetBtn.isEnabled = names.count > 0
+        case "defaultPref"?:
+            if let def = preset.defaultPref {
+                addCurrentPresetBtn.isEnabled = def != Preference()
+            }
+            else {
+                addCurrentPresetBtn.isEnabled = false
+            }
+        default:
+            break
+        }
     }
     
     @IBOutlet weak var editPresetBtn: UIButton!
@@ -319,12 +342,13 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let posF = Preference.AppDir.appendingPathComponent(positionFile)
 
             self.preset.names.append(n)
+            self.preset.presetPref.append(self.pref)
+            self.preset.defaultPref = Preference()
             self.presetView.insertRows(at: [ip], with: .bottom)
             self.selectedPreset = ip.row
             // move files to preset folder
             try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
             try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
-            self.preset.defaultPref = Preference()
         }
         
         a.addTextField { (tf) in

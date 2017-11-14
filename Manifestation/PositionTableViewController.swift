@@ -553,10 +553,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 // clear previous selection
                 curSel.presetButton.isSelected = false
                 curSel.setSelected(false, animated: false)
+                rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
                 rolloverVC.preset.defaultPref = pref
-                rolloverVC.addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
                 if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
                     print("Positions saved.")
                 }
