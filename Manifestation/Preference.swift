@@ -13,21 +13,45 @@ let positionFile = "positions"
 let presetsFile = "presets"
 
 class RolloverPresets : NSObject {
-    @objc dynamic
-    var names: [String] = []
+    @objc dynamic var names: [String] = []
+    var presetPref: [Preference] = []
+    var defaultPref: Preference? = nil
     var ctx = 0
     
     override init() {
         super.init()
+        let f = Preference.AppDir.appendingPathComponent(positionFile)
+        
+        defaultPref = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference ?? Preference()
+
         if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
             for preset in dirContents {
                 if preset.hasDirectoryPath {
+                    let posF = preset.appendingPathComponent(positionFile)
+                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: posF.path) as! Preference
+                    
                     names.append(preset.lastPathComponent)
+                    presetPref.append(pref)
                 }
             }
         }
     }
     
+    func index(of p: Preference) -> Int? {
+        return presetPref.index(of: p)
+    }
+}
+
+func ==(lhs: [Int?], rhs: [Int?]) -> Bool {
+    guard lhs.count == rhs.count else {
+        return false
+    }
+    for i in 0..<lhs.count {
+        if lhs[i] != rhs[i] {
+            return false
+        }
+    }
+    return true
 }
 
 class Preference: NSObject, NSCoding, NSCopying {
@@ -40,7 +64,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }()
     static let AppDir = {
         () -> URL in
-        return try! FileManager.default.url(for: .applicationDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }()
     static var curRolloverPosition = 0
 
@@ -223,4 +247,17 @@ class Preference: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
+
+    override func isEqual(_ obj: Any?) -> Bool {
+        guard let rhs = obj as? Preference else { return false }
+
+        let eqII = imageIndex == rhs.imageIndex
+        let eqTrend = trendText == rhs.trendText
+        let eqTarget = targetText == rhs.targetText
+        
+        return eqII && eqTrend && eqTarget
+
+    }
 }
+
+

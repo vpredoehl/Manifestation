@@ -531,9 +531,46 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
         
         rolloverVC.pref = pref
-        rolloverVC.addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
-        if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
-            print("Positions saved.")
+        let existingPresetIdx = rolloverVC.preset.index(of: pref)
+        if let idx = existingPresetIdx,
+            let s = rolloverVC.selectedPreset {
+            guard s != existingPresetIdx else   {   return  }
+                // previous selection and existing preset
+            let curSelIP = IndexPath(row: s, section: 0)
+            let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as! PresetTableViewCell
+            let newSelIP = IndexPath(row: idx, section: 0)
+            let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+            
+            curSel.presetButton.isSelected = false
+            curSel.setSelected(false, animated: false)
+            newSel.presetButton.isSelected = true
+            newSel.setSelected(true, animated: false)
+        } else {
+            if let s = rolloverVC.selectedPreset {
+                let curSelIP = IndexPath(row: s, section: 0)
+                let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as! PresetTableViewCell
+
+                // clear previous selection
+                curSel.presetButton.isSelected = false
+                curSel.setSelected(false, animated: false)
+            }
+            if existingPresetIdx == nil {
+                rolloverVC.preset.defaultPref = pref
+                rolloverVC.addCurrentPresetBtn.isEnabled = pref.hasTransferSequence
+                if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
+                    print("Positions saved.")
+                }
+            }
+            else {
+                let posF = Preference.AppDir.appendingPathComponent(positionFile)
+                let newSelIP = IndexPath(row: existingPresetIdx!, section: 0)
+                let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+
+                newSel.presetButton.isSelected = true
+                newSel.setSelected(true, animated: false)
+                try? FileManager.default.removeItem(at: posF)
+                rolloverVC.selectedPreset = existingPresetIdx
+            }
         }
         
         if let d = pref.chiTransferImage {

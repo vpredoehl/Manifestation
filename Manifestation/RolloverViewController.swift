@@ -51,7 +51,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     let animLG = UILayoutGuide()
 
     var preset = RolloverPresets()
-    var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
+    var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref != nil && pref.numPositions > 0  }   }
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
     var rolloverTimer: Timer?
@@ -61,7 +61,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        let p = preset.defaultPref
+
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        pref = p ?? Preference()
     }
     
     deinit {
@@ -74,10 +77,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         tb.items![4].isEnabled = pref.canHiliteTrash
     }
     override func viewDidLoad() {
-        let f = Preference.AppDir.appendingPathComponent(positionFile)
-        let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
-        
-        pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
@@ -350,6 +349,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             cell.setSelected(false, animated: false)
             guard s != sender.tag else {
                 // tapped selected preset
+                pref = preset.defaultPref
                 selectedPreset = nil
                 return
             }
