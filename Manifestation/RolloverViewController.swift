@@ -289,6 +289,13 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 cell.presetButton.isSelected = false
                 cell.setSelected(false, animated: false)
             }
+            if let s = selectedPreset {
+                let ip = IndexPath(row: s, section: 0)
+                let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+                
+                cell.presetButton.isSelected = true
+                cell.setSelected(true, animated: false)
+            }
         }
     }
 
@@ -311,9 +318,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
             self.preset.names.append(n)
             self.presetView.insertRows(at: [ip], with: .bottom)
+            self.selectedPreset = ip.row
             // move files to preset folder
             try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
             try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
+            self.preset.defaultPref = Preference()
         }
         
         a.addTextField { (tf) in
