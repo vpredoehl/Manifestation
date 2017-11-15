@@ -308,6 +308,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 
                 cell.presetButton.isSelected = true
                 cell.setSelected(true, animated: false)
+                pref = preset.presetPref[s]
+            }
+            else {
+                pref = preset.defaultPref
             }
         }
     }
@@ -356,7 +360,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
             self.preset.names.append(n)
             self.preset.presetPref.append(self.preset.defaultPref!)
-            self.pref = self.preset.defaultPref
             self.preset.defaultPref = Preference()
             self.presetView.insertRows(at: [ip], with: .bottom)
             self.selectedPreset = ip.row
@@ -378,13 +381,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         editPresetBtn.setTitle(presetView.isEditing ? "Done" : "Edit", for: .normal)
     }
     @IBAction func switchPreset(_ sender: UIButton) {
-        let n = sender.titleLabel!.text!
-        let url = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
-        let posFile = url.appendingPathComponent(positionFile)
         let selectedIP = IndexPath(row: sender.tag, section: 0)
         let selectedCell = presetView.cellForRow(at: selectedIP)
-
-        pref = NSKeyedUnarchiver.unarchiveObject(withFile: posFile.path) as? Preference
 
         // unselect previous cell
         if let s = selectedPreset {
