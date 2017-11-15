@@ -355,7 +355,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
 
             self.preset.names.append(n)
-            self.preset.presetPref.append(self.pref)
+            self.preset.presetPref.append(self.preset.defaultPref!)
+            self.pref = self.preset.defaultPref
             self.preset.defaultPref = Preference()
             self.presetView.insertRows(at: [ip], with: .bottom)
             self.selectedPreset = ip.row
