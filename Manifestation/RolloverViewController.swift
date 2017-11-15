@@ -290,10 +290,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         didSet {
             if let s = oldValue {
                 let ip = IndexPath(row: s, section: 0)
-                let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+                let cell = presetView.cellForRow(at: ip) as? PresetTableViewCell
                 
-                cell.presetButton.isSelected = false
-                cell.setSelected(false, animated: false)
+                cell?.presetButton.isSelected = false
+                cell?.setSelected(false, animated: false)
             }
             else {
                 let fPos = Preference.AppDir.appendingPathComponent(positionFile)
