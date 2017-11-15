@@ -340,6 +340,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let ip = IndexPath(row: self.preset.names.count, section: 0)
             let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
             let posF = Preference.AppDir.appendingPathComponent(positionFile)
+            
+            guard !self.preset.names.contains(n) else {
+                let al = UIAlertController(title: "Duplicate Name", message: "A preset with that name already exists", preferredStyle: .alert)
+                let d = UIAlertAction(title: "Ok", style: .default)
+                
+                al.addAction(d)
+                self.present(al, animated: true)
+                return
+            }
 
             // move files to preset folder
             try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
@@ -391,7 +400,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
         }
         selectedCell?.setSelected(true, animated: false)
-        addCurrentPresetBtn.isEnabled = false
         selectedPreset = sender.tag
         sender.isSelected = true
     }
