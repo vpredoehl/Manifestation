@@ -545,6 +545,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             curSel.setSelected(false, animated: false)
             newSel.presetButton.isSelected = true
             newSel.setSelected(true, animated: false)
+            rolloverVC.selectedPreset = existingPresetIdx
         } else {
             if let s = rolloverVC.selectedPreset {
                 let curSelIP = IndexPath(row: s, section: 0)

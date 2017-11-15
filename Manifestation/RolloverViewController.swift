@@ -341,14 +341,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
             let posF = Preference.AppDir.appendingPathComponent(positionFile)
 
+            // move files to preset folder
+            try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
+            try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
+
             self.preset.names.append(n)
             self.preset.presetPref.append(self.pref)
             self.preset.defaultPref = Preference()
             self.presetView.insertRows(at: [ip], with: .bottom)
             self.selectedPreset = ip.row
-            // move files to preset folder
-            try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
-            try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
         }
         
         a.addTextField { (tf) in
@@ -400,10 +401,24 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         case .delete:
             let row = indexPath.row
             let dirName = preset.names[row]
+            let cellToDelete = presetView.cellForRow(at: indexPath) as! PresetTableViewCell
 
             try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
             preset.names.remove(at: row)
+            preset.presetPref.remove(at: row)
             presetView.deleteRows(at: [indexPath], with: .fade)
+            if cellToDelete.presetButton.isSelected {
+                let posFile = Preference.AppDir.appendingPathComponent(positionFile)
+
+                pref = preset.defaultPref
+                selectedPreset = nil
+            }
+
+            let rowCount = presetView.numberOfRows(inSection: 0)
+            for i in 0..<rowCount {
+                let cell = presetView.cellForRow(at: IndexPath(row: i, section: 0)) as! PresetTableViewCell
+                cell.presetButton.tag = i
+            }
             if preset.names.count == 0 {
                 presetView.setEditing(false, animated: false)
                 editPresetBtn.setTitle("Edit", for: .normal)
