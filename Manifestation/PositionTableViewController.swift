@@ -547,6 +547,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             newSel.setSelected(true, animated: false)
             rolloverVC.selectedPreset = existingPresetIdx
         } else {
+            rolloverVC.preset.defaultPref = pref
             if let s = rolloverVC.selectedPreset {
                 let curSelIP = IndexPath(row: s, section: 0)
                 let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as! PresetTableViewCell
@@ -557,20 +558,19 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
-                rolloverVC.preset.defaultPref = pref
                 if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
                     print("Positions saved.")
                 }
             }
             else {
-                let posF = Preference.AppDir.appendingPathComponent(positionFile)
                 let newSelIP = IndexPath(row: existingPresetIdx!, section: 0)
                 let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
 
                 newSel.presetButton.isSelected = true
                 newSel.setSelected(true, animated: false)
-                try? FileManager.default.removeItem(at: posF)
+                try? FileManager.default.removeItem(at: fPosn)
                 rolloverVC.selectedPreset = existingPresetIdx
+                rolloverVC.preset.defaultPref = Preference()
             }
         }
         

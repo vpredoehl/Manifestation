@@ -128,7 +128,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let f = Preference.AppDir.appendingPathComponent(positionFile)
             
             self.pref.removeAll()
-            NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
+            try? FileManager.default.removeItem(at: f)
             
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
