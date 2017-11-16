@@ -344,25 +344,49 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let ip = IndexPath(row: self.preset.names.count, section: 0)
             let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
             let posF = Preference.AppDir.appendingPathComponent(positionFile)
+            var replacePreset = false
             
-            guard !self.preset.names.contains(n) else {
-                let al = UIAlertController(title: "Duplicate Name", message: "A preset with that name already exists", preferredStyle: .alert)
-                let d = UIAlertAction(title: "Ok", style: .default)
+            
+            let existingNameIdx = self.preset.names.index(of: n)
+            if existingNameIdx != nil {
+                let al = UIAlertController(title: "Duplicate Name", message: "A preset with that name already exists.  Would you like to replace it?", preferredStyle: .alert)
+                let no = UIAlertAction(title: "No", style: .default) {
+                    (_) in
+                    return
+                }
+                let yes = UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                    try? FileManager.default.removeItem(at: presetURL.appendingPathComponent(positionFile))
+                    replacePreset = true
+                    moveFiles()
+                })
                 
-                al.addAction(d)
+                al.addAction(yes)
+                al.addAction(no)
                 self.present(al, animated: true)
+            }
+            
+            func moveFiles() {
+                // move files to preset folder
+                try? FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
+                try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
+                
+                if replacePreset {
+                    self.preset.presetPref[existingNameIdx!] = self.preset.defaultPref!
+                    self.selectedPreset = existingNameIdx
+                }
+                else {
+                    self.preset.names.append(n)
+                    self.preset.presetPref.append(self.preset.defaultPref!)
+                    self.presetView.insertRows(at: [ip], with: .bottom)
+                    self.selectedPreset = ip.row
+                }
+                self.preset.defaultPref = Preference()
+            }
+            
+            guard existingNameIdx == nil else {
                 return
             }
-
-            // move files to preset folder
-            try! FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
-            try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
-
-            self.preset.names.append(n)
-            self.preset.presetPref.append(self.preset.defaultPref!)
-            self.preset.defaultPref = Preference()
-            self.presetView.insertRows(at: [ip], with: .bottom)
-            self.selectedPreset = ip.row
+            moveFiles()
         }
         
         a.addTextField { (tf) in
