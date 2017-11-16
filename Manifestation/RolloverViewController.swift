@@ -469,7 +469,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
         cell.presetButton.tag = indexPath.row
         if let s = selectedPreset  {
-            cell.isSelected = s == indexPath.row
+            let rowSelected = s == indexPath.row
+
+            cell.presetButton.isSelected = rowSelected
+            cell.isSelected = rowSelected
+        }
+        else {
+            cell.presetButton.isSelected = false
+            cell.isSelected = false
         }
         cell.presetButton.setTitle(preset.names[indexPath.row], for: .normal)
         cell.presetButton.setTitleColor(UIColor.brown, for: .selected)
