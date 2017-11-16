@@ -435,6 +435,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! PresetTableViewCell
+        switchPreset(cell.presetButton)
+    }
+    
     @objc
     func textChanged(_ tf: UITextField) {
         var resp: UIResponder! = tf
