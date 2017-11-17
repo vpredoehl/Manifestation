@@ -54,7 +54,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     let animLG = UILayoutGuide()
 
     var preset = RolloverPresets()
-    var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref != nil && pref.numPositions > 0  }   }
+    var pref: Preference! 
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
     var rolloverTimer: Timer?
@@ -314,6 +314,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             else {
                 pref = preset.defaultPref
             }
+            tb.items![2].isEnabled = pref.canPlay
+            tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
         }
     }
 
