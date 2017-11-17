@@ -17,9 +17,11 @@ class RolloverPresets : NSObject {
     var presetPref: [Preference] = []
     @objc dynamic var defaultPref: Preference? = nil
     var ctx = 0
+    static var rp: RolloverPresets!     // reference to only instance of self
     
     override init() {
         super.init()
+        RolloverPresets.rp = self
         let f = Preference.AppDir.appendingPathComponent(positionFile)
         
         defaultPref = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference ?? Preference()
@@ -35,6 +37,16 @@ class RolloverPresets : NSObject {
                 }
             }
         }
+    }
+    
+    func useCount(userImageIndex key: Int?) -> Int {
+        var c = defaultPref?.imageIndex.filter   {   $0 == key   }.count ?? 0
+        
+        for p in presetPref {
+            let u = p.imageIndex.filter {   $0 == key   }.count
+            c += u
+        }
+        return c
     }
     
     func index(of p: Preference) -> Int? {
@@ -166,9 +178,11 @@ class Preference: NSObject, NSCoding, NSCopying {
         }
     }
     
-    func rolloverIndex(forRow r: Int) -> (key: Int?, useCount: Int) {
+    func rolloverIndex(forRow r: Int, findUseCount: Bool = false) -> (key: Int?, useCount: Int) {
         let key = imageIndex[r]
-        let c = imageIndex.filter   {   $0 == key   }.count
+        let c = findUseCount
+            ? RolloverPresets.rp.useCount(userImageIndex: key)
+            : 0
         return (key, c)
     }
     
@@ -177,7 +191,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func remove(at rowToDelete: Int) {
-        let kc = rolloverIndex(forRow: rowToDelete)
+        let kc = rolloverIndex(forRow: rowToDelete, findUseCount: true)
         if let idx = kc.key, kc.useCount == 1 {
             deleteImage(forKey: idx) // delete user image, if exists
         }
@@ -236,7 +250,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func set(imageIndex i: Int, forRow r: Int) {
-        let kc = rolloverIndex(forRow: r)
+        let kc = rolloverIndex(forRow: r, findUseCount: true)
         if let idx = kc.key, kc.useCount == 1 {
             deleteImage(forKey: idx)
         }

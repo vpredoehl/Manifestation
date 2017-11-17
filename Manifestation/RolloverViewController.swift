@@ -439,8 +439,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             preset.presetPref.remove(at: row)
             presetView.deleteRows(at: [indexPath], with: .fade)
             if cellToDelete.presetButton.isSelected {
-                let posFile = Preference.AppDir.appendingPathComponent(positionFile)
-
                 pref = preset.defaultPref
                 selectedPreset = nil
             }
