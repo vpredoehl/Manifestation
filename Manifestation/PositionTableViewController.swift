@@ -530,6 +530,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             }
         }
         
+        pref.deleteUnusedImages()
         rolloverVC.pref = pref
         let existingPresetIdx = rolloverVC.preset.index(of: pref)
         if let idx = existingPresetIdx,

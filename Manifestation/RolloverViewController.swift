@@ -127,6 +127,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             let f = Preference.AppDir.appendingPathComponent(positionFile)
             
+            self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
             try? FileManager.default.removeItem(at: f)
             
@@ -435,6 +436,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let cellToDelete = presetView.cellForRow(at: indexPath) as! PresetTableViewCell
 
             try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
+            preset.cleanImageCache(prefBeingDeleted: preset.presetPref[row])
             preset.names.remove(at: row)
             preset.presetPref.remove(at: row)
             presetView.deleteRows(at: [indexPath], with: .fade)

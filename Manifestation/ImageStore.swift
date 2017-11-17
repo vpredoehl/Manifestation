@@ -48,16 +48,27 @@ extension Preference
         return imageFromDisk
     }
     
-    func deleteImage(forKey key: Int) {
-        Preference.cache.removeObject(forKey: String(key) as NSString)
-        if key >= 0 || key < 0  && key & 1 == 1 {   // don't delete images taken by the camera
-            let url = imageURL(forKey: key)
-            do {
-                try FileManager.default.removeItem(at: url)
-            } catch let deleteError  {  // implicit error constant if not specified
-                print("Error removing image from disk \(deleteError)")
+    func deleteUnusedImages() {
+        for key in toBeDeleted {
+            deleteImage(forKey: key, justCache: false)
+        }
+    }
+    
+    func deleteImage(forKey key: Int, justCache: Bool = true) {
+        if justCache {
+            toBeDeleted.append(key)
+        } else {
+            Preference.cache.removeObject(forKey: String(key) as NSString)
+            if key < 0  && key & 1 == 1 {   // don't delete images taken by the camera
+                let url = imageURL(forKey: key)
+                do {
+                    try FileManager.default.removeItem(at: url)
+                } catch let deleteError  {  // implicit error constant if not specified
+                    print("Error removing image from disk \(deleteError)")
+                }
+                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != key   }
             }
-            Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != key   }
+
         }
     }
     

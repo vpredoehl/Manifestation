@@ -39,6 +39,16 @@ class RolloverPresets : NSObject {
         }
     }
     
+    func cleanImageCache(prefBeingDeleted p: Preference)  {
+        for idx in p.imageIndex {
+            guard let key = idx,
+                key < 0,
+                useCount(userImageIndex: key) == 1
+                else { continue    }
+            p.deleteImage(forKey: key, justCache: false)
+        }
+    }
+    
     func useCount(userImageIndex key: Int?) -> Int {
         var c = defaultPref?.imageIndex.filter   {   $0 == key   }.count ?? 0
         
@@ -81,6 +91,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     static var curRolloverPosition = 0
 
     open var imageIndex: [Int?]!
+    open var toBeDeleted: [Int] = []
     open var trendText: [String]!
     open var targetText: [String]!
     static var userPhotoKeys: [Int]? = nil
