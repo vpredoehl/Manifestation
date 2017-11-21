@@ -10,6 +10,71 @@ import Foundation
 
 let chiImageFile = "chiImage"
 let positionFile = "positions"
+let presetsFile = "presets"
+
+class RolloverPresets : NSObject {
+    @objc dynamic var names: [String] = []
+    var presetPref: [Preference] = []
+    @objc dynamic var defaultPref: Preference? = nil
+    var ctx = 0
+    static var rp: RolloverPresets!     // reference to only instance of self
+    
+    override init() {
+        super.init()
+        RolloverPresets.rp = self
+        let f = Preference.AppDir.appendingPathComponent(positionFile)
+        
+        defaultPref = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference ?? Preference()
+
+        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
+            for preset in dirContents {
+                if preset.hasDirectoryPath {
+                    let posF = preset.appendingPathComponent(positionFile)
+                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: posF.path) as! Preference
+                    
+                    names.append(preset.lastPathComponent)
+                    presetPref.append(pref)
+                }
+            }
+        }
+    }
+    
+    func cleanImageCache(prefBeingDeleted p: Preference)  {
+        for idx in p.imageIndex {
+            guard let key = idx,
+                key < 0,
+                useCount(userImageIndex: key) == 1
+                else { continue    }
+            p.deleteImage(forKey: key, justCache: false)
+        }
+    }
+    
+    func useCount(userImageIndex key: Int?) -> Int {
+        var c = defaultPref?.imageIndex.filter   {   $0 == key   }.count ?? 0
+        
+        for p in presetPref {
+            let u = p.imageIndex.filter {   $0 == key   }.count
+            c += u
+        }
+        return c
+    }
+    
+    func index(of p: Preference) -> Int? {
+        return presetPref.index(of: p)
+    }
+}
+
+func ==(lhs: [Int?], rhs: [Int?]) -> Bool {
+    guard lhs.count == rhs.count else {
+        return false
+    }
+    for i in 0..<lhs.count {
+        if lhs[i] != rhs[i] {
+            return false
+        }
+    }
+    return true
+}
 
 class Preference: NSObject, NSCoding, NSCopying {
     
@@ -17,11 +82,16 @@ class Preference: NSObject, NSCoding, NSCopying {
     static let DocDir =
     {
         () -> URL in
-        return FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+        return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+    }()
+    static let AppDir = {
+        () -> URL in
+        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }()
     static var curRolloverPosition = 0
 
     open var imageIndex: [Int?]!
+    open var toBeDeleted: [Int] = []
     open var trendText: [String]!
     open var targetText: [String]!
     static var userPhotoKeys: [Int]? = nil
@@ -44,7 +114,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             chiTransferImage = img
         }
         else {
-            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
             chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
         }
         imageIndex = ii ?? [ nil ]
@@ -119,9 +189,11 @@ class Preference: NSObject, NSCoding, NSCopying {
         }
     }
     
-    func rolloverIndex(forRow r: Int) -> (key: Int?, useCount: Int) {
+    func rolloverIndex(forRow r: Int, findUseCount: Bool = false) -> (key: Int?, useCount: Int) {
         let key = imageIndex[r]
-        let c = imageIndex.filter   {   $0 == key   }.count
+        let c = findUseCount
+            ? RolloverPresets.rp.useCount(userImageIndex: key)
+            : 0
         return (key, c)
     }
     
@@ -130,7 +202,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func remove(at rowToDelete: Int) {
-        let kc = rolloverIndex(forRow: rowToDelete)
+        let kc = rolloverIndex(forRow: rowToDelete, findUseCount: true)
         if let idx = kc.key, kc.useCount == 1 {
             deleteImage(forKey: idx) // delete user image, if exists
         }
@@ -189,7 +261,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     }
     
     func set(imageIndex i: Int, forRow r: Int) {
-        let kc = rolloverIndex(forRow: r)
+        let kc = rolloverIndex(forRow: r, findUseCount: true)
         if let idx = kc.key, kc.useCount == 1 {
             deleteImage(forKey: idx)
         }
@@ -200,4 +272,17 @@ class Preference: NSObject, NSCoding, NSCopying {
     func copy(with zone: NSZone? = nil) -> Any {
         return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
+
+    override func isEqual(_ obj: Any?) -> Bool {
+        guard let rhs = obj as? Preference else { return false }
+
+        let eqII = imageIndex == rhs.imageIndex
+        let eqTrend = trendText == rhs.trendText
+        let eqTarget = targetText == rhs.targetText
+        
+        return eqII && eqTrend && eqTarget
+
+    }
 }
+
+

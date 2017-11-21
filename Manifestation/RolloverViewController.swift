@@ -19,36 +19,42 @@ extension Preference
             return userKeys.count > 0
         }
     }
-    var hasTransferSequence: Bool
-    {
-        get {
-            if let ii = imageIndex {    // has non-nil image?
-                for i in ii {
-                    if i != nil    {   return true }
-                }
-            }
+    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
+    var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
+    
+    func hasTransferSequence(currentPreset p: Int? = nil) -> Bool {
+        guard p == nil else {
             return false
         }
+        if let ii = imageIndex {    // has non-nil image?
+            for i in ii {
+                if i != nil    {   return true }
+            }
+        }
+        return false
     }
-    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
-    var canHiliteTrash: Bool {  get {   return hasChiImage || hasTransferSequence || hasUserPhotos  }   }
-    var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence   }   }
+    func canHiliteTrash(currentPreset p: Int?) -> Bool {
+        return hasChiImage || hasTransferSequence(currentPreset: p) || hasUserPhotos
+    }
 }
 
-class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate
+// MARK: -
+class RolloverViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate,
+    UITableViewDataSource, UITableViewDelegate
 {
-    // MARK: Properties -
     @IBOutlet weak var animationView: UIView!
     @IBOutlet weak var trashItem: UIBarButtonItem!
     @IBOutlet weak var tb: UIToolbar!
-
+    @IBOutlet weak var presetView: UITableView!
+    
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
     
     let animationDuration = 0.5
     let animLG = UILayoutGuide()
 
-    var pref: Preference!   {   didSet  {   tb.items![2].isEnabled = pref.numPositions > 0  }   }
+    var preset = RolloverPresets()
+    var pref: Preference! 
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
     var rolloverTimer: Timer?
@@ -56,21 +62,34 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
     
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        let p = preset.defaultPref
+
+        preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        pref = p ?? Preference()
+    }
+    
+    deinit {
+        removeObserver(self, forKeyPath: "names")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tb.items![2].isEnabled = pref.canPlay
-        tb.items![4].isEnabled = pref.canHiliteTrash
+        tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
     }
     override func viewDidLoad() {
-        let dd = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
-        let f = dd.appendingPathComponent(positionFile)
-        let p = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference
-        
-        pref = p ?? Preference(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)
         animationVC.pref = pref
         if let d = pref.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
+        
+        presetView.layer.borderWidth = 2.0
+        presetView.layer.borderColor = UIColor.lightGray.cgColor
+        editPresetBtn.isEnabled = preset.names.count > 0
+        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence()
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -87,32 +106,34 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         constraintsForFullChiView.append(contentsOf: [width, height])
     }
     
-    // MARK: - Tool Bar -
+    // MARK: - Tool Bar
     @IBAction func trash(_ sender: Any) {
         let ac = UIAlertController()
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
         let deleteChi = UIAlertAction(title: "Delete Transfer Image", style: .destructive)
         {
             (_) in
-            let f = Preference.DocDir.appendingPathComponent(chiImageFile)
+            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
 
             self.pref.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
             NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
         }
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
-            let f = Preference.DocDir.appendingPathComponent(positionFile)
+            let f = Preference.AppDir.appendingPathComponent(positionFile)
             
+            self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
-            NSKeyedArchiver.archiveRootObject(self.pref, toFile: f.path)
+            try? FileManager.default.removeItem(at: f)
             
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
+            self.addCurrentPresetBtn.isEnabled = false
         }
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
         {
@@ -144,7 +165,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if pref.hasChiImage {
             ac.addAction(deleteChi)
         }
-        if pref.hasTransferSequence {
+        if pref.hasTransferSequence(currentPreset: selectedPreset) {
             ac.addAction(deleteRollover)
         }
         if pref.hasUserPhotos {
@@ -168,6 +189,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 NSLayoutConstraint.activate(self.animationVC.constraintsForPauseAnimation)
                 self.chiImageView.alpha = 1
             }
+            self.addCurrentPresetBtn.isHidden = willBeAnimating
+            self.editPresetBtn.isHidden = willBeAnimating
             self.view.layoutIfNeeded()
         }
         if willBeAnimating {
@@ -262,5 +285,235 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         default: break
         }
     }
+    
+    // MARK: - Preset Table View -
+    var selectedPreset: Int? = nil {
+        didSet {
+            if let s = oldValue {
+                let ip = IndexPath(row: s, section: 0)
+                let cell = presetView.cellForRow(at: ip) as? PresetTableViewCell
+                
+                cell?.presetButton.isSelected = false
+                cell?.setSelected(false, animated: false)
+            }
+            else {
+                let fPos = Preference.AppDir.appendingPathComponent(positionFile)
+                let hasDefaultPositions = FileManager.default.fileExists(atPath: fPos.path)
+                
+                // enable add current preset button if has default positions
+                addCurrentPresetBtn.isEnabled = hasDefaultPositions
+            }
+            if let s = selectedPreset {
+                let ip = IndexPath(row: s, section: 0)
+                let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+                
+                cell.presetButton.isSelected = true
+                cell.setSelected(true, animated: false)
+                pref = preset.presetPref[s]
+            }
+            else {
+                pref = preset.defaultPref
+            }
+            tb.items![2].isEnabled = pref.canPlay
+            tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
+        }
+    }
+
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        switch keyPath {
+        case "names"?:
+            let names = change![NSKeyValueChangeKey.newKey] as! [String]
+            editPresetBtn.isEnabled = names.count > 0
+        case "defaultPref"?:
+            if let def = preset.defaultPref {
+                addCurrentPresetBtn.isEnabled = def != Preference()
+            }
+            else {
+                addCurrentPresetBtn.isEnabled = false
+            }
+        default:
+            break
+        }
+    }
+    
+    @IBOutlet weak var editPresetBtn: UIButton!
+    @IBOutlet weak var addCurrentPresetBtn: UIButton!
+    
+    @IBAction func addPreset(_ sender: UIButton) {
+        let a = UIAlertController(title: "Add New Preset", message: "What is the name of the new preset?", preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
+            let n = a.textFields![0].text!
+            let ip = IndexPath(row: self.preset.names.count, section: 0)
+            let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
+            let posF = Preference.AppDir.appendingPathComponent(positionFile)
+            var replacePreset = false
+            
+            
+            let existingNameIdx = self.preset.names.index(of: n)
+            if existingNameIdx != nil {
+                let al = UIAlertController(title: "Duplicate Name", message: "A preset with that name already exists.  Would you like to replace it?", preferredStyle: .alert)
+                let no = UIAlertAction(title: "No", style: .default) {
+                    (_) in
+                    return
+                }
+                let yes = UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                    try? FileManager.default.removeItem(at: presetURL.appendingPathComponent(positionFile))
+                    replacePreset = true
+                    moveFiles()
+                })
+                
+                al.addAction(yes)
+                al.addAction(no)
+                self.present(al, animated: true)
+            }
+            
+            func moveFiles() {
+                // move files to preset folder
+                try? FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
+                try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
+                
+                if replacePreset {
+                    self.preset.presetPref[existingNameIdx!] = self.preset.defaultPref!
+                    self.selectedPreset = existingNameIdx
+                }
+                else {
+                    self.preset.names.append(n)
+                    self.preset.presetPref.append(self.preset.defaultPref!)
+                    self.presetView.insertRows(at: [ip], with: .bottom)
+                    self.selectedPreset = ip.row
+                }
+                self.preset.defaultPref = Preference()
+            }
+            
+            guard existingNameIdx == nil else {
+                return
+            }
+            moveFiles()
+        }
+        
+        a.addTextField { (tf) in
+            tf.keyboardType = .alphabet
+            tf.addTarget(self, action: #selector(RolloverViewController.textChanged(_:)), for: .editingChanged)
+        }
+        
+        a.addAction(cancel)
+        a.addAction(ok)
+        a.actions[1].isEnabled = false
+        present(a, animated: true)
+    }
+    
+    @IBAction func editPresets(_ sender: UIButton) {
+        presetView.setEditing(!presetView.isEditing, animated: true)
+        editPresetBtn.setTitle(presetView.isEditing ? "Done" : "Edit", for: .normal)
+    }
+    @IBAction func switchPreset(_ sender: UIButton) {
+        let selectedIP = IndexPath(row: sender.tag, section: 0)
+        let selectedCell = presetView.cellForRow(at: selectedIP)
+
+        // unselect previous cell
+        if let s = selectedPreset {
+            let ip = IndexPath(row: s, section: 0)
+            let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+            
+            cell.presetButton.isSelected = false
+            cell.setSelected(false, animated: false)
+            guard s != sender.tag else {
+                // tapped selected preset
+                pref = preset.defaultPref
+                selectedPreset = nil
+                return
+            }
+        }
+        selectedCell?.setSelected(true, animated: false)
+        selectedPreset = sender.tag
+        sender.isSelected = true
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        switch editingStyle {
+        case .delete:
+            let row = indexPath.row
+            let dirName = preset.names[row]
+            let cellToDelete = presetView.cellForRow(at: indexPath) as! PresetTableViewCell
+
+            try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
+            preset.cleanImageCache(prefBeingDeleted: preset.presetPref[row])
+            preset.names.remove(at: row)
+            preset.presetPref.remove(at: row)
+            presetView.deleteRows(at: [indexPath], with: .fade)
+            if cellToDelete.presetButton.isSelected {
+                pref = preset.defaultPref
+                selectedPreset = nil
+            }
+
+            let rowCount = presetView.numberOfRows(inSection: 0)
+            for i in 0..<rowCount {
+                let cell = presetView.cellForRow(at: IndexPath(row: i, section: 0)) as! PresetTableViewCell
+                cell.presetButton.tag = i
+            }
+            if preset.names.count == 0 {
+                presetView.setEditing(false, animated: false)
+                editPresetBtn.setTitle("Edit", for: .normal)
+            }
+        case .insert, .none:
+            break
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! PresetTableViewCell
+        switchPreset(cell.presetButton)
+    }
+    
+    @objc
+    func textChanged(_ tf: UITextField) {
+        var resp: UIResponder! = tf
+        while !(resp is UIAlertController) {
+            resp = resp.next
+        }
+        (resp as! UIAlertController).actions[1].isEnabled = tf.text != ""
+    }
+    
+    // MARK: - Table View Data Source
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return preset.names.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SavedSetup", for: indexPath) as! PresetTableViewCell
+        let render = UIGraphicsImageRenderer(size: CGSize(width: 10, height: 5))
+        let hiliteImage = render.image { (rctx) in
+            let ctx = rctx.cgContext
+            
+            ctx.setFillColor(UIColor.green.cgColor)
+            ctx.fill(CGRect(x: 0, y: 0, width: 10, height: 5))
+            }.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
+
+        cell.presetButton.tag = indexPath.row
+        if let s = selectedPreset  {
+            let rowSelected = s == indexPath.row
+
+            cell.presetButton.isSelected = rowSelected
+            cell.isSelected = rowSelected
+        }
+        else {
+            cell.presetButton.isSelected = false
+            cell.isSelected = false
+        }
+        cell.presetButton.setTitle(preset.names[indexPath.row], for: .normal)
+        cell.presetButton.setTitleColor(UIColor.brown, for: .selected)
+        cell.presetButton.setBackgroundImage(hiliteImage, for: .selected)
+        return cell
+    }
+}
+
+// MARK: -
+class PresetTableViewCell: UITableViewCell {
+    @IBOutlet weak var presetButton: UIButton!
+    
 }
 
