@@ -21,6 +21,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("DocDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path))")
         return true
     }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        let navVC = window?.rootViewController as! UINavigationController
+        
+        if let rolloverVC = navVC.topViewController as? RolloverViewController,
+            rolloverVC.isAnimating {
+            rolloverVC.playRollover(UIBarButtonItem())
+        }
+    }
 }
 
 
