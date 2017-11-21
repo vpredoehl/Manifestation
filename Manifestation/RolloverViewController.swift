@@ -414,15 +414,16 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         // unselect previous cell
         if let s = selectedPreset {
             let ip = IndexPath(row: s, section: 0)
-            let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
             
-            cell.presetButton.isSelected = false
-            cell.setSelected(false, animated: false)
-            guard s != sender.tag else {
-                // tapped selected preset
-                pref = preset.defaultPref
-                selectedPreset = nil
-                return
+            if let cell = presetView.cellForRow(at: ip) as? PresetTableViewCell {
+                cell.presetButton.isSelected = false
+                cell.setSelected(false, animated: false)
+                guard s != sender.tag else {
+                    // tapped selected preset
+                    pref = preset.defaultPref
+                    selectedPreset = nil
+                    return
+                }
             }
         }
         selectedCell?.setSelected(true, animated: false)
@@ -449,8 +450,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
             let rowCount = presetView.numberOfRows(inSection: 0)
             for i in 0..<rowCount {
-                let cell = presetView.cellForRow(at: IndexPath(row: i, section: 0)) as! PresetTableViewCell
-                cell.presetButton.tag = i
+                let cell = presetView.cellForRow(at: IndexPath(row: i, section: 0)) as? PresetTableViewCell
+                cell?.presetButton.tag = i
             }
             if preset.names.count == 0 {
                 presetView.setEditing(false, animated: false)

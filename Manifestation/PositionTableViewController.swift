@@ -538,12 +538,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             guard s != existingPresetIdx else   {   return  }
                 // previous selection and existing preset
             let curSelIP = IndexPath(row: s, section: 0)
-            let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as! PresetTableViewCell
+            let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as? PresetTableViewCell
             let newSelIP = IndexPath(row: idx, section: 0)
             let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
             
-            curSel.presetButton.isSelected = false
-            curSel.setSelected(false, animated: false)
+            curSel?.presetButton.isSelected = false
+            curSel?.setSelected(false, animated: false)
             newSel.presetButton.isSelected = true
             newSel.setSelected(true, animated: false)
             rolloverVC.selectedPreset = existingPresetIdx
@@ -551,11 +551,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             rolloverVC.preset.defaultPref = pref
             if let s = rolloverVC.selectedPreset {
                 let curSelIP = IndexPath(row: s, section: 0)
-                let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as! PresetTableViewCell
+                let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as? PresetTableViewCell
 
                 // clear previous selection
-                curSel.presetButton.isSelected = false
-                curSel.setSelected(false, animated: false)
+                curSel?.presetButton.isSelected = false
+                curSel?.setSelected(false, animated: false)
                 rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
