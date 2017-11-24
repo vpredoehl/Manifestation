@@ -409,26 +409,21 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     @IBAction func switchPreset(_ sender: UIButton) {
         let selectedIP = IndexPath(row: sender.tag, section: 0)
-        let selectedCell = presetView.cellForRow(at: selectedIP)
 
         // unselect previous cell
         if let s = selectedPreset {
             let ip = IndexPath(row: s, section: 0)
             
-            if let cell = presetView.cellForRow(at: ip) as? PresetTableViewCell {
-                cell.presetButton.isSelected = false
-                cell.setSelected(false, animated: false)
-                guard s != sender.tag else {
-                    // tapped selected preset
-                    pref = preset.defaultPref
-                    selectedPreset = nil
-                    return
-                }
+            presetView.deselectRow(at: ip, animated: false)
+            guard s != sender.tag else {
+                // tapped selected preset
+                pref = preset.defaultPref
+                selectedPreset = nil
+                return
             }
         }
-        selectedCell?.setSelected(true, animated: false)
+        presetView.selectRow(at: selectedIP, animated: false, scrollPosition: .none)
         selectedPreset = sender.tag
-        sender.isSelected = true
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
