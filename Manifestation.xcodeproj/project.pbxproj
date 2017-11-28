@@ -40,6 +40,7 @@
 		0823564C1EE4EFE700F0760E /* PositionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PositionTableViewCell.swift; sourceTree = "<group>"; };
 		0823564E1EE73E0700F0760E /* ChiCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChiCellTableViewCell.swift; sourceTree = "<group>"; };
 		082356521EE7998100F0760E /* Preference.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preference.swift; sourceTree = "<group>"; };
+		083684721FCA7920001EFA23 /* Manifestation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Manifestation.entitlements; sourceTree = "<group>"; };
 		086DDC291EB6C9F90091A199 /* Manifestation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Manifestation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		086DDC2C1EB6C9F90091A199 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		086DDC2E1EB6C9F90091A199 /* RolloverViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloverViewController.swift; sourceTree = "<group>"; };
@@ -77,6 +78,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		083684731FCA7928001EFA23 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		086DDC201EB6C9F90091A199 = {
 			isa = PBXGroup;
 			children = (
@@ -84,6 +92,7 @@
 				086DDC2B1EB6C9F90091A199 /* Manifestation */,
 				0898E2651F18859600CCBE83 /* UI Tests */,
 				086DDC2A1EB6C9F90091A199 /* Products */,
+				083684731FCA7928001EFA23 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,6 +108,7 @@
 		086DDC2B1EB6C9F90091A199 /* Manifestation */ = {
 			isa = PBXGroup;
 			children = (
+				083684721FCA7920001EFA23 /* Manifestation.entitlements */,
 				0887F30A1F2255E8001A7472 /* View Controllers */,
 				0887F30B1F225605001A7472 /* Cells */,
 				086DDC301EB6C9F90091A199 /* Main.storyboard */,
@@ -205,6 +215,14 @@
 						DevelopmentTeam = X674V92M37;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					0898E2631F18859600CCBE83 = {
 						CreatedOnToolsVersion = 8.3.3;
@@ -423,6 +441,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Manifestation/Manifestation.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = X674V92M37;
 				INFOPLIST_FILE = Manifestation/Info.plist;
@@ -441,6 +460,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Manifestation/Manifestation.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = X674V92M37;
 				INFOPLIST_FILE = Manifestation/Info.plist;

@@ -6,7 +6,7 @@
 //  Copyright © 2017 Vincent Predoehl. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 let chiImageFile = "chiImage"
 let positionFile = "positions"
@@ -76,7 +76,7 @@ func ==(lhs: [Int?], rhs: [Int?]) -> Bool {
     return true
 }
 
-class Preference: NSObject, NSCoding, NSCopying {
+class Preference: UIDocument, NSCoding, NSCopying {
     
     // MARK: Properties -
     static let DocDir =
@@ -98,14 +98,33 @@ class Preference: NSObject, NSCoding, NSCopying {
     private var selectedSegment: [SegmentType]!
     var chiTransferImage: Data? = nil
     
-    var numPositions: Int
-
-    override convenience init()
+    var numPositions: Int = 1
+    
+    convenience init()
     {
         self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
     }
+
+    override init(fileURL url: URL) {
+        super.init(fileURL: url)
+        open { (s) in
+            if s {
+                print("open OK")
+            }
+            else {
+                print("open failed")
+                self.imageIndex = [ nil ]
+                self.trendText = []
+                self.targetText = []
+                self.selectedSegment = [ SegmentType.trend ]
+            }
+        }
+    }
     
-    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
+    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
+        let temp = Preference.AppDir.appendingPathComponent("temp")
+        
+        super.init(fileURL: url ?? temp)
         if tr == nil || ta == nil {
             return nil
         }
@@ -122,6 +141,21 @@ class Preference: NSObject, NSCoding, NSCopying {
         targetText = ta
         selectedSegment = s ?? [ SegmentType.trend ]
         numPositions = n
+    }
+    
+    // MARK: - UIDocument
+    override func contents(forType typeName: String) throws -> Any {
+        return NSKeyedArchiver.archivedData(withRootObject:self)
+    }
+    override func load(fromContents contents: Any, ofType typeName: String?) throws {
+        let p = NSKeyedUnarchiver.unarchiveObject(with: contents as! Data) as? Preference
+        
+        imageIndex = p?.imageIndex ?? [ nil ]
+        trendText = p?.trendText
+        targetText = p?.targetText
+        selectedSegment = p?.selectedSegment ?? [ SegmentType.trend ]
+        numPositions = p?.numPositions ?? 1
+        
     }
     
     // MARK: - Archiving -
