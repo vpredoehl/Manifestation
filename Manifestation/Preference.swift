@@ -22,9 +22,18 @@ class RolloverPresets : NSObject {
     override init() {
         super.init()
         RolloverPresets.rp = self
-        let f = Preference.AppDir.appendingPathComponent(positionFile)
+        let f = Preference.DocDir.appendingPathComponent(positionFile)
         
-        defaultPref = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference ?? Preference()
+        defaultPref = Preference(fileURL: f)
+        defaultPref!.open { (s) in
+            if s {
+                print("open OK")
+            }
+            else {
+                print("open failed")
+            }
+        }
+
 
         if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
             for preset in dirContents {
@@ -90,34 +99,41 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }()
     static var curRolloverPosition = 0
 
-    open var imageIndex: [Int?]!
+    open var imageIndex: [Int?] = [ nil ]
     open var toBeDeleted: [Int] = []
-    open var trendText: [String]!
-    open var targetText: [String]!
+    open var trendText: [String] = [ "" ]
+    open var targetText: [String] = [ "" ]
     static var userPhotoKeys: [Int]? = nil
-    private var selectedSegment: [SegmentType]!
-    var chiTransferImage: Data? = nil
-    
+    private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
-    convenience init()
-    {
+    var chiTransferImage: Data? = nil
+    
+    convenience init() {
         self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
     }
 
     override init(fileURL url: URL) {
         super.init(fileURL: url)
-        open { (s) in
-            if s {
-                print("open OK")
+        if FileManager.default.fileExists(atPath: url.path) {
+            open { (s) in
+                if s {
+                    print("open OK")
+                }
+                else {
+                    print("open failed")
+                }
             }
-            else {
-                print("open failed")
-                self.imageIndex = [ nil ]
-                self.trendText = []
-                self.targetText = []
-                self.selectedSegment = [ SegmentType.trend ]
-            }
+        }
+        else {
+            save(to: url, for: .forCreating, completionHandler: { (s) in
+                if s {
+                    print("Save OK")
+                }
+                else {
+                    print("Save failed")
+                }
+            })
         }
     }
     
@@ -137,8 +153,8 @@ class Preference: UIDocument, NSCoding, NSCopying {
             chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
         }
         imageIndex = ii ?? [ nil ]
-        trendText = tr
-        targetText = ta
+        trendText = tr ?? [ "" ]
+        targetText = ta ?? [ "" ]
         selectedSegment = s ?? [ SegmentType.trend ]
         numPositions = n
     }
@@ -151,8 +167,8 @@ class Preference: UIDocument, NSCoding, NSCopying {
         let p = NSKeyedUnarchiver.unarchiveObject(with: contents as! Data) as? Preference
         
         imageIndex = p?.imageIndex ?? [ nil ]
-        trendText = p?.trendText
-        targetText = p?.targetText
+        trendText = p?.trendText ?? [ "" ]
+        targetText = p?.targetText ?? [ "" ]
         selectedSegment = p?.selectedSegment ?? [ SegmentType.trend ]
         numPositions = p?.numPositions ?? 1
         

@@ -26,10 +26,8 @@ extension Preference
         guard p == nil else {
             return false
         }
-        if let ii = imageIndex {    // has non-nil image?
-            for i in ii {
-                if i != nil    {   return true }
-            }
+        for i in imageIndex {
+            if i != nil    {   return true }
         }
         return false
     }
