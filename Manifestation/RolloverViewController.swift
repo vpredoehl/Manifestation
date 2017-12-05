@@ -66,11 +66,13 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
         preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
         pref = p ?? Preference()
     }
     
     deinit {
         removeObserver(self, forKeyPath: "names")
+        removeObserver(self, forKeyPath: "defaultPref")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -322,6 +324,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         case "names"?:
             let names = change![NSKeyValueChangeKey.newKey] as! [String]
             editPresetBtn.isEnabled = names.count > 0
+            presetView.reloadData()
         case "defaultPref"?:
             if let def = preset.defaultPref {
                 addCurrentPresetBtn.isEnabled = def != Preference()
@@ -329,6 +332,26 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             else {
                 addCurrentPresetBtn.isEnabled = false
             }
+        default:
+            break
+        }
+    }
+    
+    @objc
+    func docStateChanged(_ n: Notification) {
+        switch pref.documentState {
+        case .normal:
+            print("documentState: normal")
+        case .closed:
+            print("documentState: closed")
+        case .inConflict:
+            print("documentState: inConflict")
+        case .savingError:
+            print("documentState: savingError")
+        case .editingDisabled:
+            print("documentState: editingDisabled")
+        case .progressAvailable:
+            print("documentState: progressAvailable")
         default:
             break
         }

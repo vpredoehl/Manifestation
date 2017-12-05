@@ -23,29 +23,55 @@ class RolloverPresets : NSObject {
         super.init()
         RolloverPresets.rp = self
         let f = Preference.DocDir.appendingPathComponent(positionFile)
+        func openNext(success: Bool) {
+            let closed = presetPref.filter { $0.documentState == .closed }
+            
+            guard closed.count > 0 else {
+                return
+            }
+            closed.first!.open(completionHandler: openNext(success:))
+        }
         
         defaultPref = Preference(fileURL: f)
-        defaultPref!.open { (s) in
-            if s {
-                print("open OK")
-            }
-            else {
-                print("open failed")
-            }
-        }
-
 
         if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
             for preset in dirContents {
                 if preset.hasDirectoryPath {
                     let posF = preset.appendingPathComponent(positionFile)
-                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: posF.path) as! Preference
-                    
-                    names.append(preset.lastPathComponent)
-                    presetPref.append(pref)
+                    let pref = Preference(fileURL: posF)
+
+                    self.names.append(preset.lastPathComponent)
+                    self.presetPref.append(pref)
                 }
             }
         }
+        defaultPref?.open(completionHandler: openNext(success:))
+
+//        // recover from application support directory
+//        if let appSupportContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
+//            for preset in appSupportContents {
+//                if preset.hasDirectoryPath {
+//                    let presetF = preset.appendingPathComponent(positionFile)
+//                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: presetF.path) as? Preference
+//                    let presetName = preset.lastPathComponent
+//
+//                    if names.index(of: presetName) != nil {
+//                        //                        presetName += " - " + String(idx)
+//                        continue
+//                    }
+//                    let dd = Preference.DocDir
+//                    
+//                    try? FileManager.default.createDirectory(at: dd.appendingPathComponent(presetName), withIntermediateDirectories: false, attributes: nil)
+//                    pref?.save(to: dd.appendingPathComponent(presetName + "/" + positionFile), for: .forCreating, completionHandler: { (s) in
+//                        if s {
+//                            self.names.append(presetName)
+//                            self.presetPref.append(pref!)
+//                        }
+//                    })
+//                    
+//                }
+//            }
+//        }
     }
     
     func cleanImageCache(prefBeingDeleted p: Preference)  {
@@ -115,17 +141,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
 
     override init(fileURL url: URL) {
         super.init(fileURL: url)
-        if FileManager.default.fileExists(atPath: url.path) {
-            open { (s) in
-                if s {
-                    print("open OK")
-                }
-                else {
-                    print("open failed")
-                }
-            }
-        }
-        else {
+        if !FileManager.default.fileExists(atPath: url.path) {
             save(to: url, for: .forCreating, completionHandler: { (s) in
                 if s {
                     print("Save OK")

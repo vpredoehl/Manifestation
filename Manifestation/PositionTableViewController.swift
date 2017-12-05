@@ -559,9 +559,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
-                if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
-                    print("Positions saved.")
-                }
+                pref.save(to: fPosn, for: .forOverwriting, completionHandler: { (s) in
+                    if s {
+                        print("Positions saved.")
+                    }
+                })
             }
             else {
                 let newSelIP = IndexPath(row: existingPresetIdx!, section: 0)
