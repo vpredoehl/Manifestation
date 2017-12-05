@@ -64,8 +64,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         super.init(coder: aDecoder)
         let p = preset.defaultPref
 
-        preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
-        preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: &preset.ctx)
+        preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
+        preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
         pref = p ?? Preference()
     }
@@ -325,7 +325,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         case "names"?:
             let names = change![NSKeyValueChangeKey.newKey] as! [String]
             editPresetBtn.isEnabled = names.count > 0
-            presetView.reloadData()
         case "defaultPref"?:
             if let def = preset.defaultPref {
                 addCurrentPresetBtn.isEnabled = def != Preference()
@@ -340,11 +339,17 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
+        guard let row = selectedPreset else { return }
+        let ip = IndexPath(row: row, section: 0)
+        guard let cell = presetView.cellForRow(at: ip) else { return }
+        
         switch pref.documentState {
         case .normal:
             print("documentState: normal")
+            cell.isUserInteractionEnabled = true
         case .closed:
             print("documentState: closed")
+            cell.isUserInteractionEnabled = false
         case .inConflict:
             print("documentState: inConflict")
         case .savingError:
@@ -512,6 +517,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
 
         cell.presetButton.tag = indexPath.row
+        cell.isUserInteractionEnabled = preset.presetPref[indexPath.row].documentState == .normal
         if let s = selectedPreset  {
             let rowSelected = s == indexPath.row
 
