@@ -133,10 +133,10 @@ class Preference: UIDocument, NSCoding, NSCopying {
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
-    var chiTransferImage: Data? = nil
+    static var chiTransferImage: Data? = NSKeyedUnarchiver.unarchiveObject(withFile: Preference.AppDir.appendingPathComponent(chiImageFile).path) as? Data
     
     convenience init() {
-        self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
+        self.init(imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
     }
 
     override init(fileURL url: URL) {
@@ -153,7 +153,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
         }
     }
     
-    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
+    init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
         let temp = Preference.AppDir.appendingPathComponent("temp")
         
         super.init(fileURL: url ?? temp)
@@ -161,13 +161,6 @@ class Preference: UIDocument, NSCoding, NSCopying {
             return nil
         }
         
-        if let img = t {
-            chiTransferImage = img
-        }
-        else {
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-            chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
-        }
         imageIndex = ii ?? [ nil ]
         trendText = tr ?? [ "" ]
         targetText = ta ?? [ "" ]
@@ -233,7 +226,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
             }
         }
         
-        self.init(transfer: nil, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
+        self.init(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
     }
     
     private
@@ -336,7 +329,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     
     // MARK: - NSCopying -
     func copy(with zone: NSZone? = nil) -> Any {
-        return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
+        return Preference(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
 
     override func isEqual(_ obj: Any?) -> Bool {

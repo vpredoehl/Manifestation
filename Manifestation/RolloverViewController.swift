@@ -19,7 +19,7 @@ extension Preference
             return userKeys.count > 0
         }
     }
-    var hasChiImage: Bool   {   get     {   return chiTransferImage != nil  }   }
+    var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage != nil  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
     
     func hasTransferSequence(currentPreset p: Int? = nil) -> Bool {
@@ -82,7 +82,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     override func viewDidLoad() {
         animationVC.pref = pref
-        if let d = pref.chiTransferImage {
+        if let d = Preference.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
         
@@ -115,9 +115,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             let f = Preference.AppDir.appendingPathComponent(chiImageFile)
 
-            self.pref.chiTransferImage = nil
+            Preference.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            NSKeyedArchiver.archiveRootObject(self.pref.chiTransferImage as Any, toFile: f.path)
+            NSKeyedArchiver.archiveRootObject(Preference.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
@@ -270,7 +270,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
         chiImageView.image = img
-        pref.chiTransferImage = UIImagePNGRepresentation(img)
+        Preference.chiTransferImage = UIImagePNGRepresentation(img)
         dismiss(animated: true, completion: nil)
     }
     
@@ -280,6 +280,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let dest = segue.destination as! PositionTableViewController
             
             dest.pref = pref.copy() as! Preference
+            dest.chiTransferImage = Preference.chiTransferImage
         case "AnimationSegue":
             animationVC = segue.destination as! AnimationViewController
         default: break
