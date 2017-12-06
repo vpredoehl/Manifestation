@@ -22,17 +22,19 @@ extension Preference
     var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage != nil  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
     
-    func hasTransferSequence(currentPreset p: Int? = nil) -> Bool {
-        guard p == nil else {
+    func hasTransferSequence(currentPreset p: Int? = -1, defaultPref dp: Preference? = nil) -> Bool {
+        guard p != nil && p == -1 || dp != nil else {
             return false
         }
-        for i in imageIndex {
+        let prefToTest = dp ?? self
+        
+        for i in prefToTest.imageIndex {
             if i != nil    {   return true }
         }
         return false
     }
-    func canHiliteTrash(currentPreset p: Int?) -> Bool {
-        return hasChiImage || hasTransferSequence(currentPreset: p) || hasUserPhotos
+    func canHiliteTrash(currentPreset p: Int?, defaultPref dp: Preference? = nil) -> Bool {
+        return hasChiImage || hasTransferSequence(currentPreset: p, defaultPref: dp) || hasUserPhotos
     }
 }
 
@@ -75,21 +77,21 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         removeObserver(self, forKeyPath: "defaultPref")
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tb.items![2].isEnabled = pref.canPlay
-        tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
-    }
     override func viewDidLoad() {
         animationVC.pref = pref
         if let d = Preference.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
-        
+        pref.open { (s) in
+            if s {
+                self.tb.items![2].isEnabled = self.pref.canPlay
+                self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+                self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+            }
+        }
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
         editPresetBtn.isEnabled = preset.names.count > 0
-        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence()
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -120,7 +122,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             NSKeyedArchiver.archiveRootObject(Preference.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
         }
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
@@ -132,7 +134,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             try? FileManager.default.removeItem(at: f)
             
             self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset)
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
             self.addCurrentPresetBtn.isEnabled = false
         }
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
@@ -165,7 +167,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if pref.hasChiImage {
             ac.addAction(deleteChi)
         }
-        if pref.hasTransferSequence(currentPreset: selectedPreset) {
+        if pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: selectedPreset == nil ? preset.defaultPref : nil) {
             ac.addAction(deleteRollover)
         }
         if pref.hasUserPhotos {
@@ -298,11 +300,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 cell?.setSelected(false, animated: false)
             }
             else {
-                let fPos = Preference.AppDir.appendingPathComponent(positionFile)
-                let hasDefaultPositions = FileManager.default.fileExists(atPath: fPos.path)
-                
                 // enable add current preset button if has default positions
-                addCurrentPresetBtn.isEnabled = hasDefaultPositions
+                addCurrentPresetBtn.isEnabled = false
             }
             if let s = selectedPreset {
                 let ip = IndexPath(row: s, section: 0)
@@ -314,9 +313,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
             else {
                 pref = preset.defaultPref
+                addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: pref)
             }
-            tb.items![2].isEnabled = pref.canPlay
-            tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset)
+            pref.open { (s) in
+                if s {
+                    self.tb.items![2].isEnabled = self.pref.canPlay
+                    self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+                }
+            }
         }
     }
 
@@ -327,7 +331,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             editPresetBtn.isEnabled = names.count > 0
         case "defaultPref"?:
             if let def = preset.defaultPref {
-                addCurrentPresetBtn.isEnabled = def != Preference()
+                addCurrentPresetBtn.isEnabled = def.hasTransferSequence()
             }
             else {
                 addCurrentPresetBtn.isEnabled = false
@@ -339,17 +343,15 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
-        guard let row = selectedPreset else { return }
-        let ip = IndexPath(row: row, section: 0)
-        guard let cell = presetView.cellForRow(at: ip) else { return }
+//        guard let row = selectedPreset else { return }
+//        let ip = IndexPath(row: row, section: 0)
+//        guard let cell = presetView.cellForRow(at: ip) else { return }
         
         switch pref.documentState {
         case .normal:
             print("documentState: normal")
-            cell.isUserInteractionEnabled = true
         case .closed:
             print("documentState: closed")
-            cell.isUserInteractionEnabled = false
         case .inConflict:
             print("documentState: inConflict")
         case .savingError:
@@ -517,7 +519,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
 
         cell.presetButton.tag = indexPath.row
-        cell.isUserInteractionEnabled = preset.presetPref[indexPath.row].documentState == .normal
         if let s = selectedPreset  {
             let rowSelected = s == indexPath.row
 

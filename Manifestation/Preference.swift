@@ -21,15 +21,15 @@ class RolloverPresets : NSObject {
     override init() {
         super.init()
         RolloverPresets.rp = self
-        let f = Preference.DocDir.appendingPathComponent(positionFile)
-        func openNext(success: Bool) {
-            let closed = presetPref.filter { $0.documentState == .closed }
-            
-            guard closed.count > 0 else {
-                return
-            }
-            closed.first!.open(completionHandler: openNext(success:))
-        }
+        let f = Preference.AppDir.appendingPathComponent(positionFile)
+//        func openNext(success: Bool) {
+//            let closed = presetPref.filter { $0.documentState == .closed }
+//
+//            guard closed.count > 0 else {
+//                return
+//            }
+//            closed.first!.open(completionHandler: openNext(success:))
+//        }
         
         defaultPref = Preference(fileURL: f)
 
@@ -44,7 +44,6 @@ class RolloverPresets : NSObject {
                 }
             }
         }
-        defaultPref?.open(completionHandler: openNext(success:))
 
 //        // recover from application support directory
 //        if let appSupportContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
@@ -153,7 +152,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }
     
     init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
-        let temp = Preference.AppDir.appendingPathComponent("temp")
+        let temp = Preference.AppDir.appendingPathComponent(positionFile)
         
         super.init(fileURL: url ?? temp)
         if tr == nil || ta == nil {
@@ -168,6 +167,13 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }
     
     // MARK: - UIDocument
+    override func open(completionHandler: ((Bool) -> Void)? = nil) {
+        guard documentState != .normal else {
+            completionHandler?(true)
+            return
+        }
+        super.open(completionHandler: completionHandler)
+    }
     override func contents(forType typeName: String) throws -> Any {
         return NSKeyedArchiver.archivedData(withRootObject:self)
     }
