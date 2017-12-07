@@ -76,18 +76,22 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         removeObserver(self, forKeyPath: "names")
         removeObserver(self, forKeyPath: "defaultPref")
     }
-    
-    override func viewDidLoad() {
-        animationVC.pref = pref
-        if let d = Preference.chiTransferImage {
-            chiImageView.image = UIImage(data: d)
-        }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         pref.open { (s) in
             if s {
                 self.tb.items![2].isEnabled = self.pref.canPlay
                 self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
                 self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
             }
+        }
+    }
+
+    override func viewDidLoad() {
+        animationVC.pref = pref
+        if let d = Preference.chiTransferImage {
+            chiImageView.image = UIImage(data: d)
         }
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
