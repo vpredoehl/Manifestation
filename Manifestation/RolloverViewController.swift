@@ -309,10 +309,10 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
             if let s = selectedPreset {
                 let ip = IndexPath(row: s, section: 0)
-                let cell = presetView.cellForRow(at: ip) as! PresetTableViewCell
+                let cell = presetView.cellForRow(at: ip) as? PresetTableViewCell
                 
-                cell.presetButton.isSelected = true
-                cell.setSelected(true, animated: false)
+                cell?.presetButton.isSelected = true
+                cell?.setSelected(true, animated: false)
                 pref = preset.presetPref[s]
             }
             else {

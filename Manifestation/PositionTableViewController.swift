@@ -108,9 +108,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBAction func keyboardDismissTap(_ sender: UITapGestureRecognizer) {
         if let row = rowBeingEdited {
             let path = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: path) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: path) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -200,9 +200,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         tableView.setEditing(editing, animated: true)
         if editing,
             let row = rowBeingEdited {
-            let cell = tableView.cellForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue)) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
@@ -214,8 +214,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if let row = rowBeingEdited {
             let ipBeingEdited = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
-            cell.textView.resignFirstResponder()
+            let cell = tableView.cellForRow(at: ipBeingEdited) as? PositionTableViewCell
+            cell?.textView.resignFirstResponder()
         }
         return false
     }
@@ -336,11 +336,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     private
     func updateTags(forRow idx: Int, to: Int)
     {
-        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
+        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: adaptedPositionSection.rawValue)) as? PositionTableViewCell
         
-        cellToUpdate.cardButton.tag = to
-        cellToUpdate.textView.tag = to
-        cellToUpdate.trendOrTarget.tag = to
+        cellToUpdate?.cardButton.tag = to
+        cellToUpdate?.textView.tag = to
+        cellToUpdate?.trendOrTarget.tag = to
     }
 
     
@@ -361,9 +361,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         popoverS.sourceV = cardButton
         if let row = rowBeingEdited {
             let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: ip) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     
@@ -414,7 +414,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         let cardVC = segue.source as! CardsViewController
         let row = cardVC.row
         let ip = IndexPath(row: cardVC.row, section: adaptedPositionSection.rawValue)
-        let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+        let cell = tableView.cellForRow(at: ip) as? PositionTableViewCell
         let img = cardVC.userImage ?? (cardVC.returnImageIdx < 0
             ? pref.image(forKey: cardVC.returnImageIdx)
             : UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)"))
@@ -424,7 +424,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             pref.setImage(img, forKey: imgKey)
         }
         pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
-        cell.cardButton.setImage(img, for: .normal)
+        cell?.cardButton.setImage(img, for: .normal)
         if tableView.isEditing {    //
             tableView.isEditing = false
             tableView.isEditing = true
@@ -541,12 +541,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             let curSelIP = IndexPath(row: s, section: 0)
             let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as? PresetTableViewCell
             let newSelIP = IndexPath(row: idx, section: 0)
-            let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+            let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as? PresetTableViewCell
             
             curSel?.presetButton.isSelected = false
             curSel?.setSelected(false, animated: false)
-            newSel.presetButton.isSelected = true
-            newSel.setSelected(true, animated: false)
+            newSel?.presetButton.isSelected = true
+            newSel?.setSelected(true, animated: false)
             rolloverVC.selectedPreset = existingPresetIdx
         } else {
             rolloverVC.preset.defaultPref = pref
@@ -568,10 +568,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             }
             else {
                 let newSelIP = IndexPath(row: existingPresetIdx!, section: 0)
-                let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+                let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as? PresetTableViewCell
 
-                newSel.presetButton.isSelected = true
-                newSel.setSelected(true, animated: false)
+                newSel?.presetButton.isSelected = true
+                newSel?.setSelected(true, animated: false)
                 try? FileManager.default.removeItem(at: fPosn)
                 rolloverVC.selectedPreset = existingPresetIdx
                 rolloverVC.preset.defaultPref = Preference()
