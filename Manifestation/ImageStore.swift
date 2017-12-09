@@ -73,9 +73,6 @@ extension Preference
     }
     
     func imageURL(forKey key: Int) -> URL {
-        let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let docDir = docsDirs.first!
-        
-        return docDir.appendingPathComponent("UI\(key)")
+        return Preference.AppDir.appendingPathComponent("UI\(key)")
     }
 }

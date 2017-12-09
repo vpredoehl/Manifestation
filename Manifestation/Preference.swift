@@ -22,54 +22,64 @@ class RolloverPresets : NSObject {
         super.init()
         RolloverPresets.rp = self
         let f = Preference.AppDir.appendingPathComponent(positionFile)
-//        func openNext(success: Bool) {
-//            let closed = presetPref.filter { $0.documentState == .closed }
-//
-//            guard closed.count > 0 else {
-//                return
-//            }
-//            closed.first!.open(completionHandler: openNext(success:))
-//        }
+        let fm = FileManager.default
         
-        defaultPref = Preference(fileURL: f)
+//        if Preference.ubiq != nil {
+//            try? fm.removeItem(at: f)
+//            if let dirContents = try? fm.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemDownloadingStatusKey], options: .skipsHiddenFiles) {
+//                for p in dirContents {
+//                    if p.hasDirectoryPath {
+//                        try? fm.removeItem(at: p)
+//                    }
+//                }
+//            }
+//        }
 
-        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
-            for preset in dirContents {
-                if preset.hasDirectoryPath {
-                    let posF = preset.appendingPathComponent(positionFile)
+        if fm.isUbiquitousItem(at: f) {
+            try? fm.startDownloadingUbiquitousItem(at: f)
+        }
+        // move local files to iCloud
+        if let docDirContents = try? FileManager.default.contentsOfDirectory(at: Preference.DocDir, includingPropertiesForKeys: [ .isDirectoryKey, .isRegularFileKey ], options: .skipsHiddenFiles) {
+            let userImages = docDirContents.filter  {   $0.lastPathComponent.hasPrefix("UI-") }
+            userImages.forEach({ (img) in
+                try? FileManager.default.copyItem(at: img, to: Preference.AppDir.appendingPathComponent(img.lastPathComponent))
+                do {
+                    try fm.setUbiquitous(true, itemAt: img, destinationURL: Preference.AppDir.appendingPathComponent(f.path))
+                }
+                catch {
+                    print(error)
+                }
+            })
+        }
+        
+        let appDir = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        if let appDirContents = try? FileManager.default.contentsOfDirectory(at: appDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) {
+            appDirContents.forEach({ (u) in
+                try? FileManager.default.copyItem(at: u, to: Preference.AppDir.appendingPathComponent(u.lastPathComponent))
+            })
+        }
+
+        defaultPref = Preference(fileURL: f)
+        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles) {
+            for f in dirContents {
+                if fm.isUbiquitousItem(at: f) {
+                    do {
+                        try fm.startDownloadingUbiquitousItem(at: f)
+                    }
+                    catch {
+                        print("Download error: \(error)")
+                    }
+                }
+                if f.hasDirectoryPath {
+                    let posF = f.appendingPathComponent(positionFile)
                     let pref = Preference(fileURL: posF)
 
-                    self.names.append(preset.lastPathComponent)
+                    self.names.append(f.lastPathComponent)
                     self.presetPref.append(pref)
                 }
             }
         }
 
-//        // recover from application support directory
-//        if let appSupportContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
-//            for preset in appSupportContents {
-//                if preset.hasDirectoryPath {
-//                    let presetF = preset.appendingPathComponent(positionFile)
-//                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: presetF.path) as? Preference
-//                    let presetName = preset.lastPathComponent
-//
-//                    if names.index(of: presetName) != nil {
-//                        //                        presetName += " - " + String(idx)
-//                        continue
-//                    }
-//                    let dd = Preference.DocDir
-//                    
-//                    try? FileManager.default.createDirectory(at: dd.appendingPathComponent(presetName), withIntermediateDirectories: false, attributes: nil)
-//                    pref?.save(to: dd.appendingPathComponent(presetName + "/" + positionFile), for: .forCreating, completionHandler: { (s) in
-//                        if s {
-//                            self.names.append(presetName)
-//                            self.presetPref.append(pref!)
-//                        }
-//                    })
-//                    
-//                }
-//            }
-//        }
     }
     
     func cleanImageCache(prefBeingDeleted p: Preference)  {
@@ -117,16 +127,19 @@ class Preference: UIDocument, NSCoding, NSCopying {
         () -> URL in
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     }()
-    static let AppDir = {
-        () -> URL in
-        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-    }()
+    static var AppDir: URL {
+        guard let url = ubiq?.appendingPathComponent("Documents", isDirectory: true) else {
+            return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        }
+        return url
+    }
     static var curRolloverPosition = 0
 
     open var imageIndex: [Int?] = [ nil ]
     open var toBeDeleted: [Int] = []
     open var trendText: [String] = [ "" ]
     open var targetText: [String] = [ "" ]
+    static var ubiq: URL?
     static var userPhotoKeys: [Int]? = nil
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
@@ -168,12 +181,16 @@ class Preference: UIDocument, NSCoding, NSCopying {
     
     // MARK: - UIDocument
     override func open(completionHandler: ((Bool) -> Void)? = nil) {
-        guard documentState != .normal else {
+        switch documentState {
+        case .normal:
             completionHandler?(true)
-            return
-        }
-        super.open(completionHandler: completionHandler)
-    }
+        case .inConflict:
+            let v = NSFileVersion.otherVersionsOfItem(at: fileURL)
+            print(v ?? "")
+        default:
+            super.open(completionHandler: completionHandler)
+
+        }    }
     override func contents(forType typeName: String) throws -> Any {
         return NSKeyedArchiver.archivedData(withRootObject:self)
     }
@@ -205,7 +222,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
         let numPositions = aDecoder.decodeInteger(forKey: "numPositions")
         var st: [SegmentType]? = nil
 
-        if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path) {
+        if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
             let userKeys = dirContents.filter { $0.starts(with: "UI-")  }
                 .map { $0.components(separatedBy: "-").last! }
                 .flatMap {    Int("-" + $0)    }
@@ -214,7 +231,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
         }
 
         // remove dangling user photo  indexes
-        let docDir = Preference.DocDir
+        let docDir = Preference.AppDir
         imageIndex = imageIndex?.map
             {
                 (idx) in

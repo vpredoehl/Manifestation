@@ -66,6 +66,33 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         super.init(coder: aDecoder)
         let p = preset.defaultPref
 
+        DispatchQueue.global(qos: .default).async {
+            let ubiq = FileManager.default.url(forUbiquityContainerIdentifier: nil)
+            
+            DispatchQueue.main.async {
+                if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path),
+                    let u = ubiq {
+                    dirContents.forEach({ (s) in
+                        try? FileManager.default.copyItem(atPath: Preference.AppDir.appendingPathComponent(s).path,
+                                                          toPath: u.appendingPathComponent(s).path)
+                    })
+                    print("iCloud Contents: \(try! FileManager.default.contentsOfDirectory(atPath: u.path))")
+                }
+                Preference.ubiq = ubiq
+                self.preset = RolloverPresets()
+                // update UI because view is already showing
+                self.presetView.reloadData()
+                self.pref = self.preset.defaultPref ?? Preference()
+                self.pref.open { (s) in
+                    if s {
+                        self.tb.items![2].isEnabled = self.pref.canPlay
+                        self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+                        self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+                    }
+                }
+            }
+        }
+
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
         preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
@@ -144,13 +171,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
         {
             (_) in
-            if let files = try? FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path) {
-                let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-                let docDir = docsDirs.first!
+            if let files = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
                 let userPhotos = files.filter {   $0.hasPrefix("UI-") }
                 let _ = userPhotos.map
                 {
-                    let f = docDir.appendingPathComponent($0)
+                    let f = Preference.AppDir.appendingPathComponent($0)
                     try? FileManager.default.removeItem(at: f)
                 }
                 Preference.userPhotoKeys = [ ]
