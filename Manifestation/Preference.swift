@@ -24,43 +24,9 @@ class RolloverPresets : NSObject {
         let f = Preference.AppDir.appendingPathComponent(positionFile)
         let fm = FileManager.default
         
-//        if Preference.ubiq != nil {
-//            try? fm.removeItem(at: f)
-//            if let dirContents = try? fm.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemDownloadingStatusKey], options: .skipsHiddenFiles) {
-//                for p in dirContents {
-//                    if p.hasDirectoryPath {
-//                        try? fm.removeItem(at: p)
-//                    }
-//                }
-//            }
-//        }
-
-        if fm.isUbiquitousItem(at: f) {
-            try? fm.startDownloadingUbiquitousItem(at: f)
-        }
-        // move local files to iCloud
-        if let docDirContents = try? FileManager.default.contentsOfDirectory(at: Preference.DocDir, includingPropertiesForKeys: [ .isDirectoryKey, .isRegularFileKey ], options: .skipsHiddenFiles) {
-            let userImages = docDirContents.filter  {   $0.lastPathComponent.hasPrefix("UI-") }
-            userImages.forEach({ (img) in
-                try? FileManager.default.copyItem(at: img, to: Preference.AppDir.appendingPathComponent(img.lastPathComponent))
-                do {
-                    try fm.setUbiquitous(true, itemAt: img, destinationURL: Preference.AppDir.appendingPathComponent(f.path))
-                }
-                catch {
-                    print(error)
-                }
-            })
-        }
-        
-        let appDir = try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        if let appDirContents = try? FileManager.default.contentsOfDirectory(at: appDir, includingPropertiesForKeys: nil, options: .skipsHiddenFiles) {
-            appDirContents.forEach({ (u) in
-                try? FileManager.default.copyItem(at: u, to: Preference.AppDir.appendingPathComponent(u.lastPathComponent))
-            })
-        }
-
         defaultPref = Preference(fileURL: f)
-        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles) {
+        do {
+            let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
             for f in dirContents {
                 if fm.isUbiquitousItem(at: f) {
                     do {
@@ -73,13 +39,15 @@ class RolloverPresets : NSObject {
                 if f.hasDirectoryPath {
                     let posF = f.appendingPathComponent(positionFile)
                     let pref = Preference(fileURL: posF)
-
+                    
                     self.names.append(f.lastPathComponent)
                     self.presetPref.append(pref)
                 }
             }
         }
-
+        catch {
+            print("contentsOfDirectory error: \(error)")
+        }
     }
     
     func cleanImageCache(prefBeingDeleted p: Preference)  {
@@ -128,9 +96,15 @@ class Preference: UIDocument, NSCoding, NSCopying {
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     }()
     static var AppDir: URL {
-        guard let url = ubiq?.appendingPathComponent("Documents", isDirectory: true) else {
+        guard let url = ubiq else {
             return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         }
+//        do {
+//            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+//        }
+//        catch {
+//            print("Error creating documents: \(error)")
+//        }
         return url
     }
     static var curRolloverPosition = 0
