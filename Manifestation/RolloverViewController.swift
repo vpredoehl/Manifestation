@@ -19,7 +19,7 @@ extension Preference
             return userKeys.count > 0
         }
     }
-    var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage != nil  }   }
+    var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage.image != nil  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
     
     func hasTransferSequence(currentPreset p: Int? = -1, defaultPref dp: Preference? = nil) -> Bool {
@@ -66,33 +66,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         super.init(coder: aDecoder)
         let p = preset.defaultPref
 
-        DispatchQueue.global(qos: .default).async {
-            let ubiq = FileManager.default.url(forUbiquityContainerIdentifier: nil)
-            
-            DispatchQueue.main.async {
-                if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path),
-                    let u = ubiq {
-                    dirContents.forEach({ (s) in
-                        try? FileManager.default.copyItem(atPath: Preference.AppDir.appendingPathComponent(s).path,
-                                                          toPath: u.appendingPathComponent(s).path)
-                    })
-                    print("iCloud Contents: \(try! FileManager.default.contentsOfDirectory(atPath: u.path))")
-                }
-                Preference.ubiq = ubiq
-                self.preset = RolloverPresets()
-                // update UI because view is already showing
-                self.presetView.reloadData()
-                self.pref = self.preset.defaultPref ?? Preference()
-                self.pref.open { (s) in
-                    if s {
-                        self.tb.items![2].isEnabled = self.pref.canPlay
-                        self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
-                        self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
-                    }
-                }
-            }
-        }
-
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
         preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
@@ -117,9 +90,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
     override func viewDidLoad() {
         animationVC.pref = pref
-        if let d = Preference.chiTransferImage {
-            chiImageView.image = UIImage(data: d)
+        Preference.chiTransferImage.open { (s) in
+            guard let chiImage = Preference.chiTransferImage.image else {   return  }
+            self.chiImageView.image = chiImage
         }
+
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
         editPresetBtn.isEnabled = preset.names.count > 0
@@ -140,6 +115,19 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     // MARK: - Tool Bar
+    @IBAction func clearCloud(_ sender: Any) {
+        let fm = FileManager.default
+        if let u = Preference.ubiq,
+            let dirFiles = try? FileManager.default.contentsOfDirectory(at: u, includingPropertiesForKeys: nil) {
+            for f in dirFiles {
+                if fm.isUbiquitousItem(at: f) {
+                    try? fm.removeItem(at: f)
+//                    fm.setUbiquitous(false, itemAt: f, destinationURL: Preference.AppDir)
+                }
+                try? fm.removeItem(at: f)
+            }
+        }
+    }
     @IBAction func trash(_ sender: Any) {
         let ac = UIAlertController()
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
@@ -148,9 +136,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             let f = Preference.AppDir.appendingPathComponent(chiImageFile)
 
-            Preference.chiTransferImage = nil
+            Preference.chiTransferImage.image = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            NSKeyedArchiver.archiveRootObject(Preference.chiTransferImage as Any, toFile: f.path)
+            Preference.chiTransferImage.save(to: f, for: .forOverwriting)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
@@ -301,7 +289,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
         chiImageView.image = img
-        Preference.chiTransferImage = UIImagePNGRepresentation(img)
+        Preference.chiTransferImage.image = img
         dismiss(animated: true, completion: nil)
     }
     
@@ -311,7 +299,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let dest = segue.destination as! PositionTableViewController
             
             dest.pref = pref.copy() as! Preference
-            dest.chiTransferImage = Preference.chiTransferImage
+            dest.chiTransferImage = Preference.chiTransferImage.image
         case "AnimationSegue":
             animationVC = segue.destination as! AnimationViewController
         default: break

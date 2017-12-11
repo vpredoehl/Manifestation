@@ -38,7 +38,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBOutlet weak var chiImageAdapted: UIButton!
     
     var pref: Preference!
-    var chiTransferImage: Data?
+    var chiTransferImage: UIImage?
     var rowBeingEdited: Int?
     var adaptedPositionSection: TableSection {
         get {
@@ -57,8 +57,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardAppearing(_:)), name: .UIKeyboardDidShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardDisappearing(_:)), name: .UIKeyboardWillHide, object: nil)
         
-        if let d = chiTransferImage,
-            let img = UIImage(data: d) {
+        if let img = chiTransferImage {
             chiImageAdapted.setImage(img, for: .normal)
             chiImageAdapted.imageView!.contentMode = .scaleAspectFit
         }
@@ -150,8 +149,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         case .chiSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChiCell", for: indexPath) as! ChiCellTableViewCell
             
-            if chiTransferImage != nil {
-                let img = UIImage(data: chiTransferImage!)
+            if let img = chiTransferImage {
                 cell.chiButton.setImage(img, for: .normal)
                 cell.chiButton.imageView!.contentMode = .scaleAspectFit
             }
@@ -384,7 +382,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         switch tag {
         case -1:
             if let img = chiTransferImage {
-                previewVC.imageView.image = UIImage(data: img)
+                previewVC.imageView.image = img
             }
             else {
                 return
@@ -454,7 +452,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        chiTransferImage = UIImagePNGRepresentation(img)
+        chiTransferImage = img
         chiImageAdapted.setImage(img, for: .normal)
         chiImageAdapted.imageView!.contentMode = .scaleAspectFit
         if traitCollection.horizontalSizeClass != .regular {
@@ -521,15 +519,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBAction func save(_ sender: UIBarButtonItem) {
         let fPosn = Preference.AppDir.appendingPathComponent(positionFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
-
-        if let img = chiTransferImage {
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-            
-            if img != Preference.chiTransferImage
-                && NSKeyedArchiver.archiveRootObject(img, toFile: f.path) {
-                print("Image saved.")
-            }
-        }
+        let chiFile = Preference.AppDir.appendingPathComponent(chiImageFile)
         
         pref.deleteUnusedImages()
         rolloverVC.pref = pref
@@ -578,9 +568,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             }
         }
         
-        if let d = chiTransferImage {
-            rolloverVC.chiImageView.image = UIImage(data: d)
-        }
+        rolloverVC.chiImageView.image = chiTransferImage
+        Preference.chiTransferImage.image = chiTransferImage
+        Preference.chiTransferImage.save(to: chiFile, for: .forOverwriting, completionHandler: { (s) in
+            print("Image saved: \(s)")
+        })
+        
         navigationController?.popViewController(animated: true)
     }
     

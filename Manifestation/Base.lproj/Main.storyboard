@@ -135,7 +135,13 @@
                             </mask>
                         </variation>
                     </view>
-                    <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv"/>
+                    <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv">
+                        <barButtonItem key="leftBarButtonItem" title="Clear" id="FHS-oD-HGQ">
+                            <connections>
+                                <action selector="clearCloud:" destination="BYZ-38-t0r" id="OSp-vO-6Cm"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="addCurrentPresetBtn" destination="YXO-A9-Afl" id="S9J-FI-OWd"/>
                         <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>

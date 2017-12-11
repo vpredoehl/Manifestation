@@ -21,10 +21,10 @@ class RolloverPresets : NSObject {
     override init() {
         super.init()
         RolloverPresets.rp = self
-        let f = Preference.AppDir.appendingPathComponent(positionFile)
+        let defaultPositions = Preference.AppDir.appendingPathComponent(positionFile)
         let fm = FileManager.default
         
-        defaultPref = Preference(fileURL: f)
+        defaultPref = Preference(fileURL: defaultPositions)
         do {
             let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
             for f in dirContents {
@@ -113,12 +113,12 @@ class Preference: UIDocument, NSCoding, NSCopying {
     open var toBeDeleted: [Int] = []
     open var trendText: [String] = [ "" ]
     open var targetText: [String] = [ "" ]
-    static var ubiq: URL?
+    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
     static var userPhotoKeys: [Int]? = nil
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
-    static var chiTransferImage: Data? = NSKeyedUnarchiver.unarchiveObject(withFile: Preference.AppDir.appendingPathComponent(chiImageFile).path) as? Data
+    static var chiTransferImage = ImageDoc(fileURL: Preference.AppDir.appendingPathComponent(chiImageFile))
     
     convenience init() {
         self.init(imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
@@ -340,4 +340,28 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }
 }
 
+final class ImageDoc: UIDocument {
+    var image: UIImage?
+    
+    override init(fileURL url: URL) {
+        super.init(fileURL: url)
+        if !FileManager.default.fileExists(atPath: url.path) {
+            save(to: url, for: .forCreating, completionHandler: { (s) in
+                if s {
+                    print("Save OK")
+                }
+                else {
+                    print("Save failed")
+                }
+            })
+        }
+    }
+
+    override func load(fromContents contents: Any, ofType typeName: String?) throws {
+        image = NSKeyedUnarchiver.unarchiveObject(with: contents as! Data) as? UIImage
+    }
+    override func contents(forType typeName: String) throws -> Any {
+        return NSKeyedArchiver.archivedData(withRootObject: image as Any)
+    }
+}
 
