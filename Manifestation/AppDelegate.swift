@@ -30,6 +30,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rolloverVC.isAnimating {
             rolloverVC.playRollover(UIBarButtonItem())
         }
+        do {
+            let url = Preference.AppDir.appendingPathComponent("image")
+            try Preference.imageW.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)
+        }
+        catch {
+            print("wrapper write error: \(error)")
+        }
     }
 }
 

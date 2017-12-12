@@ -522,13 +522,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         let fPosn = Preference.AppDir.appendingPathComponent(positionFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
-        if let img = chiTransferImage {
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-            
-            if img != Preference.chiTransferImage
-                && NSKeyedArchiver.archiveRootObject(img, toFile: f.path) {
-                print("Image saved.")
+        if let img = chiTransferImage,
+            img != Preference.chiTransferImage {
+            if let toBeReplaced = Preference.imageW.fileWrappers?[chiImageFile] {
+                Preference.imageW.removeFileWrapper(toBeReplaced)
             }
+            Preference.imageW.addRegularFile(withContents: img, preferredFilename: chiImageFile)
         }
         Preference.chiTransferImage = chiTransferImage
         

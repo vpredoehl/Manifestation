@@ -99,12 +99,6 @@ class Preference: UIDocument, NSCoding, NSCopying {
         guard let url = ubiq else {
             return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         }
-//        do {
-//            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-//        }
-//        catch {
-//            print("Error creating documents: \(error)")
-//        }
         return url
     }
     static var curRolloverPosition = 0
@@ -118,7 +112,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
-    static var chiTransferImage: Data? = NSKeyedUnarchiver.unarchiveObject(withFile: Preference.AppDir.appendingPathComponent(chiImageFile).path) as? Data
+    static var chiTransferImage: Data?
     
     convenience init() {
         self.init(imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!

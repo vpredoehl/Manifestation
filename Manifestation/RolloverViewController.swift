@@ -65,6 +65,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         let p = preset.defaultPref
+        
+        if let chiW = Preference.imageW.fileWrappers?[chiImageFile],
+            chiW.isRegularFile {
+            Preference.chiTransferImage = chiW.regularFileContents
+        }
 
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
         preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
@@ -132,11 +137,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteChi = UIAlertAction(title: "Delete Transfer Image", style: .destructive)
         {
             (_) in
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-
             Preference.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            NSKeyedArchiver.archiveRootObject(Preference.chiTransferImage as Any, toFile: f.path)
+            if let chiW = Preference.imageW.fileWrappers?[chiImageFile] {
+                Preference.imageW.removeFileWrapper(chiW)
+            }
 
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)

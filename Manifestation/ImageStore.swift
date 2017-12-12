@@ -11,7 +11,20 @@ import UIKit
 extension Preference
 {
     static let cache = NSCache<NSString, UIImage>()
-    
+    private static var fw: FileWrapper?
+    static var imageW: FileWrapper {
+        guard let w = Preference.fw else
+        {
+            guard let newFW = try? FileWrapper(url: Preference.AppDir.appendingPathComponent("image"), options: FileWrapper.ReadingOptions.immediate) else {
+                Preference.fw = FileWrapper(directoryWithFileWrappers: [ : ])
+                return Preference.fw!
+            }
+            Preference.fw = newFW
+            return newFW
+        }
+        return w
+    }
+
     func setImage(_ image: UIImage, forKey key: Int)
     {
         let matchesKey = Preference.userPhotoKeys?.filter   { $0 == key }
