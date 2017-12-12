@@ -118,7 +118,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
-    static var chiTransferImage = ImageDoc(fileURL: Preference.AppDir.appendingPathComponent(chiImageFile))
+    static var chiTransferImage: Data? = NSKeyedUnarchiver.unarchiveObject(withFile: Preference.AppDir.appendingPathComponent(chiImageFile).path) as? Data
     
     convenience init() {
         self.init(imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
@@ -337,31 +337,6 @@ class Preference: UIDocument, NSCoding, NSCopying {
         
         return eqII && eqTrend && eqTarget
 
-    }
-}
-
-final class ImageDoc: UIDocument {
-    var image: UIImage?
-    
-    override init(fileURL url: URL) {
-        super.init(fileURL: url)
-        if !FileManager.default.fileExists(atPath: url.path) {
-            save(to: url, for: .forCreating, completionHandler: { (s) in
-                if s {
-                    print("Save OK")
-                }
-                else {
-                    print("Save failed")
-                }
-            })
-        }
-    }
-
-    override func load(fromContents contents: Any, ofType typeName: String?) throws {
-        image = NSKeyedUnarchiver.unarchiveObject(with: contents as! Data) as? UIImage
-    }
-    override func contents(forType typeName: String) throws -> Any {
-        return NSKeyedArchiver.archivedData(withRootObject: image as Any)
     }
 }
 

@@ -19,7 +19,7 @@ extension Preference
             return userKeys.count > 0
         }
     }
-    var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage.image != nil  }   }
+    var hasChiImage: Bool   {   get     {   return Preference.chiTransferImage != nil  }   }
     var canPlay: Bool   {   get     {   return hasChiImage && hasTransferSequence()   }   }
     
     func hasTransferSequence(currentPreset p: Int? = -1, defaultPref dp: Preference? = nil) -> Bool {
@@ -90,11 +90,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
     override func viewDidLoad() {
         animationVC.pref = pref
-        Preference.chiTransferImage.open { (s) in
-            guard let chiImage = Preference.chiTransferImage.image else {   return  }
-            self.chiImageView.image = chiImage
+        if let d = Preference.chiTransferImage {
+            chiImageView.image = UIImage(data: d)
         }
-
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
         editPresetBtn.isEnabled = preset.names.count > 0
@@ -136,9 +134,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             let f = Preference.AppDir.appendingPathComponent(chiImageFile)
 
-            Preference.chiTransferImage.image = nil
+            Preference.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            Preference.chiTransferImage.save(to: f, for: .forOverwriting)
+            NSKeyedArchiver.archiveRootObject(Preference.chiTransferImage as Any, toFile: f.path)
 
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
@@ -289,7 +287,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
         chiImageView.image = img
-        Preference.chiTransferImage.image = img
+        Preference.chiTransferImage = UIImagePNGRepresentation(img)
         dismiss(animated: true, completion: nil)
     }
     
@@ -299,7 +297,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let dest = segue.destination as! PositionTableViewController
             
             dest.pref = pref.copy() as! Preference
-            dest.chiTransferImage = Preference.chiTransferImage.image
+            dest.chiTransferImage = Preference.chiTransferImage
         case "AnimationSegue":
             animationVC = segue.destination as! AnimationViewController
         default: break
