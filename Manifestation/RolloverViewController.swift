@@ -15,7 +15,7 @@ extension Preference
     var hasUserPhotos: Bool
     {
         get {
-            guard let userKeys = Preference.userPhotoKeys else { return false }
+            guard let userKeys = RolloverPresets.userPhotoKeys else { return false }
             return userKeys.count > 0
         }
     }
@@ -66,7 +66,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         super.init(coder: aDecoder)
         let p = preset.defaultPref
         
-        if let chiW = Preference.imageW.fileWrappers?[chiImageFile],
+        if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile],
             chiW.isRegularFile {
             Preference.chiTransferImage = chiW.regularFileContents
         }
@@ -120,7 +120,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     // MARK: - Tool Bar
     @IBAction func clearCloud(_ sender: Any) {
         let fm = FileManager.default
-        if let u = Preference.ubiq,
+        if let u = RolloverPresets.ubiq,
             let dirFiles = try? FileManager.default.contentsOfDirectory(at: u, includingPropertiesForKeys: nil) {
             for f in dirFiles {
                 if fm.isUbiquitousItem(at: f) {
@@ -139,8 +139,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             Preference.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            if let chiW = Preference.imageW.fileWrappers?[chiImageFile] {
-                Preference.imageW.removeFileWrapper(chiW)
+            if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile] {
+                RolloverPresets.imagePackage.removeFileWrapper(chiW)
             }
 
             self.tb.items![2].isEnabled = self.pref.canPlay
@@ -169,7 +169,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     let f = Preference.AppDir.appendingPathComponent($0)
                     try? FileManager.default.removeItem(at: f)
                 }
-                Preference.userPhotoKeys = [ ]
+                RolloverPresets.userPhotoKeys = [ ]
                 self.pref.imageIndex = self.pref.imageIndex.map
                     {
                         (idx) in

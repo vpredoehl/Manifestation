@@ -524,10 +524,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
         if let img = chiTransferImage,
             img != Preference.chiTransferImage {
-            if let toBeReplaced = Preference.imageW.fileWrappers?[chiImageFile] {
-                Preference.imageW.removeFileWrapper(toBeReplaced)
+            if let toBeReplaced = RolloverPresets.imagePackage.fileWrappers?[chiImageFile] {
+                RolloverPresets.imagePackage.removeFileWrapper(toBeReplaced)
             }
-            Preference.imageW.addRegularFile(withContents: img, preferredFilename: chiImageFile)
+            RolloverPresets.imagePackage.addRegularFile(withContents: img, preferredFilename: chiImageFile)
         }
         Preference.chiTransferImage = chiTransferImage
         

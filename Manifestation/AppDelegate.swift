@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         do {
             let url = Preference.AppDir.appendingPathComponent("image")
-            try Preference.imageW.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)
+            try RolloverPresets.imagePackage.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)
         }
         catch {
             print("wrapper write error: \(error)")

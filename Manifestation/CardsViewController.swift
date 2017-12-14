@@ -47,7 +47,7 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         
         switch indexPath.section {
         case 0:
-            let idx = Preference.userPhotoKeys![indexPath.item]
+            let idx = RolloverPresets.userPhotoKeys![indexPath.item]
             cell.imageView.image = pref.image(forKey: idx)
             cell.imgIdx = idx
         case 1:
@@ -82,7 +82,7 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         switch section {
         case 0:
-            let userKeys = Preference.userPhotoKeys
+            let userKeys = RolloverPresets.userPhotoKeys
             if userKeys == nil || section == 0 && userKeys!.count == 0 {
                 return .zero
             }
@@ -100,7 +100,7 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch section {
         case 0:
-            guard let userKeys = Preference.userPhotoKeys else { return 0 }
+            guard let userKeys = RolloverPresets.userPhotoKeys else { return 0 }
             return userKeys.count
         case 1:
             return AoDCount

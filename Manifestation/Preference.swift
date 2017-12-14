@@ -16,14 +16,38 @@ class RolloverPresets : NSObject {
     @objc dynamic var names: [String] = []
     @objc dynamic var defaultPref: Preference?
     var presetPref: [Preference] = []
-    static var rp: RolloverPresets!     // reference to only instance of self
     
+    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
+    static var userPhotoKeys: [Int]? = nil
+    static var rp: RolloverPresets!     // reference to only instance of self
+    private static var fw: FileWrapper?
+    static var imagePackage: FileWrapper {
+        guard let w = RolloverPresets.fw else
+        {
+            guard let newFW = try? FileWrapper(url: Preference.AppDir.appendingPathComponent("image"), options: FileWrapper.ReadingOptions.immediate) else {
+                RolloverPresets.fw = FileWrapper(directoryWithFileWrappers: [ : ])
+                return RolloverPresets.fw!
+            }
+            RolloverPresets.fw = newFW
+            return newFW
+        }
+        return w
+    }
+
     override init() {
         super.init()
         RolloverPresets.rp = self
         let defaultPositions = Preference.AppDir.appendingPathComponent(positionFile)
         let fm = FileManager.default
         
+        if let imageFiles = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
+            let userKeys = imageFiles.filter { $0.starts(with: "UI-")  }
+                .map { $0.components(separatedBy: "-").last! }
+                .flatMap {    Int("-" + $0)    }
+            
+            RolloverPresets.userPhotoKeys = userKeys
+        }
+
         defaultPref = Preference(fileURL: defaultPositions)
         do {
             let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
@@ -96,7 +120,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     }()
     static var AppDir: URL {
-        guard let url = ubiq else {
+        guard let url = RolloverPresets.ubiq else {
             return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         }
         return url
@@ -107,8 +131,6 @@ class Preference: UIDocument, NSCoding, NSCopying {
     open var toBeDeleted: [Int] = []
     open var trendText: [String] = [ "" ]
     open var targetText: [String] = [ "" ]
-    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
-    static var userPhotoKeys: [Int]? = nil
     private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
     var numPositions: Int = 1
     
@@ -189,14 +211,6 @@ class Preference: UIDocument, NSCoding, NSCopying {
         let ss = aDecoder.decodeObject(forKey: "selectedSegment") as? [Int]
         let numPositions = aDecoder.decodeInteger(forKey: "numPositions")
         var st: [SegmentType]? = nil
-
-        if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
-            let userKeys = dirContents.filter { $0.starts(with: "UI-")  }
-                .map { $0.components(separatedBy: "-").last! }
-                .flatMap {    Int("-" + $0)    }
-            
-            Preference.userPhotoKeys = userKeys
-        }
 
         // remove dangling user photo  indexes
         let docDir = Preference.AppDir

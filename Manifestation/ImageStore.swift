@@ -11,34 +11,21 @@ import UIKit
 extension Preference
 {
     static let cache = NSCache<NSString, UIImage>()
-    private static var fw: FileWrapper?
-    static var imageW: FileWrapper {
-        guard let w = Preference.fw else
-        {
-            guard let newFW = try? FileWrapper(url: Preference.AppDir.appendingPathComponent("image"), options: FileWrapper.ReadingOptions.immediate) else {
-                Preference.fw = FileWrapper(directoryWithFileWrappers: [ : ])
-                return Preference.fw!
-            }
-            Preference.fw = newFW
-            return newFW
-        }
-        return w
-    }
 
     func setImage(_ image: UIImage, forKey key: Int)
     {
-        let matchesKey = Preference.userPhotoKeys?.filter   { $0 == key }
+        let matchesKey = RolloverPresets.userPhotoKeys?.filter   { $0 == key }
         let url = imageURL(forKey: key)
         
         guard key < 0 && (matchesKey == nil || matchesKey?.count == 0) else {  return } // ignore user images that are already saved
         if let data = UIImageJPEGRepresentation(image, 0.5) {
             try? data.write(to: url, options: [.atomic])
             if key < 0 {    // store user photo key
-                if Preference.userPhotoKeys == nil {
-                    Preference.userPhotoKeys = [ key ]
+                if RolloverPresets.userPhotoKeys == nil {
+                    RolloverPresets.userPhotoKeys = [ key ]
                 }
                 else {
-                    Preference.userPhotoKeys!.append(key)
+                    RolloverPresets.userPhotoKeys!.append(key)
                 }
             }
         }
@@ -79,7 +66,7 @@ extension Preference
                 } catch let deleteError  {  // implicit error constant if not specified
                     print("Error removing image from disk \(deleteError)")
                 }
-                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != key   }
+                RolloverPresets.userPhotoKeys = RolloverPresets.userPhotoKeys?.filter {  $0 != key   }
             }
 
         }
