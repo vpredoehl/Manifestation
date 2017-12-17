@@ -9,15 +9,15 @@
 import UIKit
 
 let chiImageFile = "chiImage"
-let positionFile = "positions"
-let presetsFile = "presets"
+let defaultPositionsFile = "defaultPositions"
+let positionFileSuffix = ".positions"
 
 class RolloverPresets : NSObject {
     @objc dynamic var names: [String] = []
     @objc dynamic var defaultPref: Preference?
     var presetPref: [Preference] = []
     
-    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
+    static var ubiq: URL? = nil//FileManager.default.url(forUbiquityContainerIdentifier: nil)
     static var userPhotoKeys: [Int]? = nil
     static var rp: RolloverPresets!     // reference to only instance of self
     private static var fw: FileWrapper?
@@ -37,8 +37,7 @@ class RolloverPresets : NSObject {
     override init() {
         super.init()
         RolloverPresets.rp = self
-        let defaultPositions = Preference.AppDir.appendingPathComponent(positionFile)
-        let fm = FileManager.default
+        let defPosn = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
         
         if let imageFiles = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
             let userKeys = imageFiles.filter { $0.starts(with: "UI-")  }
@@ -48,23 +47,15 @@ class RolloverPresets : NSObject {
             RolloverPresets.userPhotoKeys = userKeys
         }
 
-        defaultPref = Preference(fileURL: defaultPositions)
+        defaultPref = Preference(fileURL: defPosn)
         do {
             let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
             for f in dirContents {
-                if fm.isUbiquitousItem(at: f) {
-                    do {
-                        try fm.startDownloadingUbiquitousItem(at: f)
-                    }
-                    catch {
-                        print("Download error: \(error)")
-                    }
-                }
-                if f.hasDirectoryPath {
-                    let posF = f.appendingPathComponent(positionFile)
-                    let pref = Preference(fileURL: posF)
+                if f.lastPathComponent.hasSuffix(positionFileSuffix) {
+                    let pref = Preference(fileURL: f)
+                    let presetName = f.deletingPathExtension().lastPathComponent
                     
-                    self.names.append(f.lastPathComponent)
+                    self.names.append(presetName)
                     self.presetPref.append(pref)
                 }
             }
@@ -155,7 +146,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }
     
     init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
-        let temp = Preference.AppDir.appendingPathComponent(positionFile)
+        let temp = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
         
         super.init(fileURL: url ?? temp)
         if tr == nil || ta == nil {

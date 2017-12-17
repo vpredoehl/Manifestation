@@ -519,7 +519,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
-        let fPosn = Preference.AppDir.appendingPathComponent(positionFile)
+        let defaultPosn = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
         if let img = chiTransferImage,
@@ -560,7 +560,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
-                pref.save(to: fPosn, for: .forOverwriting, completionHandler: { (s) in
+                pref.save(to: defaultPosn, for: .forOverwriting, completionHandler: { (s) in
                     if s {
                         print("Positions saved.")
                     }
@@ -572,7 +572,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
                 newSel?.presetButton.isSelected = true
                 newSel?.setSelected(true, animated: false)
-                try? FileManager.default.removeItem(at: fPosn)
+                try? FileManager.default.removeItem(at: defaultPosn)
                 rolloverVC.selectedPreset = existingPresetIdx
                 rolloverVC.preset.defaultPref = Preference()
             }

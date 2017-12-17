@@ -52,8 +52,15 @@
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
+			<key>UITypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>positions</string>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Rollover Positions</string>
 			<key>UTTypeIdentifier</key>
-			<string>rlvr</string>
+			<string>com.hscti.positions</string>
 		</dict>
 	</array>
 </dict>

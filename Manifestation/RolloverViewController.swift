@@ -149,7 +149,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
-            let f = Preference.AppDir.appendingPathComponent(positionFile)
+            let f = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
             
             self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
@@ -394,8 +394,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             let n = a.textFields![0].text!
             let ip = IndexPath(row: self.preset.names.count, section: 0)
-            let presetURL = Preference.AppDir.appendingPathComponent(n, isDirectory: true)
-            let posF = Preference.AppDir.appendingPathComponent(positionFile)
+            let defaultPrefURL = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
+            let newPresetF = Preference.AppDir.appendingPathComponent(n + positionFileSuffix)
             var replacePreset = false
             
             
@@ -407,7 +407,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     return
                 }
                 let yes = UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
-                    try? FileManager.default.removeItem(at: presetURL.appendingPathComponent(positionFile))
+                    try? FileManager.default.removeItem(at: defaultPrefURL.appendingPathComponent(defaultPositionsFile))
                     replacePreset = true
                     moveFiles()
                 })
@@ -418,9 +418,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
             
             func moveFiles() {
-                // move files to preset folder
-                try? FileManager.default.createDirectory(at: presetURL, withIntermediateDirectories: false, attributes: nil)
-                try! FileManager.default.moveItem(at: posF, to: presetURL.appendingPathComponent(positionFile))
+                try! FileManager.default.moveItem(at: defaultPrefURL, to: newPresetF)
                 
                 if replacePreset {
                     self.preset.presetPref[existingNameIdx!] = self.preset.defaultPref!
