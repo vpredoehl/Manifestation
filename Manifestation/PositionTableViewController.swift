@@ -519,7 +519,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
-        let defaultPosn = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
+        let defaultPosn = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
         if let img = chiTransferImage,

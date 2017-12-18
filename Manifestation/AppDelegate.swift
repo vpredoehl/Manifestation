@@ -14,12 +14,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let previewA = PreviewAnim()
     let dismissA = DismissAnim()
+    
+    func printFiles(enumerator e: FileManager.DirectoryEnumerator) {
+        print("Printing Directory:  \(e)")
+        for f in e {
+            print(f)
+        }
+    }
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.DocDir.path)!)
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.AppSupportDir.path)!)
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.CloudDir.path)!)
         print("DocDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path))")
-        print("AppDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path))")
+        print("AppDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.AppSupportDir.path))")
+        print("CloudDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.CloudDir.path))")
         return true
     }
     
@@ -31,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             rolloverVC.playRollover(UIBarButtonItem())
         }
         do {
-            let url = Preference.AppDir.appendingPathComponent("image")
+            let url = Preference.CloudDir.appendingPathComponent(imageDirectory)
             try RolloverPresets.imagePackage.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)
         }
         catch {

@@ -120,15 +120,21 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     // MARK: - Tool Bar
     @IBAction func clearCloud(_ sender: Any) {
         let fm = FileManager.default
-        if let u = RolloverPresets.ubiq,
-            let dirFiles = try? FileManager.default.contentsOfDirectory(at: u, includingPropertiesForKeys: nil) {
-            for f in dirFiles {
-                if fm.isUbiquitousItem(at: f) {
-                    try? fm.removeItem(at: f)
-//                    fm.setUbiquitous(false, itemAt: f, destinationURL: Preference.AppDir)
-                }
+
+        func doDelete(contents c: [URL]) {
+            c.forEach({ (f) in
                 try? fm.removeItem(at: f)
-            }
+            })
+        }
+        if let u = RolloverPresets.ubiq,
+            let dirFiles = try? fm.contentsOfDirectory(at: u, includingPropertiesForKeys: nil) {
+            doDelete(contents: dirFiles)
+        }
+        if let asF = try? fm.contentsOfDirectory(at: Preference.AppSupportDir, includingPropertiesForKeys: [], options: .skipsHiddenFiles) {
+            doDelete(contents: asF)
+        }
+        if let asF = try? fm.contentsOfDirectory(at: Preference.DocDir, includingPropertiesForKeys: [], options: .skipsHiddenFiles) {
+            doDelete(contents: asF)
         }
     }
     @IBAction func trash(_ sender: Any) {
@@ -149,7 +155,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
-            let f = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
+            let f = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
             
             self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
@@ -162,11 +168,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteUserPhotos = UIAlertAction(title: "Delete Photos" , style: .destructive)
         {
             (_) in
-            if let files = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
+            if let files = try? FileManager.default.contentsOfDirectory(atPath: Preference.CloudDir.path) {
                 let userPhotos = files.filter {   $0.hasPrefix("UI-") }
                 let _ = userPhotos.map
                 {
-                    let f = Preference.AppDir.appendingPathComponent($0)
+                    let f = Preference.CloudDir.appendingPathComponent($0)
                     try? FileManager.default.removeItem(at: f)
                 }
                 RolloverPresets.userPhotoKeys = [ ]
@@ -394,8 +400,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             let n = a.textFields![0].text!
             let ip = IndexPath(row: self.preset.names.count, section: 0)
-            let defaultPrefURL = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
-            let newPresetF = Preference.AppDir.appendingPathComponent(n + positionFileSuffix)
+            let defaultPrefURL = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
+            let newPresetF = Preference.CloudDir.appendingPathComponent(n + positionFileSuffix)
             var replacePreset = false
             
             
@@ -480,7 +486,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let dirName = preset.names[row]
             let cellToDelete = presetView.cellForRow(at: indexPath) as! PresetTableViewCell
 
-            try? FileManager.default.removeItem(at: Preference.AppDir.appendingPathComponent(dirName))
+            try? FileManager.default.removeItem(at: Preference.CloudDir.appendingPathComponent(dirName))
             preset.cleanImageCache(prefBeingDeleted: preset.presetPref[row])
             preset.names.remove(at: row)
             preset.presetPref.remove(at: row)

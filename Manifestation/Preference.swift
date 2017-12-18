@@ -11,20 +11,21 @@ import UIKit
 let chiImageFile = "chiImage"
 let defaultPositionsFile = "defaultPositions"
 let positionFileSuffix = ".positions"
+let imageDirectory = "images"
 
 class RolloverPresets : NSObject {
     @objc dynamic var names: [String] = []
     @objc dynamic var defaultPref: Preference?
     var presetPref: [Preference] = []
     
-    static var ubiq: URL? = nil//FileManager.default.url(forUbiquityContainerIdentifier: nil)
+    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
     static var userPhotoKeys: [Int]? = nil
     static var rp: RolloverPresets!     // reference to only instance of self
     private static var fw: FileWrapper?
     static var imagePackage: FileWrapper {
         guard let w = RolloverPresets.fw else
         {
-            guard let newFW = try? FileWrapper(url: Preference.AppDir.appendingPathComponent("image"), options: FileWrapper.ReadingOptions.immediate) else {
+            guard let newFW = try? FileWrapper(url: Preference.CloudDir.appendingPathComponent(imageDirectory), options: FileWrapper.ReadingOptions.immediate) else {
                 RolloverPresets.fw = FileWrapper(directoryWithFileWrappers: [ : ])
                 return RolloverPresets.fw!
             }
@@ -37,9 +38,22 @@ class RolloverPresets : NSObject {
     override init() {
         super.init()
         RolloverPresets.rp = self
-        let defPosn = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
-        
-        if let imageFiles = try? FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path) {
+        let defPosn = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
+
+        do {
+            if let localDirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppSupportDir, includingPropertiesForKeys: [], options: .skipsSubdirectoryDescendants) {
+                for f in localDirContents {
+                    let cloudURL = Preference.CloudDir.appendingPathComponent(f.lastPathComponent)
+
+                    try? FileManager.default.removeItem(at: cloudURL)
+                    try FileManager.default.setUbiquitous(true, itemAt: f, destinationURL: cloudURL)
+                }
+            }
+        }
+        catch {
+            print("setUbiquitous: \(error)")
+        }
+        if let imageFiles = try? FileManager.default.contentsOfDirectory(atPath: Preference.CloudDir.path) {
             let userKeys = imageFiles.filter { $0.starts(with: "UI-")  }
                 .map { $0.components(separatedBy: "-").last! }
                 .flatMap {    Int("-" + $0)    }
@@ -49,8 +63,16 @@ class RolloverPresets : NSObject {
 
         defaultPref = Preference(fileURL: defPosn)
         do {
-            let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
+            let dirContents = try FileManager.default.contentsOfDirectory(at: Preference.CloudDir, includingPropertiesForKeys: [.isDirectoryKey, .ubiquitousItemIsUploadedKey, .ubiquitousItemIsDownloadingKey], options: .skipsHiddenFiles)
             for f in dirContents {
+                if FileManager.default.isUbiquitousItem(at: f) {
+                    do {
+                        try FileManager.default.startDownloadingUbiquitousItem(at: f)
+                    }
+                    catch {
+                        print("startDownloadingUbiquitousItem error: \(error)")
+                    }
+                }
                 if f.lastPathComponent.hasSuffix(positionFileSuffix) {
                     let pref = Preference(fileURL: f)
                     let presetName = f.deletingPathExtension().lastPathComponent
@@ -110,9 +132,12 @@ class Preference: UIDocument, NSCoding, NSCopying {
         () -> URL in
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     }()
-    static var AppDir: URL {
+    static var AppSupportDir: URL {
+        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    }
+    static var CloudDir: URL {
         guard let url = RolloverPresets.ubiq else {
-            return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            return Preference.AppSupportDir
         }
         return url
     }
@@ -146,7 +171,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
     }
     
     init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
-        let temp = Preference.AppDir.appendingPathComponent(defaultPositionsFile)
+        let temp = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
         
         super.init(fileURL: url ?? temp)
         if tr == nil || ta == nil {
@@ -204,7 +229,7 @@ class Preference: UIDocument, NSCoding, NSCopying {
         var st: [SegmentType]? = nil
 
         // remove dangling user photo  indexes
-        let docDir = Preference.AppDir
+        let docDir = Preference.CloudDir
         imageIndex = imageIndex?.map
             {
                 (idx) in

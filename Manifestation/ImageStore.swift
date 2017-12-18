@@ -73,6 +73,6 @@ extension Preference
     }
     
     func imageURL(forKey key: Int) -> URL {
-        return Preference.AppDir.appendingPathComponent("UI\(key)")
+        return Preference.CloudDir.appendingPathComponent("UI\(key)")
     }
 }
