@@ -36,11 +36,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         let navVC = window?.rootViewController as! UINavigationController
+        let rvc = navVC.topViewController as? RolloverViewController
         
-        if let rolloverVC = navVC.topViewController as? RolloverViewController,
+        if let rolloverVC = rvc,
             rolloverVC.isAnimating {
             rolloverVC.playRollover(UIBarButtonItem())
         }
+        
+        rvc?.preset.save(to: Preference.CloudDir.appendingPathComponent(presetsFile), for: .forOverwriting, completionHandler: { (s) in
+            if s {
+                print("presets saved")
+            }
+        })
+
         do {
             let url = Preference.CloudDir.appendingPathComponent(imageDirectory)
             try RolloverPresets.imagePackage.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)

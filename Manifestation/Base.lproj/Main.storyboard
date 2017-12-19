@@ -60,7 +60,7 @@
                                     <segue destination="VMD-cF-AZN" kind="embed" identifier="AnimationSegue" id="IKv-6p-P4Y"/>
                                 </connections>
                             </containerView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GMX-K9-mCg">
+                            <tableView hidden="YES" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GMX-K9-mCg">
                                 <rect key="frame" x="69" y="377.66666666666674" width="276" height="294.33333333333326"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
@@ -96,14 +96,14 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="pqP-cv-BYG"/>
                                 </connections>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YXO-A9-Afl">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YXO-A9-Afl">
                                 <rect key="frame" x="69" y="339.66666666666669" width="132" height="30"/>
                                 <state key="normal" title="Add Current Preset"/>
                                 <connections>
                                     <action selector="addPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Sor-xS-cVS"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="61k-Xz-W3W">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="61k-Xz-W3W">
                                 <rect key="frame" x="315" y="339.66666666666669" width="30" height="30"/>
                                 <state key="normal" title="Edit"/>
                                 <connections>

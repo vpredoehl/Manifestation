@@ -53,7 +53,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     let animationDuration = 0.5
     let animLG = UILayoutGuide()
 
-    var preset = RolloverPresets()
+    var preset = RolloverPresets(fileURL: Preference.CloudDir.appendingPathComponent(presetsFile))
     var pref: Preference! 
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
@@ -64,7 +64,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        let p = preset.defaultPref
         
         if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile],
             chiW.isRegularFile {
@@ -74,7 +73,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
         preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
-        pref = p ?? Preference()
     }
     
     deinit {
@@ -84,8 +82,11 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        pref.open { (s) in
+        preset.open { (s) in
             if s {
+                self.presetView.isHidden = false
+                self.editPresetBtn.isHidden = false
+                self.addCurrentPresetBtn.isHidden = false
                 self.tb.items![2].isEnabled = self.pref.canPlay
                 self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
                 self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
@@ -159,7 +160,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             
             self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
-            try? FileManager.default.removeItem(at: f)
+            self.preset.defaultPref = self.pref
             
             self.tb.items![2].isEnabled = self.pref.canPlay
             self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
@@ -341,7 +342,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 pref = preset.defaultPref
                 addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: pref)
             }
-            pref.open { (s) in
+            preset.open { (s) in
                 if s {
                     self.tb.items![2].isEnabled = self.pref.canPlay
                     self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
@@ -369,12 +370,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
-//        guard let row = selectedPreset else { return }
-//        let ip = IndexPath(row: row, section: 0)
-//        guard let cell = presetView.cellForRow(at: ip) else { return }
-        
-        switch pref.documentState {
+        switch preset.documentState {
         case .normal:
+            let p = preset.defaultPref
+
+            pref = p ?? Preference()
+            presetView.reloadData()
             print("documentState: normal")
         case .closed:
             print("documentState: closed")
@@ -424,8 +425,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             }
             
             func moveFiles() {
-                try! FileManager.default.moveItem(at: defaultPrefURL, to: newPresetF)
-                
                 if replacePreset {
                     self.preset.presetPref[existingNameIdx!] = self.preset.defaultPref!
                     self.selectedPreset = existingNameIdx
