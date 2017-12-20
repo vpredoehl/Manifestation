@@ -524,10 +524,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
         if let img = chiTransferImage,
             img != Preference.chiTransferImage {
-            if let toBeReplaced = RolloverPresets.imagePackage.fileWrappers?[chiImageFile] {
-                RolloverPresets.imagePackage.removeFileWrapper(toBeReplaced)
+            if let toBeReplaced = RolloverPresets.imagePackage?.fileWrappers?[chiImageFile] {
+                RolloverPresets.imagePackage?.removeFileWrapper(toBeReplaced)
             }
-            RolloverPresets.imagePackage.addRegularFile(withContents: img, preferredFilename: chiImageFile)
+            RolloverPresets.imagePackage?.addRegularFile(withContents: img, preferredFilename: chiImageFile)
         }
         Preference.chiTransferImage = chiTransferImage
         
@@ -572,7 +572,6 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
 
                 newSel?.presetButton.isSelected = true
                 newSel?.setSelected(true, animated: false)
-//                try? FileManager.default.removeItem(at: defaultPosn)
                 rolloverVC.selectedPreset = existingPresetIdx
                 rolloverVC.preset.defaultPref = Preference()
             }

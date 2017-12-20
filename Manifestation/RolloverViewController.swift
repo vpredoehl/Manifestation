@@ -75,7 +75,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     func updateUI() {
-        if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile],
+        if let chiW = RolloverPresets.imagePackage?.fileWrappers?[chiImageFile],
             chiW.isRegularFile {
             Preference.chiTransferImage = chiW.regularFileContents
         }
@@ -169,8 +169,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             (_) in
             Preference.chiTransferImage = nil
             self.chiImageView.image = #imageLiteral(resourceName: "Transfer/Chi Transfer")
-            if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile] {
-                RolloverPresets.imagePackage.removeFileWrapper(chiW)
+            if let chiW = RolloverPresets.imagePackage?.fileWrappers?[chiImageFile] {
+                RolloverPresets.imagePackage?.removeFileWrapper(chiW)
             }
 
             self.tb.items![2].isEnabled = self.pref.canPlay

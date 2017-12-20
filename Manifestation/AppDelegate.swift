@@ -62,14 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("presets saved")
             }
         })
-
-        do {
-            let url = Preference.CloudDir.appendingPathComponent(imageDirectory)
-            try RolloverPresets.imagePackage.write(to: url, options: [ .atomic, .withNameUpdating ], originalContentsURL: url)
-        }
-        catch {
-            print("wrapper write error: \(error)")
-        }
     }
 }
 

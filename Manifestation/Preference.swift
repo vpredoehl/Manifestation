@@ -21,19 +21,7 @@ class RolloverPresets : UIDocument, NSCoding {
     static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
     static var userPhotoKeys: [Int]? = nil
     static var rp: RolloverPresets!     // reference to only instance of self
-    private static var fw: FileWrapper?
-    static var imagePackage: FileWrapper {
-        guard let w = RolloverPresets.fw else
-        {
-            guard let newFW = try? FileWrapper(url: Preference.CloudDir.appendingPathComponent(imageDirectory), options: FileWrapper.ReadingOptions.immediate) else {
-                RolloverPresets.fw = FileWrapper(directoryWithFileWrappers: [ : ])
-                return RolloverPresets.fw!
-            }
-            RolloverPresets.fw = newFW
-            return newFW
-        }
-        return w
-    }
+    static var imagePackage: FileWrapper?
     
     func encode(with aCoder: NSCoder) {
         aCoder.encode(names, forKey: "PresetNames")
@@ -47,7 +35,8 @@ class RolloverPresets : UIDocument, NSCoding {
         names = aDecoder.decodeObject(forKey: "PresetNames") as! [String]
         defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
         presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
-        RolloverPresets.fw = aDecoder.decodeObject(forKey: "imagePackage") as! FileWrapper
+        RolloverPresets.imagePackage = aDecoder.decodeObject(forKey: "imagePackage") as? FileWrapper
+            ?? FileWrapper(directoryWithFileWrappers: [ : ])
     }
     
     override init(fileURL url: URL) {
