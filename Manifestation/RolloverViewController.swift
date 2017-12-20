@@ -78,6 +78,13 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         preset.removeObserver(self, forKeyPath: "names")
         preset.removeObserver(self, forKeyPath: "defaultPref")
     }
+    
+    func updateUI() {
+        tb.items![2].isEnabled = pref.canPlay
+        tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
+        addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
+        editPresetBtn.isEnabled = preset.names.count > 0
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -90,11 +97,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             self.presetView.isHidden = false
             self.editPresetBtn.isHidden = false
             self.addCurrentPresetBtn.isHidden = false
-            
-            self.tb.items![2].isEnabled = self.pref.canPlay
-            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
-            self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
-            self.editPresetBtn.isEnabled = self.preset.names.count > 0
+            self.updateUI()
         }
     }
 
@@ -398,6 +401,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 pref = preset.defaultPref
             }
             presetView.reloadData()
+            updateUI()
             print("documentState: normal")
         case .closed:
             print("documentState: closed")
