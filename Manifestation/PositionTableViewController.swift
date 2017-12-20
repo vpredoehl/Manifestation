@@ -519,7 +519,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
-        let presetF = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
+        let presetF = Preference.CloudDir.appendingPathComponent(presetsFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
         if let img = chiTransferImage,
@@ -562,7 +562,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             if existingPresetIdx == nil {
                 rolloverVC.preset.save(to: presetF, for: .forOverwriting, completionHandler: { (s) in
                     if s {
-                        print("presets saved.")
+                        print("presets saved")
                     }
                 })
             }

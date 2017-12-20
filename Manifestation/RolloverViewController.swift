@@ -46,6 +46,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var trashItem: UIBarButtonItem!
     @IBOutlet weak var tb: UIToolbar!
     @IBOutlet weak var presetView: UITableView!
+    @IBOutlet weak var progressV: UIProgressView!
     
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
@@ -53,11 +54,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     let animationDuration = 0.5
     let animLG = UILayoutGuide()
 
-    var preset = RolloverPresets(fileURL: Preference.CloudDir.appendingPathComponent(presetsFile))
+    var preset: RolloverPresets!
     var pref: Preference! 
     var isAnimating = false {   didSet  {   animationVC.isAnimating = isAnimating   }   }
     var animationVC: AnimationViewController!
     var rolloverTimer: Timer?
+    var progressTimer: Timer?
     var curAnim: UIViewPropertyAnimator?
     
     var chiImageView: UIImageView   {   get {   return animationVC.chiIV }   }
@@ -69,39 +71,41 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             chiW.isRegularFile {
             Preference.chiTransferImage = chiW.regularFileContents
         }
-
-        preset.addObserver(self, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
-        preset.addObserver(self, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
     }
     
     deinit {
-        removeObserver(self, forKeyPath: "names")
-        removeObserver(self, forKeyPath: "defaultPref")
+        preset.removeObserver(self, forKeyPath: "names")
+        preset.removeObserver(self, forKeyPath: "defaultPref")
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        preset.open { (s) in
-            if s {
-                self.presetView.isHidden = false
-                self.editPresetBtn.isHidden = false
-                self.addCurrentPresetBtn.isHidden = false
-                self.tb.items![2].isEnabled = self.pref.canPlay
-                self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
-                self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+        preset.open { (_) in
+            if self.pref == nil {
+                self.pref = Preference()
             }
+            self.animationVC.pref = self.pref
+            
+            self.presetView.isHidden = false
+            self.editPresetBtn.isHidden = false
+            self.addCurrentPresetBtn.isHidden = false
+            
+            self.tb.items![2].isEnabled = self.pref.canPlay
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+            self.addCurrentPresetBtn.isEnabled = self.pref.hasTransferSequence(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
+            self.editPresetBtn.isEnabled = self.preset.names.count > 0
         }
     }
 
     override func viewDidLoad() {
-        animationVC.pref = pref
+        preset = (UIApplication.shared.delegate as! AppDelegate).preset
+
         if let d = Preference.chiTransferImage {
             chiImageView.image = UIImage(data: d)
         }
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
-        editPresetBtn.isEnabled = preset.names.count > 0
         
         view.addLayoutGuide(animLG)
         // constraints for layout guide
@@ -119,6 +123,22 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     // MARK: - Tool Bar
+    @IBAction func share(_ sender: Any) {
+        let fm = FileManager.default
+        
+        if let dirFiles = try? fm.contentsOfDirectory(at: Preference.CloudDir, includingPropertiesForKeys: [], options: .skipsHiddenFiles) {
+            dirFiles.forEach({ (f) in
+                if fm.isUbiquitousItem(at: f) {
+                    do {
+                        try fm.startDownloadingUbiquitousItem(at: f)
+                    }
+                    catch {
+                        print(#file, #line, "startDownloadingUbiquitousItem: \(error)")
+                    }
+                }
+            })
+        }
+    }
     @IBAction func clearCloud(_ sender: Any) {
         let fm = FileManager.default
 
@@ -156,7 +176,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let deleteRollover = UIAlertAction(title: "Delete Rollover Images", style: .destructive)
         {
             (_) in
-            let f = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
             
             self.preset.cleanImageCache(prefBeingDeleted: self.pref)
             self.pref.removeAll()
@@ -372,20 +391,42 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     func docStateChanged(_ n: Notification) {
         switch preset.documentState {
         case .normal:
-            let p = preset.defaultPref
-
-            pref = p ?? Preference()
+            if let sel = selectedPreset {
+                pref = preset.presetPref[sel]
+            }
+            else {
+                pref = preset.defaultPref
+            }
             presetView.reloadData()
             print("documentState: normal")
         case .closed:
             print("documentState: closed")
         case .inConflict:
+            let cur = NSFileVersion.currentVersionOfItem(at: preset.fileURL)
+            let conflicts = NSFileVersion.unresolvedConflictVersionsOfItem(at: preset.fileURL)
+            
+            conflicts?.forEach({ (v) in
+                v.isResolved = true
+            })
             print("documentState: inConflict")
         case .savingError:
             print("documentState: savingError")
         case .editingDisabled:
             print("documentState: editingDisabled")
         case .progressAvailable:
+            progressTimer?.invalidate()
+            progressTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { (tm) in
+                if let p = self.preset.progress {
+                    let t = p.totalUnitCount
+                    let c = p.completedUnitCount
+                    let percent = Float(c) / Float(t)
+                    self.progressV.progress = percent
+                }
+                else {
+                    tm.invalidate()
+                }
+            })
+            progressTimer?.fire()
             print("documentState: progressAvailable")
         default:
             break
@@ -401,8 +442,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         let ok = UIAlertAction(title: "Ok", style: .default) { (_) in
             let n = a.textFields![0].text!
             let ip = IndexPath(row: self.preset.names.count, section: 0)
-            let defaultPrefURL = Preference.CloudDir.appendingPathComponent(defaultPositionsFile)
-            let newPresetF = Preference.CloudDir.appendingPathComponent(n + positionFileSuffix)
             var replacePreset = false
             
             
@@ -414,7 +453,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     return
                 }
                 let yes = UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
-                    try? FileManager.default.removeItem(at: defaultPrefURL.appendingPathComponent(defaultPositionsFile))
                     replacePreset = true
                     moveFiles()
                 })

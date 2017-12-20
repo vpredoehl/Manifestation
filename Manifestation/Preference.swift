@@ -9,7 +9,6 @@
 import UIKit
 
 let chiImageFile = "chiImage"
-let defaultPositionsFile = "defaultPositions"
 let positionFileSuffix = ".positions"
 let imageDirectory = "images"
 let presetsFile = "presets"

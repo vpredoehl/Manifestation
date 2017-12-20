@@ -14,9 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let previewA = PreviewAnim()
     let dismissA = DismissAnim()
+    var preset: RolloverPresets! = nil
     
     func printFiles(enumerator e: FileManager.DirectoryEnumerator) {
-        print("Printing Directory:  \(e)")
+        print("Printing Directory:")
         for f in e {
             print(f)
         }
@@ -31,7 +32,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("DocDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path))")
         print("AppDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.AppSupportDir.path))")
         print("CloudDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.CloudDir.path))")
+
+        let navVC = window?.rootViewController as! UINavigationController
+        let rvc = navVC.topViewController as! RolloverViewController
+        let presetURL = Preference.CloudDir.appendingPathComponent(presetsFile)
+
+        preset = RolloverPresets(fileURL: presetURL)
+        preset.addObserver(rvc, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
+        preset.addObserver(rvc, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
+        
         return true
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        print("applicationWillEnterForeground")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
