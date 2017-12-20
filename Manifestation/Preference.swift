@@ -46,7 +46,7 @@ class RolloverPresets : UIDocument, NSCoding {
     required convenience init?(coder aDecoder: NSCoder) {
         self.init(fileURL: Preference.AppSupportDir.appendingPathComponent("temp"))
         names = aDecoder.decodeObject(forKey: "PresetNames") as! [String]
-        defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as! Preference
+        defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
         presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
     }
     
