@@ -66,11 +66,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        
-        if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile],
-            chiW.isRegularFile {
-            Preference.chiTransferImage = chiW.regularFileContents
-        }
         NotificationCenter.default.addObserver(self, selector: #selector(RolloverViewController.docStateChanged(_:)), name: .UIDocumentStateChanged, object: nil)
     }
     
@@ -80,6 +75,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     }
     
     func updateUI() {
+        if let chiW = RolloverPresets.imagePackage.fileWrappers?[chiImageFile],
+            chiW.isRegularFile {
+            Preference.chiTransferImage = chiW.regularFileContents
+        }
+        if let d = Preference.chiTransferImage {
+            chiImageView.image = UIImage(data: d)
+        }
+
         tb.items![2].isEnabled = pref.canPlay
         tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
         addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
@@ -104,9 +107,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         preset = (UIApplication.shared.delegate as! AppDelegate).preset
 
-        if let d = Preference.chiTransferImage {
-            chiImageView.image = UIImage(data: d)
-        }
         presetView.layer.borderWidth = 2.0
         presetView.layer.borderColor = UIColor.lightGray.cgColor
         

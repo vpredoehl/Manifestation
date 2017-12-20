@@ -47,6 +47,7 @@ class RolloverPresets : UIDocument, NSCoding {
         names = aDecoder.decodeObject(forKey: "PresetNames") as! [String]
         defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
         presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
+        RolloverPresets.fw = aDecoder.decodeObject(forKey: "imagePackage") as! FileWrapper
     }
     
     override init(fileURL url: URL) {
