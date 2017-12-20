@@ -9,9 +9,7 @@
 import UIKit
 
 let chiImageFile = "chiImage"
-let positionFileSuffix = ".positions"
-let imageDirectory = "images"
-let presetsFile = "presets"
+let presetsFile = "presets.rlvr"
 
 class RolloverPresets : UIDocument, NSCoding {
     @objc dynamic var names: [String] = []
@@ -33,10 +31,10 @@ class RolloverPresets : UIDocument, NSCoding {
     required convenience init?(coder aDecoder: NSCoder) {
         self.init(fileURL: Preference.AppSupportDir.appendingPathComponent("temp"))
         names = aDecoder.decodeObject(forKey: "PresetNames") as! [String]
-        defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
-        presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
         RolloverPresets.imagePackage = aDecoder.decodeObject(forKey: "imagePackage") as? FileWrapper
             ?? FileWrapper(directoryWithFileWrappers: [ : ])
+        defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
+        presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
     }
     
     override init(fileURL url: URL) {
@@ -87,9 +85,11 @@ class RolloverPresets : UIDocument, NSCoding {
         case .inConflict:
             let v = NSFileVersion.otherVersionsOfItem(at: fileURL)
             print(v ?? "")
-        default:
+        case .closed:
             super.open(completionHandler: completionHandler)
-            
+        default:
+            break
+
         }
     }
 }
@@ -169,14 +169,17 @@ class Preference: NSObject, NSCoding, NSCopying {
         var st: [SegmentType]? = nil
 
         // remove dangling user photo  indexes
-        let docDir = Preference.CloudDir
         imageIndex = imageIndex?.map
             {
                 (idx) in
+
                 guard let idx = idx else { return nil }
+                let imgKey = "UI\(idx)"
                 guard idx < 0 else { return idx }
-                let f = docDir.appendingPathComponent("UI\(idx)")
-                return FileManager.default.fileExists(atPath: f.path) ? idx : nil
+                guard let _ = RolloverPresets.imagePackage?.fileWrappers?[imgKey] else {
+                    return nil
+                }
+                return idx
         }
 
         if ss != nil {

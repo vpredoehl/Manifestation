@@ -55,12 +55,12 @@
 			<key>UITypeTagSpecification</key>
 			<dict>
 				<key>public.filename-extension</key>
-				<string>positions</string>
+				<string>rlvr</string>
 			</dict>
 			<key>UTTypeDescription</key>
 			<string>Rollover Positions</string>
 			<key>UTTypeIdentifier</key>
-			<string>com.hscti.positions</string>
+			<string>com.hscti.rlvr</string>
 		</dict>
 	</array>
 </dict>

@@ -394,12 +394,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     func docStateChanged(_ n: Notification) {
         switch preset.documentState {
         case .normal:
-            if let sel = selectedPreset {
-                pref = preset.presetPref[sel]
-            }
-            else {
-                pref = preset.defaultPref
-            }
+            preset.defaultPref = preset.defaultPref ?? Preference()
+            selectedPreset = nil
             presetView.reloadData()
             updateUI()
             print("documentState: normal")
