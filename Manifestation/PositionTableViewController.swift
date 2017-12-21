@@ -38,6 +38,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBOutlet weak var chiImageAdapted: UIButton!
     
     var pref: Preference!
+    var chiTransferImage: Data?
     var rowBeingEdited: Int?
     var adaptedPositionSection: TableSection {
         get {
@@ -56,7 +57,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardAppearing(_:)), name: .UIKeyboardDidShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(PositionTableViewController.keyboardDisappearing(_:)), name: .UIKeyboardWillHide, object: nil)
         
-        if let d = pref.chiTransferImage,
+        if let d = chiTransferImage,
             let img = UIImage(data: d) {
             chiImageAdapted.setImage(img, for: .normal)
             chiImageAdapted.imageView!.contentMode = .scaleAspectFit
@@ -107,9 +108,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     @IBAction func keyboardDismissTap(_ sender: UITapGestureRecognizer) {
         if let row = rowBeingEdited {
             let path = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: path) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: path) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
@@ -149,8 +150,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         case .chiSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: "ChiCell", for: indexPath) as! ChiCellTableViewCell
             
-            if pref.chiTransferImage != nil {
-                let img = UIImage(data: pref.chiTransferImage!)
+            if chiTransferImage != nil {
+                let img = UIImage(data: chiTransferImage!)
                 cell.chiButton.setImage(img, for: .normal)
                 cell.chiButton.imageView!.contentMode = .scaleAspectFit
             }
@@ -199,9 +200,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         tableView.setEditing(editing, animated: true)
         if editing,
             let row = rowBeingEdited {
-            let cell = tableView.cellForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue)) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
@@ -213,8 +214,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if let row = rowBeingEdited {
             let ipBeingEdited = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: ipBeingEdited) as! PositionTableViewCell
-            cell.textView.resignFirstResponder()
+            let cell = tableView.cellForRow(at: ipBeingEdited) as? PositionTableViewCell
+            cell?.textView.resignFirstResponder()
         }
         return false
     }
@@ -335,11 +336,11 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     private
     func updateTags(forRow idx: Int, to: Int)
     {
-        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: adaptedPositionSection.rawValue)) as! PositionTableViewCell
+        let cellToUpdate = tableView.cellForRow(at: IndexPath(row: idx, section: adaptedPositionSection.rawValue)) as? PositionTableViewCell
         
-        cellToUpdate.cardButton.tag = to
-        cellToUpdate.textView.tag = to
-        cellToUpdate.trendOrTarget.tag = to
+        cellToUpdate?.cardButton.tag = to
+        cellToUpdate?.textView.tag = to
+        cellToUpdate?.trendOrTarget.tag = to
     }
 
     
@@ -360,9 +361,9 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         popoverS.sourceV = cardButton
         if let row = rowBeingEdited {
             let ip = IndexPath(row: row, section: adaptedPositionSection.rawValue)
-            let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+            let cell = tableView.cellForRow(at: ip) as? PositionTableViewCell
             
-            cell.textView.resignFirstResponder()
+            cell?.textView.resignFirstResponder()
         }
     }
     
@@ -382,7 +383,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         }
         switch tag {
         case -1:
-            if let img = pref.chiTransferImage {
+            if let img = chiTransferImage {
                 previewVC.imageView.image = UIImage(data: img)
             }
             else {
@@ -413,7 +414,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         let cardVC = segue.source as! CardsViewController
         let row = cardVC.row
         let ip = IndexPath(row: cardVC.row, section: adaptedPositionSection.rawValue)
-        let cell = tableView.cellForRow(at: ip) as! PositionTableViewCell
+        let cell = tableView.cellForRow(at: ip) as? PositionTableViewCell
         let img = cardVC.userImage ?? (cardVC.returnImageIdx < 0
             ? pref.image(forKey: cardVC.returnImageIdx)
             : UIImage(named: "AoD/\(cardVC.returnImageIdx + 1)"))
@@ -423,7 +424,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             pref.setImage(img, forKey: imgKey)
         }
         pref.set(imageIndex: cardVC.returnImageIdx, forRow: row!)
-        cell.cardButton.setImage(img, for: .normal)
+        cell?.cardButton.setImage(img, for: .normal)
         if tableView.isEditing {    //
             tableView.isEditing = false
             tableView.isEditing = true
@@ -453,7 +454,7 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         let img = info[UIImagePickerControllerOriginalImage] as! UIImage
         
-        pref.chiTransferImage = UIImagePNGRepresentation(img)
+        chiTransferImage = UIImagePNGRepresentation(img)
         chiImageAdapted.setImage(img, for: .normal)
         chiImageAdapted.imageView!.contentMode = .scaleAspectFit
         if traitCollection.horizontalSizeClass != .regular {
@@ -518,17 +519,17 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
     }
     
     @IBAction func save(_ sender: UIBarButtonItem) {
-        let fPosn = Preference.AppDir.appendingPathComponent(positionFile)
+        let presetF = Preference.CloudDir.appendingPathComponent(presetsFile)
         let rolloverVC = navigationController?.viewControllers.first! as! RolloverViewController
 
-        if let img = pref.chiTransferImage {
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-            
-            if rolloverVC.pref.chiTransferImage != pref.chiTransferImage
-                && NSKeyedArchiver.archiveRootObject(img, toFile: f.path) {
-                print("Image saved.")
+        if let img = chiTransferImage,
+            img != Preference.chiTransferImage {
+            if let toBeReplaced = RolloverPresets.imagePackage?.fileWrappers?[chiImageFile] {
+                RolloverPresets.imagePackage?.removeFileWrapper(toBeReplaced)
             }
+            RolloverPresets.imagePackage?.addRegularFile(withContents: img, preferredFilename: chiImageFile)
         }
+        Preference.chiTransferImage = chiTransferImage
         
         pref.deleteUnusedImages()
         rolloverVC.pref = pref
@@ -540,12 +541,12 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
             let curSelIP = IndexPath(row: s, section: 0)
             let curSel = rolloverVC.presetView.cellForRow(at: curSelIP) as? PresetTableViewCell
             let newSelIP = IndexPath(row: idx, section: 0)
-            let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+            let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as? PresetTableViewCell
             
             curSel?.presetButton.isSelected = false
             curSel?.setSelected(false, animated: false)
-            newSel.presetButton.isSelected = true
-            newSel.setSelected(true, animated: false)
+            newSel?.presetButton.isSelected = true
+            newSel?.setSelected(true, animated: false)
             rolloverVC.selectedPreset = existingPresetIdx
         } else {
             rolloverVC.preset.defaultPref = pref
@@ -559,23 +560,24 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
                 rolloverVC.selectedPreset = nil
             }
             if existingPresetIdx == nil {
-                if NSKeyedArchiver.archiveRootObject(pref, toFile: fPosn.path) {
-                    print("Positions saved.")
-                }
+                rolloverVC.preset.save(to: presetF, for: .forOverwriting, completionHandler: { (s) in
+                    if s {
+                        print("presets saved")
+                    }
+                })
             }
             else {
                 let newSelIP = IndexPath(row: existingPresetIdx!, section: 0)
-                let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as! PresetTableViewCell
+                let newSel = rolloverVC.presetView.cellForRow(at: newSelIP) as? PresetTableViewCell
 
-                newSel.presetButton.isSelected = true
-                newSel.setSelected(true, animated: false)
-                try? FileManager.default.removeItem(at: fPosn)
+                newSel?.presetButton.isSelected = true
+                newSel?.setSelected(true, animated: false)
                 rolloverVC.selectedPreset = existingPresetIdx
                 rolloverVC.preset.defaultPref = Preference()
             }
         }
         
-        if let d = pref.chiTransferImage {
+        if let d = chiTransferImage {
             rolloverVC.chiImageView.image = UIImage(data: d)
         }
         navigationController?.popViewController(animated: true)

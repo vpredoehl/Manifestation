@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.1</string>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>9</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
@@ -48,6 +48,20 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UITypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<string>rlvr</string>
+			</dict>
+			<key>UTTypeDescription</key>
+			<string>Rollover Positions</string>
+			<key>UTTypeIdentifier</key>
+			<string>com.hscti.rlvr</string>
+		</dict>
 	</array>
 </dict>
 </plist>

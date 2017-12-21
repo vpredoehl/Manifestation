@@ -11,21 +11,22 @@ import UIKit
 extension Preference
 {
     static let cache = NSCache<NSString, UIImage>()
-    
+
     func setImage(_ image: UIImage, forKey key: Int)
     {
-        let matchesKey = Preference.userPhotoKeys?.filter   { $0 == key }
-        let url = imageURL(forKey: key)
+        let matchesKey = RolloverPresets.userPhotoKeys?.filter   { $0 == key }
+        let imageName = "UI\(key)"
+        
         
         guard key < 0 && (matchesKey == nil || matchesKey?.count == 0) else {  return } // ignore user images that are already saved
         if let data = UIImageJPEGRepresentation(image, 0.5) {
-            try? data.write(to: url, options: [.atomic])
+            RolloverPresets.imagePackage?.addRegularFile(withContents: data, preferredFilename: imageName)
             if key < 0 {    // store user photo key
-                if Preference.userPhotoKeys == nil {
-                    Preference.userPhotoKeys = [ key ]
+                if RolloverPresets.userPhotoKeys == nil {
+                    RolloverPresets.userPhotoKeys = [ key ]
                 }
                 else {
-                    Preference.userPhotoKeys!.append(key)
+                    RolloverPresets.userPhotoKeys!.append(key)
                 }
             }
         }
@@ -37,10 +38,17 @@ extension Preference
         if let existingImage = Preference.cache.object(forKey: String(key) as NSString) {
             return existingImage
         }
-        let url = imageURL(forKey: key)
+        let imageName = "UI\(key)"
         
         guard let imageFromDisk = key < 0
-            ? UIImage(contentsOfFile: url.path)
+            ? {
+                if let img = RolloverPresets.imagePackage?.fileWrappers?[imageName]?.regularFileContents {
+                    return UIImage(data: img)
+                }
+                else {
+                    return UIImage()
+                }
+                }()
             : UIImage(named: "AoD/\(key + 1)")
             else { return nil }
         
@@ -60,22 +68,13 @@ extension Preference
         } else {
             Preference.cache.removeObject(forKey: String(key) as NSString)
             if key < 0  && key & 1 == 1 {   // don't delete images taken by the camera
-                let url = imageURL(forKey: key)
-                do {
-                    try FileManager.default.removeItem(at: url)
-                } catch let deleteError  {  // implicit error constant if not specified
-                    print("Error removing image from disk \(deleteError)")
+                let imageName = "UI\(key)"
+                if let toBeDeleted = RolloverPresets.imagePackage?.fileWrappers?[imageName] {
+                    RolloverPresets.imagePackage?.removeFileWrapper(toBeDeleted)
                 }
-                Preference.userPhotoKeys = Preference.userPhotoKeys?.filter {  $0 != key   }
+                RolloverPresets.userPhotoKeys = RolloverPresets.userPhotoKeys?.filter {  $0 != key   }
             }
 
         }
-    }
-    
-    func imageURL(forKey key: Int) -> URL {
-        let docsDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        let docDir = docsDirs.first!
-        
-        return docDir.appendingPathComponent("UI\(key)")
     }
 }

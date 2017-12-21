@@ -6,37 +6,40 @@
 //  Copyright © 2017 Vincent Predoehl. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 let chiImageFile = "chiImage"
-let positionFile = "positions"
-let presetsFile = "presets"
+let presetsFile = "presets.rlvr"
 
-class RolloverPresets : NSObject {
+class RolloverPresets : UIDocument, NSCoding {
     @objc dynamic var names: [String] = []
+    @objc dynamic var defaultPref: Preference?
     var presetPref: [Preference] = []
-    @objc dynamic var defaultPref: Preference? = nil
-    var ctx = 0
-    static var rp: RolloverPresets!     // reference to only instance of self
     
-    override init() {
-        super.init()
+    static var ubiq: URL? = FileManager.default.url(forUbiquityContainerIdentifier: nil)
+    static var userPhotoKeys: [Int]? = nil
+    static var rp: RolloverPresets!     // reference to only instance of self
+    static var imagePackage: FileWrapper?
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(names, forKey: "PresetNames")
+        aCoder.encode(defaultPref, forKey: "defaultPref")
+        aCoder.encode(presetPref, forKey: "presetPref")
+        aCoder.encode(RolloverPresets.imagePackage, forKey: "imagePackage")
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        self.init(fileURL: Preference.AppSupportDir.appendingPathComponent("temp"))
+        names = aDecoder.decodeObject(forKey: "PresetNames") as! [String]
+        RolloverPresets.imagePackage = aDecoder.decodeObject(forKey: "imagePackage") as? FileWrapper
+            ?? FileWrapper(directoryWithFileWrappers: [ : ])
+        defaultPref = aDecoder.decodeObject(forKey: "defaultPref") as? Preference
+        presetPref = aDecoder.decodeObject(forKey: "presetPref") as! [Preference]
+    }
+    
+    override init(fileURL url: URL) {
+        super.init(fileURL: url)
         RolloverPresets.rp = self
-        let f = Preference.AppDir.appendingPathComponent(positionFile)
-        
-        defaultPref = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Preference ?? Preference()
-
-        if let dirContents = try? FileManager.default.contentsOfDirectory(at: Preference.AppDir, includingPropertiesForKeys: [.isDirectoryKey], options: .skipsHiddenFiles) {
-            for preset in dirContents {
-                if preset.hasDirectoryPath {
-                    let posF = preset.appendingPathComponent(positionFile)
-                    let pref = NSKeyedUnarchiver.unarchiveObject(withFile: posF.path) as! Preference
-                    
-                    names.append(preset.lastPathComponent)
-                    presetPref.append(pref)
-                }
-            }
-        }
     }
     
     func cleanImageCache(prefBeingDeleted p: Preference)  {
@@ -62,6 +65,33 @@ class RolloverPresets : NSObject {
     func index(of p: Preference) -> Int? {
         return presetPref.index(of: p)
     }
+    
+    
+    // MARK: - UIDocument
+    override func contents(forType typeName: String) throws -> Any {
+        return NSKeyedArchiver.archivedData(withRootObject:self)
+    }
+    override func load(fromContents contents: Any, ofType typeName: String?) throws {
+        let p = NSKeyedUnarchiver.unarchiveObject(with: contents as! Data) as! RolloverPresets
+        
+        names = p.names
+        defaultPref = p.defaultPref
+        presetPref = p.presetPref
+    }
+    override func open(completionHandler: ((Bool) -> Void)? = nil) {
+        switch documentState {
+        case .normal:
+            completionHandler?(true)
+        case .inConflict:
+            let v = NSFileVersion.otherVersionsOfItem(at: fileURL)
+            print(v ?? "")
+        case .closed:
+            super.open(completionHandler: completionHandler)
+        default:
+            break
+
+        }
+    }
 }
 
 func ==(lhs: [Int?], rhs: [Int?]) -> Bool {
@@ -84,42 +114,39 @@ class Preference: NSObject, NSCoding, NSCopying {
         () -> URL in
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
     }()
-    static let AppDir = {
-        () -> URL in
+    static var AppSupportDir: URL {
         return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-    }()
+    }
+    static var CloudDir: URL {
+        guard let url = RolloverPresets.ubiq else {
+            return Preference.AppSupportDir
+        }
+        return url
+    }
     static var curRolloverPosition = 0
 
-    open var imageIndex: [Int?]!
+    open var imageIndex: [Int?] = [ nil ]
     open var toBeDeleted: [Int] = []
-    open var trendText: [String]!
-    open var targetText: [String]!
-    static var userPhotoKeys: [Int]? = nil
-    private var selectedSegment: [SegmentType]!
-    var chiTransferImage: Data? = nil
+    open var trendText: [String] = [ "" ]
+    open var targetText: [String] = [ "" ]
+    private var selectedSegment: [SegmentType] = [ SegmentType.trend ]
+    var numPositions: Int = 1
     
-    var numPositions: Int
-
-    override convenience init()
-    {
-        self.init(transfer: nil, imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
+    static var chiTransferImage: Data?
+    
+    convenience override init() {
+        self.init(imageIndex: nil, trendText: [ "" ], targetText: [ "" ], segments: nil, numPositions: 1)!
     }
     
-    init?(transfer t: Data?, imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int) {
+    init?(imageIndex ii: [Int?]?, trendText tr: [String]?, targetText ta: [String]?, segments s: [SegmentType]?, numPositions n: Int, fileURL url: URL? = nil) {
+        super.init()
         if tr == nil || ta == nil {
             return nil
         }
         
-        if let img = t {
-            chiTransferImage = img
-        }
-        else {
-            let f = Preference.AppDir.appendingPathComponent(chiImageFile)
-            chiTransferImage = NSKeyedUnarchiver.unarchiveObject(withFile: f.path) as? Data
-        }
         imageIndex = ii ?? [ nil ]
-        trendText = tr
-        targetText = ta
+        trendText = tr ?? [ "" ]
+        targetText = ta ?? [ "" ]
         selectedSegment = s ?? [ SegmentType.trend ]
         numPositions = n
     }
@@ -141,23 +168,18 @@ class Preference: NSObject, NSCoding, NSCopying {
         let numPositions = aDecoder.decodeInteger(forKey: "numPositions")
         var st: [SegmentType]? = nil
 
-        if let dirContents = try? FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path) {
-            let userKeys = dirContents.filter { $0.starts(with: "UI-")  }
-                .map { $0.components(separatedBy: "-").last! }
-                .flatMap {    Int("-" + $0)    }
-            
-            Preference.userPhotoKeys = userKeys
-        }
-
         // remove dangling user photo  indexes
-        let docDir = Preference.DocDir
         imageIndex = imageIndex?.map
             {
                 (idx) in
+
                 guard let idx = idx else { return nil }
+                let imgKey = "UI\(idx)"
                 guard idx < 0 else { return idx }
-                let f = docDir.appendingPathComponent("UI\(idx)")
-                return FileManager.default.fileExists(atPath: f.path) ? idx : nil
+                guard let _ = RolloverPresets.imagePackage?.fileWrappers?[imgKey] else {
+                    return nil
+                }
+                return idx
         }
 
         if ss != nil {
@@ -167,7 +189,7 @@ class Preference: NSObject, NSCoding, NSCopying {
             }
         }
         
-        self.init(transfer: nil, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
+        self.init(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: st, numPositions: numPositions)
     }
     
     private
@@ -270,7 +292,7 @@ class Preference: NSObject, NSCoding, NSCopying {
     
     // MARK: - NSCopying -
     func copy(with zone: NSZone? = nil) -> Any {
-        return Preference(transfer: chiTransferImage, imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
+        return Preference(imageIndex: imageIndex, trendText: trendText, targetText: targetText, segments: selectedSegment, numPositions: numPositions)!
     }
 
     override func isEqual(_ obj: Any?) -> Bool {
@@ -284,5 +306,4 @@ class Preference: NSObject, NSCoding, NSCopying {
 
     }
 }
-
 

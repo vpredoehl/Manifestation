@@ -14,22 +14,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     let previewA = PreviewAnim()
     let dismissA = DismissAnim()
+    var preset: RolloverPresets! = nil
+    
+    func printFiles(enumerator e: FileManager.DirectoryEnumerator) {
+        print("Printing Directory:")
+        for f in e {
+            print(f)
+        }
+    }
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.DocDir.path)!)
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.AppSupportDir.path)!)
+        printFiles(enumerator: FileManager.default.enumerator(atPath: Preference.CloudDir.path)!)
         print("DocDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.DocDir.path))")
-        print("AppDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.AppDir.path))")
+        print("AppDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.AppSupportDir.path))")
+        print("CloudDir Contents: \(try! FileManager.default.contentsOfDirectory(atPath: Preference.CloudDir.path))")
+
+        let navVC = window?.rootViewController as! UINavigationController
+        let rvc = navVC.topViewController as! RolloverViewController
+        let presetURL = Preference.CloudDir.appendingPathComponent(presetsFile)
+
+        preset = RolloverPresets(fileURL: presetURL)
+        preset.addObserver(rvc, forKeyPath: "names", options: NSKeyValueObservingOptions.new, context: nil)
+        preset.addObserver(rvc, forKeyPath: "defaultPref", options: NSKeyValueObservingOptions.new, context: nil)
+        
         return true
+    }
+    
+    func applicationWillEnterForeground(_ application: UIApplication) {
+        print("applicationWillEnterForeground")
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
         let navVC = window?.rootViewController as! UINavigationController
+        let rvc = navVC.topViewController as? RolloverViewController
         
-        if let rolloverVC = navVC.topViewController as? RolloverViewController,
+        if let rolloverVC = rvc,
             rolloverVC.isAnimating {
             rolloverVC.playRollover(UIBarButtonItem())
         }
+        
+        rvc?.preset.save(to: Preference.CloudDir.appendingPathComponent(presetsFile), for: .forOverwriting, completionHandler: { (s) in
+            if s {
+                print("presets saved")
+            }
+        })
     }
 }
 
