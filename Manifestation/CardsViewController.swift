@@ -13,16 +13,17 @@ class HeaderView: UICollectionReusableView {
     @IBOutlet weak var sizeSlider: UISlider!
 }
 
-class CardsViewController: UICollectionViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class CardsViewController: UICollectionViewController,  UICollectionViewDelegateFlowLayout,
+UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: Properties -
     @IBOutlet weak var cameraItem: UIBarButtonItem!
 
     var pref: Preference!
     var returnImageIdx, row: Int!
+    var sectionSize: [Float] = [ 90, 90 ]
     var userImage: UIImage?
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         let statusBarHeight = UIApplication.shared.statusBarFrame.height
@@ -39,15 +40,34 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
         navigationItem.title = "Cards"
     }
     
+    func setSliderValues(slider: UISlider?) {
+        let width = Float(view.bounds.width - 20)
+        
+        guard let s = slider else { return }
+        sectionSize[s.tag] = min(width, sectionSize[s.tag])
+        s.maximumValue = width
+    }
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        for c in 0..<sectionSize.count {
+            let h = collectionView?.supplementaryView(forElementKind: UICollectionElementKindSectionHeader, at: IndexPath(item: 0, section: c)) as? HeaderView
+            setSliderValues(slider: h?.sizeSlider)
+        }
+        collectionView?.collectionViewLayout.invalidateLayout()
+    }
+    
     // MARK: - Collection View Data Source -
 
     @IBAction func sliderMoved(_ sender: UISlider) {
         let l = collectionView?.collectionViewLayout as! UICollectionViewFlowLayout
-        let v = Int(sender.value)
+        let v = sender.value
         
-        l.itemSize = CGSize(width: v, height: v)
+        sectionSize[sender.tag] = v
         l.invalidateLayout()
         print("Slider: \(sender.value)")
+    }
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let v = sectionSize[indexPath.section]
+        return CGSize(width: Int(v), height: Int(v))
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -77,14 +97,18 @@ class CardsViewController: UICollectionViewController, UIImagePickerControllerDe
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let v = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "cardHeader", for: indexPath) as! HeaderView
+        let s = indexPath.section
         
-        switch indexPath.section {
+        switch s {
         case 0:
             v.headerText.text = "User Photos"
         case 1:
             v.headerText.text = "Alphabet of Desire"
         default: break
         }
+        v.sizeSlider.tag = s
+        v.sizeSlider.value = Float(sectionSize[s])
+        setSliderValues(slider: v.sizeSlider)
         return v
     }
     
