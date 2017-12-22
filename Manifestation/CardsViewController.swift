@@ -28,7 +28,9 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         super.viewDidLoad()
         let statusBarHeight = UIApplication.shared.statusBarFrame.height
         let insets = UIEdgeInsets(top: statusBarHeight, left: 0, bottom: 0, right: 0)
-        
+        let fl = collectionViewLayout as? UICollectionViewFlowLayout
+
+        fl?.sectionHeadersPinToVisibleBounds = true
         collectionView?.scrollIndicatorInsets = insets
         if popoverPresentationController != nil {
             navigationItem.leftBarButtonItem = nil
@@ -65,6 +67,7 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         l.invalidateLayout()
         print("Slider: \(sender.value)")
     }
+    // MARK: - UICollectionViewDelegateFlowLayout
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let v = sectionSize[indexPath.section]
         return CGSize(width: Int(v), height: Int(v))
