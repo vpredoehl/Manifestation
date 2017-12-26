@@ -64,7 +64,7 @@
                                 <rect key="frame" x="69" y="318.66666666666674" width="276" height="353.33333333333326"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SavedSetup" id="xzY-8c-iUj" customClass="PresetTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="gray" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="SavedSetup" id="xzY-8c-iUj" customClass="PresetTableViewCell" customModule="Manifestation" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="276" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xzY-8c-iUj" id="bcF-67-e9e">
@@ -72,7 +72,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iYC-y9-Jxq">
-                                                    <rect key="frame" x="4" y="4" width="150" height="35.666666666666664"/>
+                                                    <rect key="frame" x="4" y="4" width="268" height="35.666666666666664"/>
                                                     <state key="normal" title="Button"/>
                                                     <connections>
                                                         <action selector="switchPreset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="geR-Zv-oOp"/>
@@ -110,16 +110,21 @@
                                     <action selector="editPresets:" destination="BYZ-38-t0r" eventType="touchUpInside" id="8bM-BS-2gr"/>
                                 </connections>
                             </button>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tx3-QI-VtK">
-                                <rect key="frame" x="69" y="226" width="276" height="2"/>
+                            <progressView hidden="YES" opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tx3-QI-VtK">
+                                <rect key="frame" x="149.66666666666663" y="226" width="195.33333333333337" height="2"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="2" id="71j-Qo-OdK"/>
                                 </constraints>
                             </progressView>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Progress:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RYB-Do-Wzn">
+                                <rect key="frame" x="69" y="216.66666666666666" width="72.666666666666686" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="tx3-QI-VtK" secondAttribute="leading" id="0ug-ef-TvM"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="top" secondItem="GMX-K9-mCg" secondAttribute="bottom" constant="20" id="3LA-fd-olw"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="66m-JS-x6j"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="879-mi-y7P"/>
@@ -130,12 +135,15 @@
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="trailing" secondItem="tx3-QI-VtK" secondAttribute="trailing" id="SXu-6z-lxE"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="YXO-A9-Afl" secondAttribute="bottom" constant="8" id="Sn0-7y-C95"/>
                             <constraint firstItem="61k-Xz-W3W" firstAttribute="trailing" secondItem="GMX-K9-mCg" secondAttribute="trailing" id="bEj-XF-bS6"/>
+                            <constraint firstItem="RYB-Do-Wzn" firstAttribute="centerY" secondItem="tx3-QI-VtK" secondAttribute="centerY" id="c5B-rD-BEW"/>
                             <constraint firstItem="M1q-TV-OXq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="fPM-gZ-qdC"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="YXO-A9-Afl" secondAttribute="leading" id="g16-gi-HGm"/>
+                            <constraint firstItem="tx3-QI-VtK" firstAttribute="leading" secondItem="RYB-Do-Wzn" secondAttribute="trailing" constant="8" symbolic="YES" id="hO9-mE-ih4"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pdg-Oc-x60"/>
                             <constraint firstItem="tx3-QI-VtK" firstAttribute="top" secondItem="tfU-eF-Nfh" secondAttribute="bottom" constant="34" id="rHQ-9g-tcG"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="RYB-Do-Wzn" secondAttribute="leading" id="xFX-CN-Av6"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="61k-Xz-W3W" secondAttribute="bottom" constant="8" id="xwD-OP-xdp"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="yLv-Vk-36z"/>
                         </constraints>
@@ -162,6 +170,7 @@
                         <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>
                         <outlet property="editPresetBtn" destination="61k-Xz-W3W" id="ch7-KD-4UJ"/>
                         <outlet property="presetView" destination="GMX-K9-mCg" id="JxN-zN-O0O"/>
+                        <outlet property="progressL" destination="RYB-Do-Wzn" id="K1z-Mt-tIq"/>
                         <outlet property="progressV" destination="tx3-QI-VtK" id="gqb-g4-KCA"/>
                         <outlet property="tb" destination="M1q-TV-OXq" id="soV-eI-5bS"/>
                         <outlet property="trashItem" destination="c8o-o3-GIe" id="b6X-uM-BvQ"/>
@@ -512,7 +521,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChiCell" rowHeight="140" id="bto-6u-UY8" customClass="ChiCellTableViewCell" customModule="Manifestation" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="414" height="140"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="bto-6u-UY8" id="LrX-Ks-JC3">
@@ -520,7 +529,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <button opaque="NO" tag="-1" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aAR-zI-BcP">
-                                                    <rect key="frame" x="67" y="13" width="120" height="114"/>
+                                                    <rect key="frame" x="147" y="13" width="120" height="114"/>
                                                     <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                                                     <gestureRecognizers/>
                                                     <constraints>
@@ -544,7 +553,7 @@
                                             <outlet property="chiButton" destination="aAR-zI-BcP" id="28u-Ci-SuC"/>
                                         </connections>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" selectionStyle="default" indentationWidth="15" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="15" reuseIdentifier="PositionTableViewCell" rowHeight="140" id="1vb-BD-eBA" customClass="PositionTableViewCell" customModule="Manifestation" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="168" width="414" height="140"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1vb-BD-eBA" id="BkG-V0-WIM">
@@ -552,7 +561,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ET1-RQ-nWK">
-                                                    <rect key="frame" x="112" y="47" width="127" height="82.666666666666629"/>
+                                                    <rect key="frame" x="112" y="47.000000000000007" width="287" height="82.666666666666686"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                     <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
@@ -562,7 +571,7 @@
                                                     </connections>
                                                 </textView>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="0fc-7T-zBP">
-                                                    <rect key="frame" x="132" y="11" width="107" height="29"/>
+                                                    <rect key="frame" x="292" y="11" width="107" height="29"/>
                                                     <segments>
                                                         <segment title="Trend"/>
                                                         <segment title="Target"/>

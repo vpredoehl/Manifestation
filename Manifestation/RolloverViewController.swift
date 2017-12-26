@@ -47,6 +47,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var tb: UIToolbar!
     @IBOutlet weak var presetView: UITableView!
     @IBOutlet weak var progressV: UIProgressView!
+    @IBOutlet weak var progressL: UILabel!
     
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
@@ -424,8 +425,12 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 }
                 else {
                     tm.invalidate()
+                    self.progressL.isHidden = true
+                    self.progressV.isHidden = true
                 }
             })
+            progressL.isHidden = false
+            progressV.isHidden = false
             progressTimer?.fire()
             print("documentState: progressAvailable")
         default:
