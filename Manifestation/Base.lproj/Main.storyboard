@@ -122,6 +122,9 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Aaw-Sr-QJe">
+                                <rect key="frame" x="69" y="200" width="276" height="72"/>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
@@ -129,9 +132,12 @@
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="66m-JS-x6j"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="879-mi-y7P"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="tx3-QI-VtK" secondAttribute="bottom" constant="90.666666666666742" id="8Cn-d0-46d"/>
+                            <constraint firstItem="Aaw-Sr-QJe" firstAttribute="top" secondItem="tfU-eF-Nfh" secondAttribute="bottom" constant="8" symbolic="YES" id="8zz-Rq-vOk"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="top" relation="greaterThanOrEqual" secondItem="tfU-eF-Nfh" secondAttribute="bottom" constant="20" id="KF5-PJ-qxj"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="Aaw-Sr-QJe" secondAttribute="leading" id="MDF-qA-5eP"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" multiplier="2:3" id="MI6-cF-7BJ"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="height" secondItem="8bC-Xf-vdC" secondAttribute="height" multiplier="4:10" priority="999" id="N4b-f6-OMz"/>
+                            <constraint firstItem="YXO-A9-Afl" firstAttribute="top" secondItem="Aaw-Sr-QJe" secondAttribute="bottom" constant="8" symbolic="YES" id="QWv-4L-biZ"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="trailing" secondItem="tx3-QI-VtK" secondAttribute="trailing" id="SXu-6z-lxE"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="top" secondItem="YXO-A9-Afl" secondAttribute="bottom" constant="8" id="Sn0-7y-C95"/>
                             <constraint firstItem="61k-Xz-W3W" firstAttribute="trailing" secondItem="GMX-K9-mCg" secondAttribute="trailing" id="bEj-XF-bS6"/>
@@ -141,6 +147,7 @@
                             <constraint firstItem="tx3-QI-VtK" firstAttribute="leading" secondItem="RYB-Do-Wzn" secondAttribute="trailing" constant="8" symbolic="YES" id="hO9-mE-ih4"/>
                             <constraint firstItem="tfU-eF-Nfh" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pdg-Oc-x60"/>
                             <constraint firstItem="tx3-QI-VtK" firstAttribute="top" secondItem="tfU-eF-Nfh" secondAttribute="bottom" constant="34" id="rHQ-9g-tcG"/>
+                            <constraint firstItem="GMX-K9-mCg" firstAttribute="trailing" secondItem="Aaw-Sr-QJe" secondAttribute="trailing" id="uK4-bI-sVL"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="M1q-TV-OXq" secondAttribute="bottom" id="vHN-PR-i7V"/>
                             <constraint firstAttribute="trailing" secondItem="M1q-TV-OXq" secondAttribute="trailing" id="vqo-gp-fnJ"/>
                             <constraint firstItem="GMX-K9-mCg" firstAttribute="leading" secondItem="RYB-Do-Wzn" secondAttribute="leading" id="xFX-CN-Av6"/>
@@ -170,6 +177,7 @@
                         <outlet property="animationView" destination="tfU-eF-Nfh" id="TEW-RU-qTI"/>
                         <outlet property="editPresetBtn" destination="61k-Xz-W3W" id="ch7-KD-4UJ"/>
                         <outlet property="presetView" destination="GMX-K9-mCg" id="JxN-zN-O0O"/>
+                        <outlet property="previewSV" destination="Aaw-Sr-QJe" id="WkW-0h-BAd"/>
                         <outlet property="progressL" destination="RYB-Do-Wzn" id="K1z-Mt-tIq"/>
                         <outlet property="progressV" destination="tx3-QI-VtK" id="gqb-g4-KCA"/>
                         <outlet property="tb" destination="M1q-TV-OXq" id="soV-eI-5bS"/>

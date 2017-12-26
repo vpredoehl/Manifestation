@@ -48,6 +48,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     @IBOutlet weak var presetView: UITableView!
     @IBOutlet weak var progressV: UIProgressView!
     @IBOutlet weak var progressL: UILabel!
+    @IBOutlet weak var previewSV: UIScrollView!
     
     @IBOutlet var constraintsForFullChiView: [NSLayoutConstraint]!
     @IBOutlet var constraintsForReducedChiView: [NSLayoutConstraint]!
@@ -608,3 +609,16 @@ class PresetTableViewCell: UITableViewCell {
     
 }
 
+// MARK: -
+class previewScroll: UIScrollView {
+    let previewWidth = 120
+    let spacing = 90
+    var pref: Preference?
+    
+    override var intrinsicContentSize: CGSize {
+        guard let numItems = pref?.imageIndex.count else { return .zero }
+        return CGSize(width: numItems * (previewWidth + spacing), height: previewWidth)
+    }
+    
+    
+}
