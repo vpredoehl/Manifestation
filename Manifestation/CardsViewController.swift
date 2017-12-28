@@ -102,20 +102,16 @@ UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let v = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "cardHeader", for: indexPath) as! HeaderView
         let s = indexPath.section
-        let render = UIGraphicsImageRenderer(size: CGSize(width: 10, height: 5))
-        let backImg = render.image { (rctx) in
-            let ctx = rctx.cgContext
-            
-            ctx.setFillColor(UIColor.yellow.cgColor)
-            ctx.fill(CGRect(x: 0, y: 0, width: 10, height: 5))
-            }.resizableImage(withCapInsets: UIEdgeInsets.zero, resizingMode: .stretch)
-
-        v.backImage.image = backImg
         switch s {
         case 0:
+            v.headerText.isHidden = false
             v.headerText.text = "User Photos"
         case 1:
-            v.headerText.text = "Alphabet of Desire"
+            let backImg = #imageLiteral(resourceName: "SectionHeaders/AoD")
+            let stretchInset = UIEdgeInsetsMake(0, 365, 0, 0)
+            
+            v.headerText.isHidden = true
+            v.backImage.image = backImg.resizableImage(withCapInsets: stretchInset)
         default: break
         }
         v.sizeSlider.tag = s
