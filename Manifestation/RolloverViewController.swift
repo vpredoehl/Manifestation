@@ -84,6 +84,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             chiImageView.image = UIImage(data: d)
         }
 
+        progressL.isHidden = true
+        progressV.isHidden = true
         tb.items![2].isEnabled = pref.canPlay
         tb.items![4].isEnabled = pref.canHiliteTrash(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
         addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: preset.defaultPref)
@@ -393,6 +395,9 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
+        func stopTimer() {
+            
+        }
         switch preset.documentState {
         case .normal:
             preset.defaultPref = preset.defaultPref ?? Preference()
