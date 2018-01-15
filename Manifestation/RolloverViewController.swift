@@ -380,6 +380,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         switch keyPath {
         case "names"?:
             let names = change![NSKeyValueChangeKey.newKey] as! [String]
+            
+            presetView.reloadData()
             editPresetBtn.isEnabled = names.count > 0
         case "defaultPref"?:
             if let def = preset.defaultPref {
@@ -395,9 +397,6 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
-        func stopTimer() {
-            
-        }
         switch preset.documentState {
         case .normal:
             preset.defaultPref = preset.defaultPref ?? Preference()

@@ -45,7 +45,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillEnterForeground(_ application: UIApplication) {
-        print("applicationWillEnterForeground")
+        let navVC = window?.rootViewController as! UINavigationController
+        let rvc = navVC.topViewController as? RolloverViewController
+        
+        rvc?.share(self)
     }
     
     func applicationDidEnterBackground(_ application: UIApplication) {
