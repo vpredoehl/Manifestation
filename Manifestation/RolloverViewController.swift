@@ -381,7 +381,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         case "names"?:
             let names = change![NSKeyValueChangeKey.newKey] as! [String]
             
-            presetView.reloadData()
+            presetView?.reloadData()
             editPresetBtn.isEnabled = names.count > 0
         case "defaultPref"?:
             if let def = preset.defaultPref {
@@ -477,8 +477,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                     self.selectedPreset = existingNameIdx
                 }
                 else {
-                    self.preset.names.append(n)
+                    let pv = self.presetView
                     self.preset.presetPref.append(self.preset.defaultPref!)
+
+                        // disable table reloadData in KVO for names key because row has not been added yet
+                    self.presetView = nil
+                    self.preset.names.append(n)
+                    self.presetView = pv
+                    
                     self.presetView.insertRows(at: [ip], with: .bottom)
                     self.selectedPreset = ip.row
                 }
