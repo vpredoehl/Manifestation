@@ -87,8 +87,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         
         tableView.contentInset.bottom = r.size.height
         tableView.scrollIndicatorInsets.bottom = r.size.height
-        r = tableView.rectForRow(at: IndexPath(row: rowBeingEdited!, section: adaptedPositionSection.rawValue))
-        tableView.scrollRectToVisible(r, animated: true)
+        if let row = rowBeingEdited {
+            r = tableView.rectForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue))
+            tableView.scrollRectToVisible(r, animated: true)
+        }
     }
     
     @objc
