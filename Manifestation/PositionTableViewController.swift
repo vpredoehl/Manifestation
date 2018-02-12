@@ -276,7 +276,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         if pref.numPositions == 1 {
             return false
         }
-        return indexPath.section != TableSection.chiSection.rawValue
+        return traitCollection.horizontalSizeClass == .regular
+            || indexPath.section != TableSection.chiSection.rawValue
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
