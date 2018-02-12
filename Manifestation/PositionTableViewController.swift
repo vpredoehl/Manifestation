@@ -88,8 +88,10 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         
         tableView.contentInset.bottom = r.size.height
         tableView.scrollIndicatorInsets.bottom = r.size.height
-        r = tableView.rectForRow(at: IndexPath(row: rowBeingEdited!, section: adaptedPositionSection.rawValue))
-        tableView.scrollRectToVisible(r, animated: true)
+        if let row = rowBeingEdited {
+            r = tableView.rectForRow(at: IndexPath(row: row, section: adaptedPositionSection.rawValue))
+            tableView.scrollRectToVisible(r, animated: true)
+        }
     }
     
     @objc
@@ -275,7 +277,8 @@ class PositionTableViewController: UIViewController, UITextViewDelegate,
         if pref.numPositions == 1 {
             return false
         }
-        return indexPath.section != TableSection.chiSection.rawValue
+        return traitCollection.horizontalSizeClass == .regular
+            || indexPath.section != TableSection.chiSection.rawValue
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
