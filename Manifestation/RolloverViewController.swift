@@ -397,23 +397,26 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @objc
     func docStateChanged(_ n: Notification) {
-        switch preset.documentState {
-        case .normal:
+        func handleCaseNormal() {
             preset.defaultPref = preset.defaultPref ?? Preference()
             selectedPreset = nil
             presetView.reloadData()
             updateUI()
-            print("documentState: normal")
-        case .closed:
-            print("documentState: closed")
+        }
+        switch preset.documentState {
         case .inConflict:
-            let cur = NSFileVersion.currentVersionOfItem(at: preset.fileURL)
             let conflicts = NSFileVersion.unresolvedConflictVersionsOfItem(at: preset.fileURL)
             
             conflicts?.forEach({ (v) in
                 v.isResolved = true
             })
             print("documentState: inConflict")
+            fallthrough
+        case .normal:
+            handleCaseNormal()
+            print("documentState: normal")
+        case .closed:
+            print("documentState: closed")
         case .savingError:
             print("documentState: savingError")
         case .editingDisabled:
@@ -437,6 +440,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             progressV.isHidden = false
             progressTimer?.fire()
             print("documentState: progressAvailable")
+            handleCaseNormal()
         default:
             break
         }
