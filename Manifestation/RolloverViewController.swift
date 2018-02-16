@@ -541,11 +541,14 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
             let row = indexPath.row
             let dirName = preset.names[row]
             let cellToDelete = presetView.cellForRow(at: indexPath) as! PresetTableViewCell
-
+            let savePV = presetView
+            
+            presetView = nil
             try? FileManager.default.removeItem(at: Preference.CloudDir.appendingPathComponent(dirName))
             preset.cleanImageCache(prefBeingDeleted: preset.presetPref[row])
             preset.names.remove(at: row)
             preset.presetPref.remove(at: row)
+            presetView = savePV
             presetView.deleteRows(at: [indexPath], with: .fade)
             if cellToDelete.presetButton.isSelected {
                 pref = preset.defaultPref
