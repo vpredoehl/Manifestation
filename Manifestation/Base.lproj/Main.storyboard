@@ -154,11 +154,6 @@
                         </variation>
                     </view>
                     <navigationItem key="navigationItem" title="Manifestation" id="flX-FD-qwv">
-                        <barButtonItem key="leftBarButtonItem" title="Clear" id="FHS-oD-HGQ">
-                            <connections>
-                                <action selector="clearCloud:" destination="BYZ-38-t0r" id="OSp-vO-6Cm"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="action" id="2ti-MC-dkW">
                             <connections>
                                 <action selector="share:" destination="BYZ-38-t0r" id="2lJ-Ws-adw"/>

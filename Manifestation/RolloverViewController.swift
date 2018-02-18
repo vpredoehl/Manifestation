@@ -210,6 +210,19 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 }
             }
         }
+        let clearCloudA = UIAlertAction(title: "Reset to Initial Settings", style: .destructive) {
+            (_) in
+            let confirm = UIAlertController(title: "Reset Cloud", message: "Clearing cloud cache is irreversible.  Are you sure you want to do this?", preferredStyle: .alert)
+            let yes = UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+                self.clearCloud(self)
+            })
+            let no = UIAlertAction(title: "No", style: .default)
+
+            confirm.addAction(yes)
+            confirm.addAction(no)
+            self.present(confirm, animated: true, completion: nil)
+            
+        }
         
         if let vc = ac.popoverPresentationController {
             vc.barButtonItem = trashItem
@@ -225,6 +238,7 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
         if pref.hasUserPhotos {
             ac.addAction(deleteUserPhotos)
         }
+        ac.addAction(clearCloudA)
         present(ac, animated: true)
     }
     @IBAction func playRollover(_ playBtn: UIBarButtonItem) {
@@ -367,6 +381,8 @@ class RolloverViewController: UIViewController, UIImagePickerControllerDelegate,
                 pref = preset.defaultPref
                 addCurrentPresetBtn.isEnabled = pref.hasTransferSequence(currentPreset: selectedPreset, defaultPref: pref)
             }
+            self.tb.items![2].isEnabled = self.pref.canPlay
+            self.tb.items![4].isEnabled = self.pref.canHiliteTrash(currentPreset: self.selectedPreset, defaultPref: self.preset.defaultPref)
             preset.open { (s) in
                 if s {
                     self.tb.items![2].isEnabled = self.pref.canPlay
